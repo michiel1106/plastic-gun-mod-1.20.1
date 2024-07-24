@@ -85,7 +85,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                         chamber.setCount(bulletsInChamber + addedBullets);
                         bulletStack.decrement(addedBullets);
                         if (chamber.isEmpty()) {
-                            stack.set(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+                            stack.remove(GUN_AMMO_COMPONENT);
                         } else {
                             stack.set(GUN_AMMO_COMPONENT, chamber);
                             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
@@ -99,7 +99,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                             chamber = bulletStack.copy();
                             chamber.setCount(targetCount);
                             if (chamber.isEmpty()) {
-                                stack.set(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+                                stack.remove(GUN_AMMO_COMPONENT);
                             } else {
                                 stack.set(GUN_AMMO_COMPONENT, chamber);
                                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
@@ -135,7 +135,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
                 if (chamber.isEmpty()) {
-                    stack.set(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+                    stack.remove(GUN_AMMO_COMPONENT);
                 } else {
                     stack.set(GUN_AMMO_COMPONENT, chamber);
                 }
