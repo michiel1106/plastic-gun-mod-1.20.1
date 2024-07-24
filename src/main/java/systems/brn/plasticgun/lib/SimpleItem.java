@@ -13,10 +13,10 @@ public abstract class SimpleItem extends SimplePolymerItem implements PolymerIte
     private final PolymerModelData polymerModel;
     protected final Identifier identifier;
 
-    public SimpleItem(Settings settings, Identifier identifier) {
-        super(settings, Items.BARRIER);
+    public SimpleItem(Settings settings, Identifier identifier, Item replacement) {
+        super(settings, replacement);
         this.identifier = identifier;
-        this.polymerModel = PolymerResourcePackUtils.requestModel(Items.BARRIER, identifier.withPath("item/" + identifier.getPath()));
+        this.polymerModel = PolymerResourcePackUtils.requestModel(replacement, identifier.withPath("item/" + identifier.getPath()));
     }
 
     @Override

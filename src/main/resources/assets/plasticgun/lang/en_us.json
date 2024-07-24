@@ -1,3 +1,22 @@
 {
-  "item.plasticgun.arrowhead": "Central Processing Unit"
+  "item.bullet.357_magnum": "357 Magnum",
+  "item.bullet.32_acp_high_velocity": "32 ACP High Velocity",
+  "item.bullet.45_acp_hollow_point": "45 ACP Hollow Point",
+  "item.bullet.9mm_jhp": "9mm JHP",
+  "item.bullet.38_special_p": "38 Special +P",
+  "item.bullet.762_tokarev_ap": "7.62 Tokarev AP",
+  "item.bullet.357_standard": "357 Standard",
+  "item.bullet.32_acp": "32 ACP",
+  "item.bullet.45_acp": "45 ACP",
+  "item.bullet.9mm_parabellum": "9mm Parabellum",
+  "item.bullet.38_special": "38 Special",
+  "item.bullet.762_tokarev": "7.62 Tokarev",
+  "item.gun.357_revolver": "357 Revolver",
+  "item.gun.colt_1903": "Colt 1903",
+  "item.gun.colt_45": "Colt 45",
+  "item.gun.colt_peacemaker": "Colt Peacemaker",
+  "item.gun.p2022": "P2022",
+  "item.gun.snub_nosed_revolver": "Snub Nosed Revolver",
+  "item.gun.tokarev_tt_33": "Tokarev TT-33"
+
 }

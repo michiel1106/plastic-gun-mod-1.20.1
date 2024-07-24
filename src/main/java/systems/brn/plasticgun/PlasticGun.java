@@ -3,13 +3,25 @@ package systems.brn.plasticgun;
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.world.World;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.guns.Gun;
+import systems.brn.plasticgun.lib.EventHandler;
 
 import java.util.ArrayList;
 
@@ -54,13 +66,19 @@ public class PlasticGun implements ModInitializer {
         guns.add(new Gun("tokarev_tt_33", 0.6, 2, 8, 42, 762));
 
 
-
         BULLET_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
                 id("bullet"),
                 EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
         );
         PolymerEntityUtils.registerType(BULLET_ENTITY_TYPE);
+
+        // Detect item use
+        UseItemCallback.EVENT.register(EventHandler::onItemUse);
+
+        // Use a custom method to detect general hand swings
+        // This is done by checking the player's actions in the tick event
+        ServerTickEvents.END_WORLD_TICK.register(EventHandler::onWorldTick);
 
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         PolymerResourcePackUtils.markAsRequired();

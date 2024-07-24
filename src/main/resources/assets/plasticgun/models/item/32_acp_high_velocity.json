@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "plasticgun:item/32_acp_high_velocity"
+  }
+}
