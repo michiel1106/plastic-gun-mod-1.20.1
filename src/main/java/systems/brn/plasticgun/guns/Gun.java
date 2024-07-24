@@ -120,7 +120,11 @@ public class Gun extends SimpleItem implements PolymerItem {
     public void updateDamage(ItemStack stack) {
         ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
         int numBullets = chamber.getCount();
-        stack.setDamage(clipSize - numBullets + 1);
+        int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+        if (currentReload < reloadCount) {
+            numBullets = -1;
+        }
+        stack.setDamage(clipSize - numBullets);
     }
 
     public void shoot(World world, PlayerEntity user, Hand hand) {
