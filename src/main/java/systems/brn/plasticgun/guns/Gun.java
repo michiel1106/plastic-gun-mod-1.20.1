@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import static systems.brn.plasticgun.PlasticGun.bullets;
-import static systems.brn.plasticgun.lib.GunComponents.GUN_AMMO_COMPONENT;
-import static systems.brn.plasticgun.lib.GunComponents.GUN_LOADING_COMPONENT;
+import static systems.brn.plasticgun.lib.GunComponents.*;
 import static systems.brn.plasticgun.lib.Util.*;
 
 public class Gun extends SimpleItem implements PolymerItem {
@@ -35,14 +34,18 @@ public class Gun extends SimpleItem implements PolymerItem {
     public final int caliber;
     private final double explosionPowerGun;
     private final double repulsionPowerGun;
+    private final int cooldownTarget;
+    private final int reloadTarget;
 
-    public Gun(String path, double damage, int reloadCount, int clipSize, int speed, int caliber, double explosionPowerGun, double repulsionPowerGun) {
+    public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, boolean hasScope, double explosionPowerGun, double repulsionPowerGun) {
         super(
                 new Settings()
                         .maxCount(1)
                         .component(GUN_AMMO_COMPONENT, ItemStack.EMPTY)
+                        .component(GUN_COOLDOWN_COMPONENT, 0)
+                        .component(GUN_RELOAD_COOLDOWN_COMPONENT, 0)
                         .maxDamage(clipSize + 1)
-                , id(path), Items.WOODEN_SWORD
+                , id(path), hasScope ? Items.SPYGLASS : Items.WOODEN_SWORD
         );
         Item item = Registry.register(Registries.ITEM, id(path), this);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(item));
@@ -60,58 +63,66 @@ public class Gun extends SimpleItem implements PolymerItem {
         this.caliber = caliber;
         this.explosionPowerGun = explosionPowerGun;
         this.repulsionPowerGun = repulsionPowerGun;
+        this.cooldownTarget = cooldownTarget;
+        this.reloadTarget = reloadTarget + 1;
     }
 
     public void reload(World world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            ItemStack bulletStack = findBulletStack(ammo, player);
-            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
-            int bulletsInChamber = chamber.getCount();
-            int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+            int currentReloadCooldown = stack.getOrDefault(GUN_RELOAD_COOLDOWN_COMPONENT, 0);
+            if (currentReloadCooldown == 0) {
+                stack.set(GUN_RELOAD_COOLDOWN_COMPONENT, reloadTarget);
+                ItemStack bulletStack = findBulletStack(ammo, player);
+                ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+                int bulletsInChamber = chamber.getCount();
+                int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
 
-            if (bulletStack != null && !bulletStack.isEmpty()) { //we have ammo
-                if (currentReload < reloadCount) { //still reloading
-                    stack.set(GUN_LOADING_COMPONENT, currentReload + 1);
-                    world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.PLAYERS, 0.1f, 1.8f);
-                } else if (currentReload == reloadCount) { //now reload
-                    int addedBullets = Math.min(bulletStack.getCount(), clipSize - bulletsInChamber); //how many
-                    if (chamber.isEmpty() || chamber.getItem() == bulletStack.getItem()) {
-                        if (chamber.isEmpty()) {
-                            chamber = bulletStack.copy();
-                        }
-                        chamber.setCount(bulletsInChamber + addedBullets);
-                        bulletStack.decrement(addedBullets);
-                        if (chamber.isEmpty()) {
-                            stack.remove(GUN_AMMO_COMPONENT);
-                        } else {
-                            stack.set(GUN_AMMO_COMPONENT, chamber);
-                            world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
-                        }
-                        stack.set(GUN_LOADING_COMPONENT, 1);
-                    } else {
-                        if (canInsertItemIntoInventory(player.getInventory(), chamber.copy()) == chamber.getCount()) { //can take out chamber
-                            insertStackIntoInventory(player.getInventory(), chamber.copy());
-                            chamber.setCount(0); //empty
-                            int targetCount = Math.min(bulletStack.getCount(), clipSize);
-                            chamber = bulletStack.copy();
-                            chamber.setCount(targetCount);
+                if (bulletStack != null && !bulletStack.isEmpty()) { //we have ammo
+                    if (currentReload < reloadCount) { //still reloading
+                        stack.set(GUN_LOADING_COMPONENT, currentReload + 1);
+                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.PLAYERS, 0.1f, 1.8f);
+                    } else if (currentReload == reloadCount) { //now reload
+                        int addedBullets = Math.min(bulletStack.getCount(), clipSize - bulletsInChamber); //how many
+                        if (chamber.isEmpty() || chamber.getItem() == bulletStack.getItem()) {
+                            if (chamber.isEmpty()) {
+                                chamber = bulletStack.copy();
+                            }
+                            chamber.setCount(bulletsInChamber + addedBullets);
+                            bulletStack.decrement(addedBullets);
                             if (chamber.isEmpty()) {
                                 stack.remove(GUN_AMMO_COMPONENT);
                             } else {
                                 stack.set(GUN_AMMO_COMPONENT, chamber);
-                                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
+                                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
                             }
-                            bulletStack.decrement(targetCount);
                             stack.set(GUN_LOADING_COMPONENT, 1);
+                        } else {
+                            if (canInsertItemIntoInventory(player.getInventory(), chamber.copy()) == chamber.getCount()) { //can take out chamber
+                                insertStackIntoInventory(player.getInventory(), chamber.copy());
+                                chamber.setCount(0); //empty
+                                int targetCount = Math.min(bulletStack.getCount(), clipSize);
+                                chamber = bulletStack.copy();
+                                chamber.setCount(targetCount);
+                                if (chamber.isEmpty()) {
+                                    stack.remove(GUN_AMMO_COMPONENT);
+                                } else {
+                                    stack.set(GUN_AMMO_COMPONENT, chamber);
+                                    world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
+                                }
+                                bulletStack.decrement(targetCount);
+                                stack.set(GUN_LOADING_COMPONENT, 1);
+                            }
                         }
                     }
                 }
+                if (player.isCreative()) {
+                    stack.set(GUN_AMMO_COMPONENT, new ItemStack(ammo.getFirst(), clipSize)); // Ensure ammo.get(0) is a valid item
+                }
+                updateDamage(stack);
+            } else {
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
             }
-            if (player.isCreative()) {
-                stack.set(GUN_AMMO_COMPONENT, new ItemStack(ammo.getFirst(), clipSize)); // Ensure ammo.get(0) is a valid item
-            }
-            updateDamage(stack);
         }
     }
 
@@ -140,6 +151,7 @@ public class Gun extends SimpleItem implements PolymerItem {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+            int currentCooldown = stack.getOrDefault(GUN_COOLDOWN_COMPONENT, 0);
             ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
 
             BulletItem bullet = null;
@@ -150,28 +162,31 @@ public class Gun extends SimpleItem implements PolymerItem {
                 }
             }
 
-            if (!chamber.isEmpty() && currentReload == 1) {
+            if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0) {
                 boolean isIncendiary = false;
                 double explosionPower = explosionPowerGun;
                 double repulsionPower = repulsionPowerGun;
 
-                if (bullet != null){
+                if (bullet != null) {
                     isIncendiary = bullet.isIncendiary;
                     explosionPower *= bullet.explosionPowerCoefficient;
                     repulsionPower *= bullet.repulsionPowerCoefficient;
                 }
 
-                BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, damage, speed, explosionPower, repulsionPower, isIncendiary);
+                BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, 1f, damage, speed, explosionPower, repulsionPower, isIncendiary);
                 world.spawnEntity(bulletEntity);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
+                stack.set(GUN_COOLDOWN_COMPONENT, cooldownTarget);
                 doRecoil(player);
                 if (chamber.isEmpty()) {
                     stack.remove(GUN_AMMO_COMPONENT);
                 } else {
                     stack.set(GUN_AMMO_COMPONENT, chamber);
                 }
-            } else {
+            } else if (cooldownTarget > 0) {
+                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
+            } else if (currentReload > 1) {
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
             }
             updateDamage(stack);
