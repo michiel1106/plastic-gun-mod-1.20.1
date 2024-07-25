@@ -33,8 +33,10 @@ public class Gun extends SimpleItem implements PolymerItem {
     public final int speed;
     public final ArrayList<Item> ammo;
     public final int caliber;
+    private final double explosionPowerGun;
+    private final double repulsionPowerGun;
 
-    public Gun(String path, double damage, int reloadCount, int clipSize, int speed, int caliber) {
+    public Gun(String path, double damage, int reloadCount, int clipSize, int speed, int caliber, double explosionPowerGun, double repulsionPowerGun) {
         super(
                 new Settings()
                         .maxCount(1)
@@ -56,6 +58,8 @@ public class Gun extends SimpleItem implements PolymerItem {
         }
         this.ammo = ammo;
         this.caliber = caliber;
+        this.explosionPowerGun = explosionPowerGun;
+        this.repulsionPowerGun = repulsionPowerGun;
     }
 
     public void reload(World world, PlayerEntity user, Hand hand) {
@@ -138,8 +142,26 @@ public class Gun extends SimpleItem implements PolymerItem {
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
             ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
 
+            BulletItem bullet = null;
+            for (BulletItem bulletTemp : bullets) {
+                if (bulletTemp == chamber.getItem()) {
+                    bullet = bulletTemp;
+                    break;
+                }
+            }
+
             if (!chamber.isEmpty() && currentReload == 1) {
-                BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, damage, speed);
+                boolean isIncendiary = false;
+                double explosionPower = explosionPowerGun;
+                double repulsionPower = repulsionPowerGun;
+
+                if (bullet != null){
+                    isIncendiary = bullet.isIncendiary;
+                    explosionPower *= bullet.explosionPowerCoefficient;
+                    repulsionPower *= bullet.repulsionPowerCoefficient;
+                }
+
+                BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, damage, speed, explosionPower, repulsionPower, isIncendiary);
                 world.spawnEntity(bulletEntity);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);

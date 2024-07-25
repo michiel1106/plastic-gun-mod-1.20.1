@@ -36,29 +36,36 @@ public class PlasticGun implements ModInitializer {
     public void onInitialize() {
 
         // Bullets - Batch 1 (Better Bullets First)
-        bullets.add(new BulletItem("357_magnum", 1.4, 357));
-        bullets.add(new BulletItem("32_acp_high_velocity", 0.9, 32));
-        bullets.add(new BulletItem("45_acp_hollow_point", 1.2, 45));
-        bullets.add(new BulletItem("9mm_jhp", 1.05, 9));
-        bullets.add(new BulletItem("38_special_p", 1.3, 38));
-        bullets.add(new BulletItem("762_tokarev_ap", 1.2, 762));
+        bullets.add(new BulletItem("357_magnum", 1.4, 357, false, 0, 0));
+        bullets.add(new BulletItem("32_acp_high_velocity", 0.9, 32, false, 0, 0));
+        bullets.add(new BulletItem("45_acp_hollow_point", 1.2, 45, false, 0, 0));
+        bullets.add(new BulletItem("9mm_jhp", 1.05, 9, false, 0, 0));
+        bullets.add(new BulletItem("38_special_p", 1.3, 38, false, 0, 0));
+        bullets.add(new BulletItem("762_tokarev_ap", 1.2, 762, false, 0, 0));
 
         // Bullets - Batch 2 (Standard Bullets)
-        bullets.add(new BulletItem("357_standard", 1, 357));
-        bullets.add(new BulletItem("32_acp", 0.8, 32));
-        bullets.add(new BulletItem("45_acp", 1, 45));
-        bullets.add(new BulletItem("9mm_parabellum", 0.9, 9));
-        bullets.add(new BulletItem("38_special", 0.95, 38));
-        bullets.add(new BulletItem("762_tokarev", 1.1, 762));
+        bullets.add(new BulletItem("357_standard", 1, 357, false, 0, 0));
+        bullets.add(new BulletItem("32_acp", 0.8, 32, false, 0, 0));
+        bullets.add(new BulletItem("45_acp", 1, 45, false, 0, 0));
+        bullets.add(new BulletItem("9mm_parabellum", 0.9, 9, false, 0, 0));
+        bullets.add(new BulletItem("38_special", 0.95, 38, false, 0, 0));
+        bullets.add(new BulletItem("762_tokarev", 1.1, 762, false, 0, 0));
+
+        bullets.add(new BulletItem("rpg_shell_incendiary", 1.1, 999, true, 1, 0));
+        bullets.add(new BulletItem("rpg_shell", 1.1, 999, false, 1, 0));
+        bullets.add(new BulletItem("force_container", 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("357_revolver", 0.3, 3, 6, 43, 357));
-        guns.add(new Gun("colt_1903", 0.25, 2, 8, 38, 32));
-        guns.add(new Gun("colt_45", 0.4, 2, 7, 48, 45));
-        guns.add(new Gun("colt_peacemaker", 0.35, 4, 6, 43, 45));
-        guns.add(new Gun("p2022", 0.3, 2, 10, 41, 9));
-        guns.add(new Gun("snub_nosed_revolver", 0.3, 3, 5, 36, 38));
-        guns.add(new Gun("tokarev_tt_33", 0.35, 2, 8, 45, 762));
+        guns.add(new Gun("357_revolver", 0.3, 3, 6, 43, 357, 0, 0));
+        guns.add(new Gun("colt_1903", 0.25, 2, 8, 38, 32, 0, 0));
+        guns.add(new Gun("colt_45", 0.4, 2, 7, 48, 45, 0, 0));
+        guns.add(new Gun("colt_peacemaker", 0.35, 4, 6, 43, 45, 0, 0));
+        guns.add(new Gun("p2022", 0.3, 2, 10, 41, 9, 0, 0));
+        guns.add(new Gun("snub_nosed_revolver", 0.3, 3, 5, 36, 38, 0, 0));
+        guns.add(new Gun("tokarev_tt_33", 0.35, 2, 8, 45, 762, 0, 0));
+
+        guns.add(new Gun("rpg9", 2, 2, 8, 10, 999, 8, 0));
+        guns.add(new Gun("forcegun", 0, 2, 8, 10, 888, 0, 20));
 
 
         BULLET_ENTITY_TYPE = Registry.register(

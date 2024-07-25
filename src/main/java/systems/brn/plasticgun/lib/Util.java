@@ -1,14 +1,24 @@
 package systems.brn.plasticgun.lib;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.TntEntity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static net.minecraft.world.explosion.Explosion.getExposure;
 import static systems.brn.plasticgun.PlasticGun.MOD_ID;
 
 public class Util {
@@ -94,6 +104,49 @@ public class Util {
                 return;
             }
         }
-
     }
+
+    public static List<Entity> getEntitiesAround(Entity entity, double radius) {
+        Vec3d pos = entity.getPos();
+        int minX = MathHelper.floor(pos.x - radius - 1.0);
+        int maxX = MathHelper.floor(pos.x + radius + 1.0);
+        int minY = MathHelper.floor(pos.y - radius - 1.0);
+        int maxY = MathHelper.floor(pos.y + radius + 1.0);
+        int minZ = MathHelper.floor(pos.z - radius - 1.0);
+        int maxZ = MathHelper.floor(pos.z + radius + 1.0);
+        Box box = new Box(minX, minY, minZ, maxX, maxY, maxZ);
+        return entity.getEntityWorld().getOtherEntities(entity, box);
+    }
+
+    public static void applyKnockbackToEntities(Entity explodingEntity, Vec3d explosionPos, double power, double radius) {
+        List<Entity> entities = getEntitiesAround(explodingEntity, radius);
+
+        for (Entity entity : entities) {
+            double distanceRatio = Math.sqrt(entity.squaredDistanceTo(explosionPos)) / power;
+            if (distanceRatio > 1.0) {
+                continue;
+            }
+
+            double dx = entity.getX() - explosionPos.x;
+            double dy = entity.getY() - explosionPos.y;
+            double dz = entity.getZ() - explosionPos.z;
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+            if (distance == 0.0) {
+                continue;
+            }
+
+            dx /= distance;
+            dy /= distance;
+            dz /= distance;
+
+            double knockbackStrength = (1.0 - distanceRatio) * getExposure(explosionPos, entity);
+            double knockback = knockbackStrength * (1.0 - (entity instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(EntityAttributes.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE) : 0.0));
+
+            Vec3d knockbackVec = new Vec3d(dx * knockback, dy * knockback, dz * knockback);
+            entity.setVelocity(entity.getVelocity().add(knockbackVec));
+        }
+    }
+
+
 }
