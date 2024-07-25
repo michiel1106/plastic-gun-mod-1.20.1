@@ -2,29 +2,23 @@ package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.lib.SimpleItem;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import static systems.brn.plasticgun.PlasticGun.bullets;
 import static systems.brn.plasticgun.lib.GunComponents.GUN_AMMO_COMPONENT;
@@ -46,7 +40,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .maxCount(1)
                         .component(GUN_AMMO_COMPONENT, ItemStack.EMPTY)
                         .maxDamage(clipSize + 1)
-                , id(path), Items.WOODEN_HOE
+                , id(path), Items.WOODEN_SWORD
         );
         Item item = Registry.register(Registries.ITEM, id(path), this);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(item));
@@ -65,7 +59,7 @@ public class Gun extends SimpleItem implements PolymerItem {
     }
 
     public void reload(World world, PlayerEntity user, Hand hand) {
-        if (user instanceof ServerPlayerEntity player) {
+        if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             ItemStack bulletStack = findBulletStack(ammo, player);
             ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
@@ -121,23 +115,35 @@ public class Gun extends SimpleItem implements PolymerItem {
         ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
         int numBullets = chamber.getCount();
         int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
-        if (currentReload < reloadCount) {
-            numBullets = -1;
+        if (currentReload != 1) {
+            numBullets = -clipSize;
         }
-        stack.setDamage(clipSize - numBullets);
+        stack.setDamage((clipSize - numBullets) + 1);
+    }
+
+    public void doRecoil(ServerPlayerEntity player) {
+        // Get the player's current position and yaw
+        Vec3d pos = player.getPos();
+        float yaw = player.getYaw();
+        float newPitch = player.getPitch();
+        newPitch -= player.getWorld().getRandom().nextBetween(1, 4);
+        yaw -= player.getWorld().getRandom().nextBetween(-2, 2);
+
+        player.teleport(player.getServerWorld(), pos.x, pos.y, pos.z, Set.of(PositionFlag.X_ROT, PositionFlag.Y_ROT), yaw, newPitch);
     }
 
     public void shoot(World world, PlayerEntity user, Hand hand) {
-        if (user instanceof ServerPlayerEntity player) {
+        if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
-            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
 
             if (!chamber.isEmpty() && currentReload == 1) {
                 BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, damage, speed);
                 world.spawnEntity(bulletEntity);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
+                doRecoil(player);
                 if (chamber.isEmpty()) {
                     stack.remove(GUN_AMMO_COMPONENT);
                 } else {

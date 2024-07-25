@@ -67,7 +67,7 @@ public class Util {
         return !stack1.isEmpty() && stack1.getItem() == stack2.getItem() && ItemStack.areItemsAndComponentsEqual(stack1, stack2);
     }
 
-    public static ItemStack insertStackIntoInventory(Inventory inventory, ItemStack stack) {
+    public static void insertStackIntoInventory(Inventory inventory, ItemStack stack) {
         // First, try to merge with existing stacks
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack slotStack = inventory.getStack(i);
@@ -78,7 +78,7 @@ public class Util {
                     stack.decrement(transferAmount);
                     inventory.markDirty();
                     if (stack.isEmpty()) {
-                        return ItemStack.EMPTY;
+                        return;
                     }
                 }
             }
@@ -91,10 +91,9 @@ public class Util {
                 inventory.setStack(i, stack.copy());
                 stack.setCount(0);
                 inventory.markDirty();
-                return ItemStack.EMPTY;
+                return;
             }
         }
 
-        return stack;
     }
 }

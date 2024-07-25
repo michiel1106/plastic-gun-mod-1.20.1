@@ -4,24 +4,17 @@ import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.lib.EventHandler;
+import systems.brn.plasticgun.testing.DamageTester;
 
 import java.util.ArrayList;
 
@@ -37,15 +30,17 @@ public class PlasticGun implements ModInitializer {
 
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
+    public static EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE;
+
     @Override
     public void onInitialize() {
 
         // Bullets - Batch 1 (Better Bullets First)
-        bullets.add(new BulletItem("357_magnum", 1.2, 357));
+        bullets.add(new BulletItem("357_magnum", 1.4, 357));
         bullets.add(new BulletItem("32_acp_high_velocity", 0.9, 32));
-        bullets.add(new BulletItem("45_acp_hollow_point", 1.1, 45));
+        bullets.add(new BulletItem("45_acp_hollow_point", 1.2, 45));
         bullets.add(new BulletItem("9mm_jhp", 1.05, 9));
-        bullets.add(new BulletItem("38_special_p", 1.1, 38));
+        bullets.add(new BulletItem("38_special_p", 1.3, 38));
         bullets.add(new BulletItem("762_tokarev_ap", 1.2, 762));
 
         // Bullets - Batch 2 (Standard Bullets)
@@ -57,13 +52,13 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("762_tokarev", 1.1, 762));
 
         // Guns
-        guns.add(new Gun("357_revolver", 0.5, 3, 6, 40, 357));
-        guns.add(new Gun("colt_1903", 0.4, 2, 8, 35, 32));
-        guns.add(new Gun("colt_45", 0.7, 2, 7, 45, 45));
-        guns.add(new Gun("colt_peacemaker", 0.6, 4, 6, 40, 45));
-        guns.add(new Gun("p2022", 0.5, 2, 10, 38, 9));
-        guns.add(new Gun("snub_nosed_revolver", 0.5, 3, 5, 35, 38));
-        guns.add(new Gun("tokarev_tt_33", 0.6, 2, 8, 42, 762));
+        guns.add(new Gun("357_revolver", 0.3, 3, 6, 43, 357));
+        guns.add(new Gun("colt_1903", 0.25, 2, 8, 38, 32));
+        guns.add(new Gun("colt_45", 0.4, 2, 7, 48, 45));
+        guns.add(new Gun("colt_peacemaker", 0.35, 4, 6, 43, 45));
+        guns.add(new Gun("p2022", 0.3, 2, 10, 41, 9));
+        guns.add(new Gun("snub_nosed_revolver", 0.3, 3, 5, 36, 38));
+        guns.add(new Gun("tokarev_tt_33", 0.35, 2, 8, 45, 762));
 
 
         BULLET_ENTITY_TYPE = Registry.register(
@@ -72,6 +67,15 @@ public class PlasticGun implements ModInitializer {
                 EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
         );
         PolymerEntityUtils.registerType(BULLET_ENTITY_TYPE);
+
+        DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
+                Registries.ENTITY_TYPE,
+                id("damagetester"),
+                EntityType.Builder.<DamageTester>create(DamageTester::new, SpawnGroup.MISC).build()
+        );
+        FabricDefaultAttributeRegistry.register(DAMAGE_TESTER_ENTITY_TYPE, DamageTester.createDamageTesterAttributes());
+        PolymerEntityUtils.registerType(DAMAGE_TESTER_ENTITY_TYPE);
+
 
         // Detect item use
         UseItemCallback.EVENT.register(EventHandler::onItemUse);
