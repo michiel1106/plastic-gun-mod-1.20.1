@@ -86,6 +86,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
+        this.setPosition(blockHitResult.getPos());
         if (blockHitResult.getType() == HitResult.Type.BLOCK) {
             BlockState block = this.getWorld().getBlockState(blockHitResult.getBlockPos());
 
@@ -103,6 +104,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
+        this.setPosition(entityHitResult.getPos());
         setSilent(false);
         playSound(SoundEvents.BLOCK_BAMBOO_HIT, 4.0F, 1.0F);
         setSilent(true);
