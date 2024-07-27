@@ -74,41 +74,30 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("force_container", 99, 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, false, 0, 0));
-        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, false, 0, 0));
-        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, false, 0, 0));
-        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, false, 0, 0));
-        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, false, 0, 0));
-        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, false, 0, 0));
-        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, false, 0, 0));
-        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, false, 0, 0));
-        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, true, 0, 0));
+        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0));
+        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0));
+        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0));
+        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0));
+        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0));
+        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0));
+        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0));
+        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0));
+        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0));
 
-        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, false, 20, 0));
-        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, false, 0, 20));
+        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0));
+        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20));
 
-
-        grenades.add(new GrenadeItem("grenade_m67", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // M67 Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_mk2", 1, 7f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // Mk 2 Fragmentation Grenade
 
         grenades.add(new GrenadeItem("grenade_an_m14", 1, 5f, 0.5f, 40, true, false, 0, 0, 0, 8, 0)); // AN-M14 Incendiary Grenade
-        grenades.add(new GrenadeItem("grenade_m3d", 1, 10f, 0.5f, 60, true, true, 0, 0, 0, 10, 0)); // M34 White Phosphorus Incendiary Fragmentation Grenade
-
-        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 0)); // M18 Smoke Grenade
-        grenades.add(new GrenadeItem("grenade_l109a1", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // L109A1 Fragmentation Grenade
-
-        grenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 10, 10, 5, 12, 10)); // M84 Stun Grenade (Flashbang)
+        grenades.add(new GrenadeItem("grenade_m34", 1, 10f, 0.5f, 60, true, true, 0, 0, 0, 10, 0)); // M34 White Phosphorus Incendiary Fragmentation Grenade
+        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 0)); // M18 Smoke Grenadegrenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 10, 10, 5, 12, 10)); // M84 Stun Grenade (Flashbang)
         grenades.add(new GrenadeItem("grenade_rgd_5", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // RGD-5 Fragmentation Grenade
-
         grenades.add(new GrenadeItem("grenade_thermite", 1, 4f, 0.3f, 80, true, false, 0, 0, 0, 8, 15)); // Thermite Grenade
         grenades.add(new GrenadeItem("grenade_f1", 1, 7f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // F1 Soviet Fragmentation Grenade
-
         grenades.add(new GrenadeItem("grenade_mk3a2", 1, 6f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // Mk3A2 Offensive Grenade
         grenades.add(new GrenadeItem("grenade_m7a3", 1, 0.1f, 0.2f, 90, false, false, 0, 0, 50, 8, 40)); // M7A3 CS Gas Grenade
-
         grenades.add(new GrenadeItem("grenade_no_69", 1, 5.5f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // No. 69 British Offensive Grenade
-
-        grenades.add(new GrenadeItem("grenade_rgo", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // RGO Fragmentation Grenade
+        grenades.add(new GrenadeItem("grenade_rgo", 1, 6.5f, 0.5f, 90, false, true, 0, 0, 0, 10, 0)); // RGO Fragmentation Grenade
         grenades.add(new GrenadeItem("grenade_k417", 1, 7f, 0.5f, 70, false, true, 0, 0, 0, 10, 0)); // K417 Fragmentation Grenade
 
 

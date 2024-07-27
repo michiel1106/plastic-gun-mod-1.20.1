@@ -40,9 +40,8 @@ public class Gun extends SimpleItem implements PolymerItem {
     private final double repulsionPowerGun;
     private final int cooldownTarget;
     private final int reloadTarget;
-    private final boolean hasScope;
 
-    public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, boolean hasScope, double explosionPowerGun, double repulsionPowerGun) {
+    public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, double explosionPowerGun, double repulsionPowerGun) {
         super(
                 new Settings()
                         .maxCount(1)
@@ -50,7 +49,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .component(GUN_COOLDOWN_COMPONENT, 0)
                         .component(GUN_RELOAD_COOLDOWN_COMPONENT, 0)
                         .maxDamage(clipSize + 1)
-                , id(path), hasScope ? Items.SPYGLASS : Items.WOODEN_SWORD
+                , id(path), Items.WOODEN_SWORD
         );
         Registry.register(Registries.ITEM, id(path), this);
         this.damage = damage;
@@ -69,7 +68,6 @@ public class Gun extends SimpleItem implements PolymerItem {
         this.repulsionPowerGun = repulsionPowerGun;
         this.cooldownTarget = cooldownTarget;
         this.reloadTarget = reloadTarget + 1;
-        this.hasScope = hasScope;
     }
 
     public void reload(World world, PlayerEntity user, Hand hand) {
@@ -153,9 +151,6 @@ public class Gun extends SimpleItem implements PolymerItem {
         loreList.add(Text.translatable("gun.description.damage_absolute", damage));
         loreList.add(Text.translatable("gun.description.speed", speed));
         loreList.add(Text.translatable("gun.description.clip_size", clipSize));
-        if (hasScope) {
-            loreList.add(Text.translatable("gun.description.has_scope"));
-        }
         loreList.add(Text.translatable("gun.description.reload_cooldown", reloadTarget));
         loreList.add(Text.translatable("gun.description.reload_cycles", reloadCount));
         loreList.add(Text.translatable("gun.description.shoot_cooldown", cooldownTarget));
