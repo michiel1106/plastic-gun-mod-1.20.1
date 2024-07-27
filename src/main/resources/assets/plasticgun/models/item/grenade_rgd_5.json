@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "plasticgun:item/grenade_rgd_5"
+  }
+}

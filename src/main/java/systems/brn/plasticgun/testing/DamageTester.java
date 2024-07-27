@@ -13,20 +13,12 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
+import net.minecraft.world.World;
 
 import java.util.Collections;
 
-import static systems.brn.plasticgun.PlasticGun.*;
-
 public class DamageTester extends LivingEntity implements PolymerEntity {
-
-    public DamageTester(Vec3d pos, World world) {
-        super(DAMAGE_TESTER_ENTITY_TYPE, world);
-        this.setPos(pos.x, pos.y, pos.z);
-    }
 
     public DamageTester(EntityType<systems.brn.plasticgun.testing.DamageTester> entityType, World world) {
         super(entityType, world);

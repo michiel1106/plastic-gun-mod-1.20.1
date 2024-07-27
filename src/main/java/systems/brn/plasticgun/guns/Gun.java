@@ -2,14 +2,18 @@ package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -18,7 +22,7 @@ import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.lib.SimpleItem;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 import static systems.brn.plasticgun.PlasticGun.bullets;
 import static systems.brn.plasticgun.lib.GunComponents.*;
@@ -36,6 +40,7 @@ public class Gun extends SimpleItem implements PolymerItem {
     private final double repulsionPowerGun;
     private final int cooldownTarget;
     private final int reloadTarget;
+    private final boolean hasScope;
 
     public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, boolean hasScope, double explosionPowerGun, double repulsionPowerGun) {
         super(
@@ -47,8 +52,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .maxDamage(clipSize + 1)
                 , id(path), hasScope ? Items.SPYGLASS : Items.WOODEN_SWORD
         );
-        Item item = Registry.register(Registries.ITEM, id(path), this);
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(item));
+        Registry.register(Registries.ITEM, id(path), this);
         this.damage = damage;
         this.reloadCount = reloadCount;
         this.clipSize = clipSize;
@@ -65,6 +69,7 @@ public class Gun extends SimpleItem implements PolymerItem {
         this.repulsionPowerGun = repulsionPowerGun;
         this.cooldownTarget = cooldownTarget;
         this.reloadTarget = reloadTarget + 1;
+        this.hasScope = hasScope;
     }
 
     public void reload(World world, PlayerEntity user, Hand hand) {
@@ -128,12 +133,54 @@ public class Gun extends SimpleItem implements PolymerItem {
 
     public void updateDamage(ItemStack stack) {
         ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+        BulletItem bulletItem = null;
+        for (BulletItem bulletTemp : bullets) {
+            if (bulletTemp == chamber.getItem()) {
+                bulletItem = bulletTemp;
+                break;
+            }
+        }
         int numBullets = chamber.getCount();
         int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
         if (currentReload != 1) {
             numBullets = -clipSize;
         }
         stack.setDamage((clipSize - numBullets) + 1);
+
+        List<Text> loreList = new ArrayList<>();
+
+        loreList.add(Text.translatable("gun.description.caliber", caliber));
+        loreList.add(Text.translatable("gun.description.damage_absolute", damage));
+        loreList.add(Text.translatable("gun.description.speed", speed));
+        loreList.add(Text.translatable("gun.description.clip_size", clipSize));
+        if (hasScope) {
+            loreList.add(Text.translatable("gun.description.has_scope"));
+        }
+        loreList.add(Text.translatable("gun.description.reload_cooldown", reloadTarget));
+        loreList.add(Text.translatable("gun.description.reload_cycles", reloadCount));
+        loreList.add(Text.translatable("gun.description.shoot_cooldown", cooldownTarget));
+        if (explosionPowerGun > 0) {
+            loreList.add(Text.translatable("gun.description.explosion_power", explosionPowerGun));
+        }
+        if (repulsionPowerGun > 0) {
+            loreList.add(Text.translatable("gun.description.repulsion_power", repulsionPowerGun));
+        }
+        loreList.add(Text.translatable("gun.description.magazine_count", numBullets, clipSize));
+        if (!chamber.isEmpty() && bulletItem != null) {
+            loreList.add(Text.translatable("gun.description.damage_with_coefficient", damage * bulletItem.damageCoefficient));
+            loreList.add(Text.translatable("gun.description.magazine_bullet", bulletItem.getName()));
+            loreList.add(Text.translatable("gun.description.damage_coefficient", bulletItem.damageCoefficient));
+            loreList.add(Text.translatable("gun.description.explosion_coefficient", bulletItem.explosionPowerCoefficient));
+            if (bulletItem.isIncendiary) {
+                loreList.add(Text.translatable("gun.description.incendiary"));
+            }
+        } else {
+            loreList.add(Text.translatable("gun.description.magazine_bullet", "Empty"));
+        }
+
+        LoreComponent newLore = new LoreComponent(loreList);
+
+        stack.set(DataComponentTypes.LORE, newLore);
     }
 
     public void doRecoil(ServerPlayerEntity player) {
@@ -141,13 +188,13 @@ public class Gun extends SimpleItem implements PolymerItem {
         Vec3d pos = player.getPos();
         float yaw = player.getYaw();
         float newPitch = player.getPitch();
-        newPitch -= player.getWorld().getRandom().nextBetween(1, 4);
-        yaw -= player.getWorld().getRandom().nextBetween(-2, 2);
+        newPitch -= player.getServerWorld().getRandom().nextBetween(1, 4);
+        yaw -= player.getServerWorld().getRandom().nextBetween(-2, 2);
 
-        player.teleport(player.getServerWorld(), pos.x, pos.y, pos.z, Set.of(PositionFlag.X_ROT, PositionFlag.Y_ROT), yaw, newPitch);
+        player.teleport(player.getServerWorld(), pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch);
     }
 
-    public void shoot(World world, PlayerEntity user, Hand hand) {
+    public void shoot(ServerWorld world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
@@ -173,7 +220,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                     repulsionPower *= bullet.repulsionPowerCoefficient;
                 }
 
-                BulletEntity bulletEntity = new BulletEntity(user.getPos(), player, chamber, user.getStackInHand(hand), this, 1f, damage, speed, explosionPower, repulsionPower, isIncendiary);
+                BulletEntity bulletEntity = new BulletEntity(player, chamber, hand, this, 1f, damage, speed, explosionPower, repulsionPower, isIncendiary);
                 world.spawnEntity(bulletEntity);
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);

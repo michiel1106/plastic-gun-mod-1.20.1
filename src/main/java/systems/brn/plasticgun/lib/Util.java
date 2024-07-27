@@ -1,19 +1,27 @@
 package systems.brn.plasticgun.lib;
 
+import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.explosion.ExplosionBehavior;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,5 +156,25 @@ public class Util {
         }
     }
 
+    public static void setProjectileData(List<DataTracker.SerializedEntry<?>> data, boolean initial, float scale, ItemStack itemStack) {
+        if (initial) {
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.TELEPORTATION_DURATION, 2));
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.SCALE, new Vector3f(scale)));
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.BILLBOARD, (byte) DisplayEntity.BillboardMode.CENTER.ordinal()));
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.Item.ITEM, itemStack));
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.Item.ITEM_DISPLAY, ModelTransformationMode.FIXED.getIndex()));
+        }
+    }
+
+    public static void hitDamage(Vec3d pos, double explosionPower, double repulsionPower, World worldTemp, @Nullable Entity entity, boolean isIncendiary, int radius, @Nullable ExplosionBehavior explosionBehavior) {
+        if (worldTemp instanceof ServerWorld world) {
+            if (explosionPower > 0) {
+                world.createExplosion(entity, Explosion.createDamageSource(world, entity), explosionBehavior, pos.getX(), pos.getY(), pos.getZ(), (float) explosionPower, isIncendiary, ServerWorld.ExplosionSourceType.TNT);
+            }
+            if (repulsionPower > 0) {
+                applyKnockbackToEntities(entity, pos, repulsionPower * 100, radius);
+            }
+        }
+    }
 
 }
