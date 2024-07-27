@@ -119,6 +119,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof LivingEntity livingEntity) {
                     livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, stunDuration, 255, true, false));
+                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, stunDuration, 255, true, false));
                 }
             }
             stunDuration = 0;

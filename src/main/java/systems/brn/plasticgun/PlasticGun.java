@@ -112,12 +112,12 @@ public class PlasticGun implements ModInitializer {
         grenades.add(new GrenadeItem("grenade_k417", 1, 7f, 0.5f, 70, false, true, 0, 0, 0, 10, 0)); // K417 Fragmentation Grenade
 
 
-        shurikens.add(new ShurikenItem("wooden_shuriken", 0.1, 5, 4f));
-        shurikens.add(new ShurikenItem("stone_shuriken", 0.2, 5, 4f));
-        shurikens.add(new ShurikenItem("iron_shuriken", 0.4, 5, 4f));
-        shurikens.add(new ShurikenItem("golden_shuriken", 0.3, 5, 4f));
-        shurikens.add(new ShurikenItem("diamond_shuriken", 0.8, 5, 4f));
-        shurikens.add(new ShurikenItem("netherite_shuriken", 1, 5, 4f));
+        shurikens.add(new ShurikenItem("wooden_shuriken", 1, 5, 4f));
+        shurikens.add(new ShurikenItem("stone_shuriken", 2, 5, 4f));
+        shurikens.add(new ShurikenItem("iron_shuriken", 4, 5, 4f));
+        shurikens.add(new ShurikenItem("golden_shuriken", 3, 5, 4f));
+        shurikens.add(new ShurikenItem("diamond_shuriken", 4, 5, 4f));
+        shurikens.add(new ShurikenItem("netherite_shuriken", 8, 5, 4f));
 
 
         GRENADE_ENTITY_TYPE = Registry.register(
