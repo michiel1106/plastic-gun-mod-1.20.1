@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " T ",
+    "CEC",
+    " G "
+  ],
+  "key": {
+    "T": { "item": "plasticgun:titanium_alloy" },
+    "C": { "item": "plasticgun:composite_resin" },
+    "E": { "item": "plasticgun:explosive_powder" },
+    "G": { "item": "plasticgun:graphene_sheet" }
+  },
+  "result": {
+    "id": "plasticgun:grenade_m7a3",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "GHG",
+    " E "
+  ],
+  "key": {
+    "E": { "item": "plasticgun:explosive_powder" },
+    "G": { "item": "plasticgun:graphene_sheet" },
+    "H": { "item": "plasticgun:hardened_steel" }
+  },
+  "result": {
+    "id": "plasticgun:rpg_shell",
+    "count": 1
+  }
+}

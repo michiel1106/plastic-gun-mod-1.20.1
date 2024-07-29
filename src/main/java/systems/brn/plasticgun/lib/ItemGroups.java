@@ -1,18 +1,15 @@
 package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.bullets.BulletItem;
+import systems.brn.plasticgun.defence.WeaponArmor;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.shurikens.ShurikenItem;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static systems.brn.plasticgun.lib.Util.id;
 
@@ -57,10 +54,32 @@ public class ItemGroups {
             }))
             .build();
 
+    public static final ItemGroup MATERIALS_GROUPS = PolymerItemGroupUtils.builder()
+            .icon(() -> new ItemStack(PlasticGun.craftingItems.getFirst()))
+            .displayName(Text.translatable("guns.groups.materials"))
+            .entries(((context, entries) -> {
+                for (CraftingItem craftingItem : PlasticGun.craftingItems) {
+                    entries.add(craftingItem);
+                }
+            }))
+            .build();
+
+    public static final ItemGroup DEFENSE = PolymerItemGroupUtils.builder()
+            .icon(() -> new ItemStack(PlasticGun.weaponArmors.getFirst()))
+            .displayName(Text.translatable("guns.groups.defense"))
+            .entries(((context, entries) -> {
+                for (WeaponArmor weaponArmor : PlasticGun.weaponArmors) {
+                    entries.add(weaponArmor);
+                }
+            }))
+            .build();
+
     public static void register() {
         PolymerItemGroupUtils.registerPolymerItemGroup(id("guns"), GUNS_GROUP);
         PolymerItemGroupUtils.registerPolymerItemGroup(id("ammo"), AMMO_GROUP);
         PolymerItemGroupUtils.registerPolymerItemGroup(id("shurikens"), SHURIKEN_GROUP);
         PolymerItemGroupUtils.registerPolymerItemGroup(id("grenades"), GRENADES_GROUP);
+        PolymerItemGroupUtils.registerPolymerItemGroup(id("materials"), MATERIALS_GROUPS);
+        PolymerItemGroupUtils.registerPolymerItemGroup(id("defense"), DEFENSE);
     }
 }

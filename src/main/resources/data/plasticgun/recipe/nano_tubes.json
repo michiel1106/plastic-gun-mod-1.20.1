@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "G G",
+    " G "
+  ],
+  "key": {
+    "G": { "item": "plasticgun:graphene_sheet" }
+  },
+  "result": {
+    "id": "plasticgun:nano_tubes",
+    "count": 2
+  }
+}

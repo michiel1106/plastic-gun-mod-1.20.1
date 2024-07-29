@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CHH",
+    "PTI",
+    " RC"
+  ],
+  "key": {
+    "C": { "item": "plasticgun:composite_frame" },
+    "H": { "item": "plasticgun:hardened_steel" },
+    "P": { "item": "plasticgun:precision_gear" },
+    "T": { "item": "plasticgun:trigger_mechanism" },
+    "I": { "item": "plasticgun:iron_shuriken" },
+    "R": { "item": "plasticgun:reinforced_fiber" }
+  },
+  "result": {
+    "id": "plasticgun:colt_45",
+    "count": 1
+  }
+}

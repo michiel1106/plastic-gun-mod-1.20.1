@@ -1,14 +1,11 @@
 package systems.brn.plasticgun.bullets;
 
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
-import systems.brn.plasticgun.lib.ItemGroups;
 import systems.brn.plasticgun.lib.SimpleItem;
 
 import java.util.List;

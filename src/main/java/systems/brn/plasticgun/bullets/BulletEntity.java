@@ -2,6 +2,7 @@ package systems.brn.plasticgun.bullets;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -16,12 +17,12 @@ import net.minecraft.util.hit.HitResult;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.guns.Gun;
+import systems.brn.plasticgun.lib.WeaponDamageType;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static systems.brn.plasticgun.PlasticGun.BULLET_ENTITY_TYPE;
-import static systems.brn.plasticgun.PlasticGun.bullets;
+import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.Util.*;
 
 public class BulletEntity extends PersistentProjectileEntity implements PolymerEntity {
@@ -42,7 +43,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.gun = gun;
         this.scale = scale;
         this.setCustomPierceLevel((byte) 1);
-        this.setItemStack(stack);
+        this.setItemStack(stack.copy());
         this.explosionPower = explosionPower;
         this.repulsionPower = repulsionPower;
         this.isIncendiary = isIncendiary;
@@ -113,6 +114,9 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         setSilent(false);
         playSound(SoundEvents.BLOCK_BAMBOO_HIT, 4.0F, 1.0F);
         setSilent(true);
+        if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.BULLET, this.getDamage()));
+        }
 
         super.onEntityHit(entityHitResult);
         hitDamage(entityHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, 5, null);

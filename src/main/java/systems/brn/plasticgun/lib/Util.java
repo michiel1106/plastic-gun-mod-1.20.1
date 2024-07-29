@@ -1,5 +1,9 @@
 package systems.brn.plasticgun.lib;
 
+import dev.emi.trinkets.api.SlotReference;
+import dev.emi.trinkets.api.TrinketComponent;
+import dev.emi.trinkets.api.TrinketInventory;
+import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.Entity;
@@ -14,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -22,12 +27,15 @@ import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import systems.brn.plasticgun.defence.WeaponArmor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.world.explosion.Explosion.getExposure;
 import static systems.brn.plasticgun.PlasticGun.MOD_ID;
+import static systems.brn.plasticgun.PlasticGun.weaponArmors;
 
 public class Util {
 
@@ -177,4 +185,39 @@ public class Util {
         }
     }
 
+    public static double getFinalDamage(LivingEntity livingEntity, WeaponDamageType damageType, double damage) {
+        Optional<TrinketComponent> trinketComponentTemp = TrinketsApi.getTrinketComponent(livingEntity);
+        if (trinketComponentTemp.isPresent()) {
+            TrinketComponent trinketComponent = trinketComponentTemp.get();
+            for (WeaponArmor weaponArmor : weaponArmors) {
+                if (weaponArmor.resistances.containsKey(damageType)) {
+
+                    List<Pair<SlotReference, ItemStack>> vestsComponents = trinketComponent.getEquipped(weaponArmor);
+                    if (!vestsComponents.isEmpty()) {
+                        Pair<SlotReference, ItemStack> vestComponent = vestsComponents.getFirst();
+                        TrinketInventory trinketInventory = vestComponent.getLeft().inventory();
+                        int currentDamage = vestComponent.getRight().getDamage();
+                        int maxDamage = vestComponent.getRight().getMaxDamage();
+                        double reducedDamage = 0;
+                        if (currentDamage < maxDamage) {
+                            double coefficient = weaponArmor.resistances.get(damageType);
+                            reducedDamage = (1 - coefficient) * damage;
+                            damage *= coefficient;
+                        }
+
+                        int nextDamage = currentDamage + (int) reducedDamage;
+                        int inventoryIndex = vestComponent.getLeft().index();
+                        ItemStack vestStack = trinketInventory.getStack(inventoryIndex);
+                        if (nextDamage >= maxDamage) {
+                            vestStack.setCount(0);
+                        } else {
+                            vestStack.setDamage(nextDamage);
+                        }
+                        trinketInventory.setStack(inventoryIndex, vestStack);
+                    }
+                }
+            }
+        }
+        return damage;
+    }
 }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " H ",
+    "HTH",
+    " H "
+  ],
+  "key": {
+    "H": { "item": "plasticgun:hardened_steel" },
+    "T": { "item": "plasticgun:titanium_alloy" }
+  },
+  "result": {
+    "id": "plasticgun:alloy_wheel",
+    "count": 1
+  }
+}

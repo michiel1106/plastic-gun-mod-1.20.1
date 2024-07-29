@@ -1,12 +1,9 @@
 package systems.brn.plasticgun.shurikens;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
@@ -35,7 +32,8 @@ public class ShurikenItem extends SimpleItem implements PolymerItem {
                         .maxDamage(durability)
                         .component(DataComponentTypes.LORE, new LoreComponent(List.of(
                                 Text.translatable("gun.description.damage", damage),
-                                Text.translatable("gun.description.speed", speed)
+                                Text.translatable("gun.description.speed", speed),
+                                Text.translatable("gun.description.damage_with_coefficient_max_speed", speed, speed * damage)
                         )))
                 , id(path), Items.WOODEN_PICKAXE
         );

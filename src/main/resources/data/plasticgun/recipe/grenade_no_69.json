@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "CPC",
+    " G "
+  ],
+  "key": {
+    "E": { "item": "plasticgun:explosive_powder" },
+    "C": { "item": "plasticgun:composite_frame" },
+    "P": { "item": "plasticgun:plasma_core" },
+    "G": { "item": "plasticgun:graphene_sheet" }
+  },
+  "result": {
+    "id": "plasticgun:grenade_no_69",
+    "count": 1
+  }
+}

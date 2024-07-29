@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " TT",
+    "CHC",
+    "PI "
+  ],
+  "key": {
+    "T": { "item": "plasticgun:titanium_alloy" },
+    "C": { "item": "plasticgun:composite_frame" },
+    "H": { "item": "plasticgun:hardened_steel" },
+    "P": { "item": "plasticgun:precision_gear" },
+    "I": { "item": "plasticgun:iron_shuriken" }
+  },
+  "result": {
+    "id": "plasticgun:tokarev_tt_33",
+    "count": 1
+  }
+}

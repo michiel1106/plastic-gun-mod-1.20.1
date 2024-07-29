@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "S S",
+    " S "
+  ],
+  "key": {
+    "S": { "item": "minecraft:cobblestone" }
+  },
+  "result": {
+    "id": "plasticgun:stone_shuriken"
+  }
+}

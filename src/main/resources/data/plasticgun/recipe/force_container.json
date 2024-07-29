@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "GPG",
+    " C "
+  ],
+  "key": {
+    "C": { "item": "plasticgun:composite_resin" },
+    "G": { "item": "plasticgun:graphene_sheet" },
+    "P": { "item": "plasticgun:plasma_core" }
+  },
+  "result": {
+    "id": "plasticgun:force_container",
+    "count": 1
+  }
+}

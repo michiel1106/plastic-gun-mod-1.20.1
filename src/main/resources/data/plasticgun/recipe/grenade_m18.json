@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "CEC",
+    " R "
+  ],
+  "key": {
+    "P": { "item": "plasticgun:plasma_core" },
+    "C": { "item": "plasticgun:composite_frame" },
+    "E": { "item": "plasticgun:explosive_powder" },
+    "R": { "item": "plasticgun:reinforced_fiber" }
+  },
+  "result": {
+    "id": "plasticgun:grenade_m18",
+    "count": 1
+  }
+}

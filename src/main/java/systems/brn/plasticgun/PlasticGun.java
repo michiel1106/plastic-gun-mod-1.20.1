@@ -15,9 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
+import systems.brn.plasticgun.defence.WeaponArmor;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.guns.Gun;
+import systems.brn.plasticgun.lib.CraftingItem;
 import systems.brn.plasticgun.lib.EventHandler;
 import systems.brn.plasticgun.lib.ItemGroups;
 import systems.brn.plasticgun.shurikens.ShurikenEntity;
@@ -40,9 +42,13 @@ public class PlasticGun implements ModInitializer {
 
     public static final ArrayList<ShurikenItem> shurikens = new ArrayList<>();
 
+    public static final ArrayList<CraftingItem> craftingItems = new ArrayList<>();
+
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
     public static EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE;
+
+    public static final ArrayList<WeaponArmor> weaponArmors = new ArrayList<>();
 
     public static EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE;
 
@@ -74,23 +80,24 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("force_container", 99, 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0));
-        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0));
-        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0));
-        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0));
-        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0));
-        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0));
-        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0));
-        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0));
-        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0));
+        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0, 2, 4, 0.2f, 0.5f, -1, 1));
+        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1));
+        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1));
+        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1));
+        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1));
+        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1));
+        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0, 1.5f, 2.5f, 0.25f, 0.5f, -1, 1));
+        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1));
+        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0, 2f, 8, 0.3f, 0.6f, -1, 1));
 
-        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0));
-        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20));
+        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0, 3f, 0.5f, 1, 2, -1, 1));
+        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20, 0f, 0f, 5f, 10f, 0, 0));
 
 
         grenades.add(new GrenadeItem("grenade_an_m14", 1, 5f, 0.5f, 40, true, false, 0, 0, 0, 8, 0)); // AN-M14 Incendiary Grenade
         grenades.add(new GrenadeItem("grenade_m34", 1, 10f, 0.5f, 60, true, true, 0, 0, 0, 10, 0)); // M34 White Phosphorus Incendiary Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 0)); // M18 Smoke Grenadegrenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 10, 10, 5, 12, 10)); // M84 Stun Grenade (Flashbang)
+        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 30)); // M18 Smoke Grenade
+        grenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 10, 10, 5, 12, 10)); // M84 Stun Grenade (Flashbang)
         grenades.add(new GrenadeItem("grenade_rgd_5", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // RGD-5 Fragmentation Grenade
         grenades.add(new GrenadeItem("grenade_thermite", 1, 4f, 0.3f, 80, true, false, 0, 0, 0, 8, 15)); // Thermite Grenade
         grenades.add(new GrenadeItem("grenade_f1", 1, 7f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // F1 Soviet Fragmentation Grenade
@@ -100,6 +107,8 @@ public class PlasticGun implements ModInitializer {
         grenades.add(new GrenadeItem("grenade_rgo", 1, 6.5f, 0.5f, 90, false, true, 0, 0, 0, 10, 0)); // RGO Fragmentation Grenade
         grenades.add(new GrenadeItem("grenade_k417", 1, 7f, 0.5f, 70, false, true, 0, 0, 0, 10, 0)); // K417 Fragmentation Grenade
 
+        weaponArmors.add(new WeaponArmor("kevlar_vest", 200, 0.8, 0.8, 0.4, 0.3));
+        weaponArmors.add(new WeaponArmor("flak_vest", 500, 0.8, 0.4, 0.8, 0.2));
 
         shurikens.add(new ShurikenItem("wooden_shuriken", 1, 5, 4f));
         shurikens.add(new ShurikenItem("stone_shuriken", 2, 5, 4f));
@@ -107,6 +116,31 @@ public class PlasticGun implements ModInitializer {
         shurikens.add(new ShurikenItem("golden_shuriken", 3, 5, 4f));
         shurikens.add(new ShurikenItem("diamond_shuriken", 4, 5, 4f));
         shurikens.add(new ShurikenItem("netherite_shuriken", 8, 5, 4f));
+
+        craftingItems.add(new CraftingItem("advanced_circuit"));
+        craftingItems.add(new CraftingItem("alloy_wheel"));
+        craftingItems.add(new CraftingItem("ceramic_mixture"));
+        craftingItems.add(new CraftingItem("ceramic_plate"));
+        craftingItems.add(new CraftingItem("composite_frame"));
+        craftingItems.add(new CraftingItem("composite_resin"));
+        craftingItems.add(new CraftingItem("copper_wiring"));
+        craftingItems.add(new CraftingItem("enhanced_gunpowder"));
+        craftingItems.add(new CraftingItem("explosive_powder"));
+        craftingItems.add(new CraftingItem("graphene_sheet"));
+        craftingItems.add(new CraftingItem("hardened_steel"));
+        craftingItems.add(new CraftingItem("hyperalloy"));
+        craftingItems.add(new CraftingItem("kevlar_sheet"));
+        craftingItems.add(new CraftingItem("magnetic_coil"));
+        craftingItems.add(new CraftingItem("microchip"));
+        craftingItems.add(new CraftingItem("nano_tubes"));
+        craftingItems.add(new CraftingItem("plasma_core"));
+        craftingItems.add(new CraftingItem("power_cell"));
+        craftingItems.add(new CraftingItem("precision_gear"));
+        craftingItems.add(new CraftingItem("reinforced_fiber"));
+        craftingItems.add(new CraftingItem("silicon_mixture"));
+        craftingItems.add(new CraftingItem("silicon_wafer"));
+        craftingItems.add(new CraftingItem("titanium_alloy"));
+        craftingItems.add(new CraftingItem("trigger_mechanism"));
 
 
         GRENADE_ENTITY_TYPE = Registry.register(

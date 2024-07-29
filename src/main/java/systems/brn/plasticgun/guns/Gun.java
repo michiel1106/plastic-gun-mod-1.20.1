@@ -1,7 +1,6 @@
 package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +15,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
@@ -41,7 +41,16 @@ public class Gun extends SimpleItem implements PolymerItem {
     private final int cooldownTarget;
     private final int reloadTarget;
 
-    public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, double explosionPowerGun, double repulsionPowerGun) {
+    private final float verticalRecoilMin;
+    private final float verticalRecoilMax;
+
+    private final float velocityRecoilMin;
+    private final float velocityRecoilMax;
+
+    private final double horizontalRecoilMin;
+    private final double horizontalRecoilMax;
+
+    public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, double explosionPowerGun, double repulsionPowerGun, float verticalRecoilMin, float verticalRecoilMax, float velocityRecoilMin, float velocityRecoilMax, double horizontalRecoilMin, double horizontalRecoilMax) {
         super(
                 new Settings()
                         .maxCount(1)
@@ -51,6 +60,12 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .maxDamage(clipSize + 1)
                 , id(path), Items.WOODEN_SWORD
         );
+        this.verticalRecoilMin = verticalRecoilMin;
+        this.verticalRecoilMax = verticalRecoilMax;
+        this.velocityRecoilMin = velocityRecoilMin;
+        this.velocityRecoilMax = velocityRecoilMax;
+        this.horizontalRecoilMin = horizontalRecoilMin;
+        this.horizontalRecoilMax = horizontalRecoilMax;
         Registry.register(Registries.ITEM, id(path), this);
         this.damage = damage;
         this.reloadCount = reloadCount;
@@ -163,6 +178,7 @@ public class Gun extends SimpleItem implements PolymerItem {
         loreList.add(Text.translatable("gun.description.magazine_count", numBullets, clipSize));
         if (!chamber.isEmpty() && bulletItem != null) {
             loreList.add(Text.translatable("gun.description.damage_with_coefficient", damage * bulletItem.damageCoefficient));
+            loreList.add(Text.translatable("gun.description.damage_with_coefficient_muzzle_speed", speed, speed * damage * bulletItem.damageCoefficient));
             loreList.add(Text.translatable("gun.description.magazine_bullet", bulletItem.getName()));
             loreList.add(Text.translatable("gun.description.damage_coefficient", bulletItem.damageCoefficient));
             loreList.add(Text.translatable("gun.description.explosion_coefficient", bulletItem.explosionPowerCoefficient));
@@ -179,14 +195,21 @@ public class Gun extends SimpleItem implements PolymerItem {
     }
 
     public void doRecoil(ServerPlayerEntity player) {
+        Random rng = player.getServerWorld().getRandom();
         // Get the player's current position and yaw
         Vec3d pos = player.getPos();
         float yaw = player.getYaw();
         float newPitch = player.getPitch();
-        newPitch -= player.getServerWorld().getRandom().nextBetween(1, 4);
-        yaw -= player.getServerWorld().getRandom().nextBetween(-2, 2);
+        Vec3d currentLook = player.getRotationVector().multiply(-1);
+        newPitch -= verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
+        yaw -= (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
+
 
         player.teleport(player.getServerWorld(), pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch);
+        double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
+        if (velocityRecoil > 0) {
+            player.setVelocity(currentLook.multiply(velocityRecoil));
+        }
     }
 
     public void shoot(ServerWorld world, PlayerEntity user, Hand hand) {

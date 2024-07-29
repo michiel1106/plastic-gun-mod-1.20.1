@@ -1,7 +1,6 @@
 package systems.brn.plasticgun.grenades;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -62,7 +61,7 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
         );
         this.explosionTarget = explosionTarget;
         this.isIncendiary = isIncendiary;
-        Item item = Registry.register(Registries.ITEM, id(path), this);
+        Registry.register(Registries.ITEM, id(path), this);
         this.speed = speed;
         this.explosionPower = explosionPower;
         this.repulsionPower = repulsionPower;
@@ -100,7 +99,7 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
             ItemStack stack = user.getStackInHand(hand);
             int timer = stack.getOrDefault(GRENADE_TIMER_COMPONENT, -1);
             if (timer > 0) {
-                turnIntoEntity(player, stack, speed, timer);
+                turnIntoEntity(player, stack.copy(), speed, timer);
                 if (!player.isCreative()) {
                     stack.decrement(1);
                 }

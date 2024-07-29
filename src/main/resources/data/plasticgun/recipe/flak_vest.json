@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "minecraft:iron_chestplate"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    }
+  ],
+  "result": {
+    "id": "plasticgun:45_acp_hollow_point",
+    "count": 4
+  }
+}

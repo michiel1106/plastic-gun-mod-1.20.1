@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " H ",
+    "IRI",
+    " H "
+  ],
+  "key": {
+    "H": { "item": "plasticgun:hardened_steel" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "R": { "item": "plasticgun:reinforced_fiber" }
+  },
+  "result": {
+    "id": "plasticgun:precision_gear",
+    "count": 1
+  }
+}

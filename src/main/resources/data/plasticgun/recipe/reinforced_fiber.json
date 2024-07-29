@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "FIF",
+    " S "
+  ],
+  "key": {
+    "S": { "item": "minecraft:string" },
+    "F": { "item": "minecraft:feather" },
+    "I": { "item": "plasticgun:composite_resin" }
+  },
+  "result": {
+    "id": "plasticgun:reinforced_fiber",
+    "count": 1
+  }
+}

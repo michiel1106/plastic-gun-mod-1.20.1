@@ -113,7 +113,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
     }
 
     private void explode() {
-        hitDamage(getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, effectRadius, isFragmentation ? new FragmentationExplosionBehavior() : null);
+        hitDamage(getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, effectRadius, isFragmentation ? new FragmentationExplosionBehavior() : new GrenadeExplosionBehavior());
         List<Entity> nearbyEntities = getEntitiesAround(this, effectRadius);
         if (stunDuration > 0) {
             for (Entity entity : nearbyEntities) {

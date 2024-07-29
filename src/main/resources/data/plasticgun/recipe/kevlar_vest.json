@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "K K",
+    "KKK",
+    "KKK"
+  ],
+  "key": {
+    "K": {
+      "tag": "plasticgun:kevlar_sheet"
+    }
+  },
+  "result": {
+    "id": "plasticgun:kevlar_vest"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "D D",
+    " D "
+  ],
+  "key": {
+    "D": { "item": "minecraft:diamond" }
+  },
+  "result": {
+    "id": "plasticgun:diamond_shuriken"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "CPC",
+    " G "
+  ],
+  "key": {
+    "E": { "item": "plasticgun:explosive_powder" },
+    "C": { "item": "plasticgun:ceramic_plate" },
+    "P": { "item": "plasticgun:plasma_core" },
+    "G": { "item": "plasticgun:graphene_sheet" }
+  },
+  "result": {
+    "id": "plasticgun:grenade_an_m14",
+    "count": 1
+  }
+}

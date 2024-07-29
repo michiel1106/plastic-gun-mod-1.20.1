@@ -26,7 +26,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
         this.setSilent(true);
         this.scale = scale;
         this.setCustomPierceLevel(penetration);
-        this.setItemStack(itemStack);
+        this.setItemStack(itemStack.copy());
     }
 
     public ThrowableProjectile(EntityType<? extends PersistentProjectileEntity> entityType, ServerPlayerEntity player, ItemStack itemStack, float scale, float speed, double damage, PickupPermission pickupPermission, byte penetration) {

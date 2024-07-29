@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " H ",
+    "HCH",
+    " TR"
+  ],
+  "key": {
+    "H": { "item": "plasticgun:hardened_steel" },
+    "C": { "item": "plasticgun:composite_frame" },
+    "T": { "item": "plasticgun:trigger_mechanism" },
+    "R": { "item": "plasticgun:reinforced_fiber" }
+  },
+  "result": {
+    "id": "plasticgun:colt_peacemaker",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " H ",
+    "HC ",
+    " T "
+  ],
+  "key": {
+    "H": { "item": "plasticgun:hardened_steel" },
+    "C": { "item": "plasticgun:composite_frame" },
+    "T": { "item": "plasticgun:trigger_mechanism" }
+  },
+  "result": {
+    "id": "plasticgun:snub_nosed_revolver",
+    "count": 1
+  }
+}

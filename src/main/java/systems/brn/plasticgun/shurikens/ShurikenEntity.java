@@ -3,16 +3,20 @@ package systems.brn.plasticgun.shurikens;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import systems.brn.plasticgun.lib.WeaponDamageType;
 import systems.brn.plasticgun.throwables.ThrowableProjectile;
 
-import static systems.brn.plasticgun.PlasticGun.SHURIKEN_ENTITY_TYPE;
+import static systems.brn.plasticgun.PlasticGun.*;
+import static systems.brn.plasticgun.lib.Util.getFinalDamage;
 
 public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity {
     public ShurikenEntity(ServerPlayerEntity player, ItemStack itemStack, float speed, double damage) {
@@ -44,5 +48,14 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
             }
         }
         super.onBlockHit(blockHitResult);
+    }
+
+    @Override
+    protected void onEntityHit(EntityHitResult entityHitResult) {
+        if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
+            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.SHURIKEN, this.getDamage()));
+        }
+
+        super.onEntityHit(entityHitResult);
     }
 }
