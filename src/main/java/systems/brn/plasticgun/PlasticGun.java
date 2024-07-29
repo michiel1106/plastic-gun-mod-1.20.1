@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.slf4j.Logger;
@@ -27,7 +28,9 @@ import systems.brn.plasticgun.shurikens.ShurikenItem;
 import systems.brn.plasticgun.testing.DamageTester;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import static systems.brn.plasticgun.lib.Util.generateItemMap;
 import static systems.brn.plasticgun.lib.Util.id;
 
 public class PlasticGun implements ModInitializer {
@@ -43,6 +46,11 @@ public class PlasticGun implements ModInitializer {
     public static final ArrayList<ShurikenItem> shurikens = new ArrayList<>();
 
     public static final ArrayList<CraftingItem> craftingItems = new ArrayList<>();
+
+    public static Map<Item, Gun> itemGunMap;
+    public static Map<Item, BulletItem> itemBulletItemMap;
+    public static Map<Item, GrenadeItem> itemGrenadeItemMap;
+    public static Map<Item, ShurikenItem> itemShurikenItemMap;
 
     public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
 
@@ -80,32 +88,32 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("force_container", 99, 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0, 2, 4, 0.2f, 0.5f, -1, 1));
-        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1));
-        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1));
-        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1));
-        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1));
-        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1));
-        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0, 1.5f, 2.5f, 0.25f, 0.5f, -1, 1));
-        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1));
-        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0, 2f, 8, 0.3f, 0.6f, -1, 1));
+        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20, 0f, 0f, 5f, 10f, 0, 0)); // 0
+        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1)); // 1.8
+        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1)); // 3
+        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
+        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1)); // 3.6
+        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1)); // 2.8
+        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1)); // 4.8
+        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0, 1.5f, 2.5f, 0.25f, 0.5f, -1, 1)); // 7
+        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0, 2, 4, 0.2f, 0.5f, -1, 1)); // 8
+        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0, 2f, 8, 0.3f, 0.6f, -1, 1)); // 4
+        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0, 3f, 0.5f, 1, 2, -1, 1)); // 8
 
-        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0, 3f, 0.5f, 1, 2, -1, 1));
-        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20, 0f, 0f, 5f, 10f, 0, 0));
 
+        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 30)); // 0.02
+        grenades.add(new GrenadeItem("grenade_m7a3", 1, 0.1f, 0.2f, 90, false, false, 80, 40, 50, 8, 40)); // 0.02
+        grenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 160, 160, 5, 12, 10)); // 0.1
+        grenades.add(new GrenadeItem("grenade_no_69", 1, 5.5f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // 2.2
+        grenades.add(new GrenadeItem("grenade_an_m14", 1, 5f, 0.5f, 40, true, false, 0, 0, 0, 8, 0)); // 2.5
+        grenades.add(new GrenadeItem("grenade_thermite", 1, 4f, 0.3f, 80, true, false, 0, 0, 0, 8, 15)); // 1.2
+        grenades.add(new GrenadeItem("grenade_mk3a2", 1, 6f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // 2.4
+        grenades.add(new GrenadeItem("grenade_m34", 1, 10f, 0.5f, 60, true, true, 0, 0, 0, 10, 0)); // 5
+        grenades.add(new GrenadeItem("grenade_f1", 1, 7f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // 3.5
+        grenades.add(new GrenadeItem("grenade_rgd_5", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // 3.25
+        grenades.add(new GrenadeItem("grenade_rgo", 1, 6.5f, 0.5f, 90, false, true, 0, 0, 0, 10, 0)); // 3.25
+        grenades.add(new GrenadeItem("grenade_k417", 1, 7f, 0.5f, 70, false, true, 0, 0, 0, 10, 0)); // 3.5
 
-        grenades.add(new GrenadeItem("grenade_an_m14", 1, 5f, 0.5f, 40, true, false, 0, 0, 0, 8, 0)); // AN-M14 Incendiary Grenade
-        grenades.add(new GrenadeItem("grenade_m34", 1, 10f, 0.5f, 60, true, true, 0, 0, 0, 10, 0)); // M34 White Phosphorus Incendiary Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 30)); // M18 Smoke Grenade
-        grenades.add(new GrenadeItem("grenade_m84", 1, 0.5f, 0.2f, 120, false, false, 10, 10, 5, 12, 10)); // M84 Stun Grenade (Flashbang)
-        grenades.add(new GrenadeItem("grenade_rgd_5", 1, 6.5f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // RGD-5 Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_thermite", 1, 4f, 0.3f, 80, true, false, 0, 0, 0, 8, 15)); // Thermite Grenade
-        grenades.add(new GrenadeItem("grenade_f1", 1, 7f, 0.5f, 60, false, true, 0, 0, 0, 10, 0)); // F1 Soviet Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_mk3a2", 1, 6f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // Mk3A2 Offensive Grenade
-        grenades.add(new GrenadeItem("grenade_m7a3", 1, 0.1f, 0.2f, 90, false, false, 0, 0, 50, 8, 40)); // M7A3 CS Gas Grenade
-        grenades.add(new GrenadeItem("grenade_no_69", 1, 5.5f, 0.4f, 60, false, false, 0, 0, 0, 10, 0)); // No. 69 British Offensive Grenade
-        grenades.add(new GrenadeItem("grenade_rgo", 1, 6.5f, 0.5f, 90, false, true, 0, 0, 0, 10, 0)); // RGO Fragmentation Grenade
-        grenades.add(new GrenadeItem("grenade_k417", 1, 7f, 0.5f, 70, false, true, 0, 0, 0, 10, 0)); // K417 Fragmentation Grenade
 
         weaponArmors.add(new WeaponArmor("kevlar_vest", 200, 0.8, 0.8, 0.4, 0.3));
         weaponArmors.add(new WeaponArmor("flak_vest", 500, 0.8, 0.4, 0.8, 0.2));
@@ -142,6 +150,10 @@ public class PlasticGun implements ModInitializer {
         craftingItems.add(new CraftingItem("titanium_alloy"));
         craftingItems.add(new CraftingItem("trigger_mechanism"));
 
+        itemGunMap = generateItemMap(guns);
+        itemBulletItemMap = generateItemMap(bullets);
+        itemGrenadeItemMap = generateItemMap(grenades);
+        itemShurikenItemMap = generateItemMap(shurikens);
 
         GRENADE_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,

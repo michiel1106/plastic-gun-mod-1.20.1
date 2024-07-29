@@ -20,7 +20,7 @@ import static systems.brn.plasticgun.lib.Util.getFinalDamage;
 
 public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity {
     public ShurikenEntity(ServerPlayerEntity player, ItemStack itemStack, float speed, double damage) {
-        super(SHURIKEN_ENTITY_TYPE, player, itemStack, 1f, speed, damage, PickupPermission.ALLOWED, (byte) 0);
+        super(SHURIKEN_ENTITY_TYPE, player, itemStack, 0.5f, speed, damage, PickupPermission.ALLOWED, (byte) 0);
     }
 
     public ShurikenEntity(EntityType<ShurikenEntity> bulletEntityEntityType, World world) {

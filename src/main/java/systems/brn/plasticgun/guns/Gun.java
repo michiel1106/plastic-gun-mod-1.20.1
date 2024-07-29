@@ -3,6 +3,9 @@ package systems.brn.plasticgun.guns;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
@@ -16,7 +19,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.lib.SimpleItem;
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static systems.brn.plasticgun.PlasticGun.bullets;
+import static systems.brn.plasticgun.PlasticGun.itemBulletItemMap;
 import static systems.brn.plasticgun.lib.GunComponents.*;
 import static systems.brn.plasticgun.lib.Util.*;
 
@@ -112,6 +118,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                                 stack.remove(GUN_AMMO_COMPONENT);
                             } else {
                                 stack.set(GUN_AMMO_COMPONENT, chamber);
+                                stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
                                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
                             }
                             stack.set(GUN_LOADING_COMPONENT, 1);
@@ -126,6 +133,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                                     stack.remove(GUN_AMMO_COMPONENT);
                                 } else {
                                     stack.set(GUN_AMMO_COMPONENT, chamber);
+                                    stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
                                     world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
                                 }
                                 bulletStack.decrement(targetCount);
@@ -136,10 +144,41 @@ public class Gun extends SimpleItem implements PolymerItem {
                 }
                 if (player.isCreative()) {
                     stack.set(GUN_AMMO_COMPONENT, new ItemStack(ammo.getFirst(), clipSize)); // Ensure ammo.get(0) is a valid item
+                    stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
                 }
                 updateDamage(stack);
             } else {
                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
+            }
+        }
+    }
+
+    public void reload(World world, MobEntity mobEntity, Hand hand, Random random, LocalDifficulty localDifficulty) {
+        if (!world.isClient()) {
+            ItemStack stack = mobEntity.getStackInHand(hand);
+            int currentReloadCooldown = stack.getOrDefault(GUN_RELOAD_COOLDOWN_COMPONENT, 0);
+            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+            int bulletsInChamber = chamber.getCount();
+            int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+            if (currentReload == 1 && bulletsInChamber > 0) {
+                return;
+            }
+            if (currentReloadCooldown == 0) {
+                stack.set(GUN_RELOAD_COOLDOWN_COMPONENT, reloadTarget);
+                ItemStack oldChamber = stack.getOrDefault(GUN_LAST_LOADED_AMMO, ItemStack.EMPTY);
+                Item ammoItem = (oldChamber == null || oldChamber.isEmpty())
+                        ? ammo.get(selectWeaponIndex(random, localDifficulty, ammo.size()))
+                        : oldChamber.getItem();
+                ItemStack bulletStack = new ItemStack(ammoItem, world.getRandom().nextBetween(1, ammoItem.getMaxCount()));
+                if (!bulletStack.isEmpty()) { // we have ammo
+                    if (currentReload < reloadCount) { // still reloading
+                        stack.set(GUN_LOADING_COMPONENT, currentReload + 1);
+                    } else if (currentReload == reloadCount) { // now reload
+                        stack.set(GUN_AMMO_COMPONENT, bulletStack);
+                        stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
+                        stack.set(GUN_LOADING_COMPONENT, 1);
+                    }
+                }
             }
         }
     }
@@ -194,67 +233,70 @@ public class Gun extends SimpleItem implements PolymerItem {
         stack.set(DataComponentTypes.LORE, newLore);
     }
 
-    public void doRecoil(ServerPlayerEntity player) {
-        Random rng = player.getServerWorld().getRandom();
-        // Get the player's current position and yaw
-        Vec3d pos = player.getPos();
-        float yaw = player.getYaw();
-        float newPitch = player.getPitch();
-        Vec3d currentLook = player.getRotationVector().multiply(-1);
-        newPitch -= verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
-        yaw -= (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
+    public void doRecoil(LivingEntity entity) {
+        if (entity.getEntityWorld() instanceof ServerWorld serverWorld) {
+            Random rng = entity.getWorld().getRandom();
+            // Get the entity's current position and yaw
+            Vec3d pos = entity.getPos();
+            float yaw = entity.getYaw();
+            float newPitch = entity.getPitch();
+            Vec3d currentLook = entity.getRotationVector().multiply(-1);
+            newPitch -= verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
+            yaw -= (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
 
 
-        player.teleport(player.getServerWorld(), pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch);
-        double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
-        if (velocityRecoil > 0) {
-            player.setVelocity(currentLook.multiply(velocityRecoil));
+            entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch);
+            double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
+            if (velocityRecoil > 0) {
+                entity.setVelocity(currentLook.multiply(velocityRecoil));
+            }
         }
     }
 
-    public void shoot(ServerWorld world, PlayerEntity user, Hand hand) {
-        if (user instanceof ServerPlayerEntity player && !world.isClient()) {
+    public void shoot(ServerWorld world, LivingEntity user, Hand hand) {
+        if (!world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
             int currentCooldown = stack.getOrDefault(GUN_COOLDOWN_COMPONENT, 0);
             ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
 
             BulletItem bullet = null;
-            for (BulletItem bulletTemp : bullets) {
-                if (bulletTemp == chamber.getItem()) {
-                    bullet = bulletTemp;
-                    break;
-                }
+            if (itemBulletItemMap.containsKey(chamber.getItem())) {
+                bullet = itemBulletItemMap.get(chamber.getItem());
             }
 
             if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0) {
-                boolean isIncendiary = false;
-                double explosionPower = explosionPowerGun;
-                double repulsionPower = repulsionPowerGun;
-
-                if (bullet != null) {
-                    isIncendiary = bullet.isIncendiary;
-                    explosionPower *= bullet.explosionPowerCoefficient;
-                    repulsionPower *= bullet.repulsionPowerCoefficient;
-                }
-
-                BulletEntity bulletEntity = new BulletEntity(player, chamber, hand, this, 1f, damage, speed, explosionPower, repulsionPower, isIncendiary);
+                BulletEntity bulletEntity = getBulletEntity(user, hand, bullet, chamber);
                 world.spawnEntity(bulletEntity);
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
                 stack.set(GUN_COOLDOWN_COMPONENT, cooldownTarget);
-                doRecoil(player);
+                doRecoil(user);
                 if (chamber.isEmpty()) {
                     stack.remove(GUN_AMMO_COMPONENT);
                 } else {
                     stack.set(GUN_AMMO_COMPONENT, chamber);
                 }
             } else if (cooldownTarget > 0) {
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
             } else if (currentReload > 1) {
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
             }
             updateDamage(stack);
         }
+    }
+
+    private @NotNull BulletEntity getBulletEntity(LivingEntity entity, Hand hand, BulletItem bullet, ItemStack chamber) {
+        boolean isIncendiary = false;
+        double explosionPower = explosionPowerGun;
+        double repulsionPower = repulsionPowerGun;
+
+        if (bullet != null) {
+            isIncendiary = bullet.isIncendiary;
+            explosionPower *= bullet.explosionPowerCoefficient;
+            repulsionPower *= bullet.repulsionPowerCoefficient;
+        }
+
+        return new BulletEntity(entity, chamber, hand, this, 0.25f, damage, speed, explosionPower, repulsionPower, isIncendiary);
     }
 }

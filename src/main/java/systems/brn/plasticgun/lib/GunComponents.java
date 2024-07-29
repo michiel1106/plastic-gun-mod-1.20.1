@@ -3,6 +3,7 @@ package systems.brn.plasticgun.lib;
 import com.mojang.serialization.Codec;
 import eu.pb4.polymer.core.api.other.PolymerComponent;
 import net.minecraft.component.ComponentType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -15,6 +16,7 @@ public class GunComponents {
     public static final ComponentType<Integer> GUN_LOADING_COMPONENT = register("gun_load", builder -> builder.codec(Codec.INT));
     public static final ComponentType<Integer> GUN_COOLDOWN_COMPONENT = register("gun_cooldown", builder -> builder.codec(Codec.INT));
     public static final ComponentType<Integer> GUN_RELOAD_COOLDOWN_COMPONENT = register("gun_reload_cooldown", builder -> builder.codec(Codec.INT));
+    public static final ComponentType<ItemStack> GUN_LAST_LOADED_AMMO = register("gun_last_load", builder -> builder.codec(ItemStack.CODEC));
     public static final ComponentType<Integer> GRENADE_TIMER_COMPONENT = register("grenade_tuner", builder -> builder.codec(Codec.INT));
 
     private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {

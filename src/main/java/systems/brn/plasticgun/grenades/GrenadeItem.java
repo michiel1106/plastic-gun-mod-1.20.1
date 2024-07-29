@@ -3,6 +3,7 @@ package systems.brn.plasticgun.grenades;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
@@ -57,7 +58,7 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
                                 Text.translatable("gun.description.particle_count", smokeCount)
                         )))
                         .maxDamage(explosionTarget + 1)
-                , id(path), Items.FLOWER_POT
+                , id(path), Items.STICK
         );
         this.explosionTarget = explosionTarget;
         this.isIncendiary = isIncendiary;
@@ -103,17 +104,23 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
                 if (!player.isCreative()) {
                     stack.decrement(1);
                 }
-                if (!stack.isEmpty()) {
+                    if (!stack.isEmpty()) {
                     stack.setDamage(0);
                 }
             }
         }
     }
 
-    private void turnIntoEntity(ServerPlayerEntity player, @Nullable ItemStack stack, int speed, int timer) {
-        GrenadeEntity grenadeEntity = new GrenadeEntity(player, stack, timer, 1f, speed, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
+    public void turnIntoEntity(ServerPlayerEntity player, @Nullable ItemStack stack, int speed, int timer) {
+        GrenadeEntity grenadeEntity = new GrenadeEntity(player, stack, timer, 0.5f, speed, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
         player.getServerWorld().spawnEntity(grenadeEntity);
         player.getServerWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+    }
+
+    public void turnIntoEntity(Entity entity, @Nullable ItemStack stack, int speed, int timer) {
+        GrenadeEntity grenadeEntity = new GrenadeEntity(entity.getEntityWorld(), entity.getPos(), stack, timer, 1f, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
+        entity.getEntityWorld().spawnEntity(grenadeEntity);
+        entity.getEntityWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
     }
 
     public void checkExplosions(ServerWorld world, PlayerEntity playerEntity, ItemStack stackInSlot) {

@@ -22,16 +22,18 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.defence.WeaponArmor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static net.minecraft.world.explosion.Explosion.getExposure;
 import static systems.brn.plasticgun.PlasticGun.MOD_ID;
@@ -219,5 +221,44 @@ public class Util {
             }
         }
         return damage;
+    }
+
+    public static <T extends Item> Map<Item, T> generateItemMap(List<T> extendedItems) {
+        Map<Item, T> itemMap = new HashMap<>();
+        for (T item : extendedItems) {
+            itemMap.put(item, item);
+        }
+        return itemMap;
+    }
+
+    public static int getDifficultyAdjustedChance(LocalDifficulty localDifficulty, World world) {
+        Difficulty worldDifficulty = world.getDifficulty();
+
+        // Calculate chance modifiers based on difficulties
+        float localDifficultyFactor = localDifficulty.getLocalDifficulty();
+        int worldDifficultyFactor = switch (worldDifficulty) {
+            case PEACEFUL -> 0;
+            case EASY -> 1;
+            case NORMAL -> 2;
+            case HARD -> 3;
+            default -> 1;
+        };
+
+        // Determine the chance to equip a gun
+        int baseChance = 20; // Base chance denominator
+        return (int) (baseChance / (localDifficultyFactor * worldDifficultyFactor));
+    }
+
+
+    public static int selectWeaponIndex(Random random, LocalDifficulty localDifficulty, int size) {
+        double difficultyFactor = localDifficulty.getClampedLocalDifficulty();
+        double biasFactor = 1.0 - difficultyFactor; // Higher difficulty means lower index less likely
+
+        // Bias towards lower indices
+        double r = random.nextDouble() * biasFactor;
+        int index = (int) (r * size * size);
+
+        // Ensure index is within bounds
+        return Math.min(index, size - 1);
     }
 }

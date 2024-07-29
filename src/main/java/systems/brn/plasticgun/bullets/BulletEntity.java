@@ -33,10 +33,10 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
     private ItemStack itemStack = Items.ARROW.getDefaultStack();
     private final float scale;
 
-    public BulletEntity(ServerPlayerEntity player, ItemStack stack, Hand hand, Gun gun, float scale, double damage, float speed, double explosionPower, double repulsionPower, boolean isIncendiary) {
-        super(BULLET_ENTITY_TYPE, player.getPos().x, player.getPos().y + 1.5d, player.getPos().z, player.getServerWorld(), stack, player.getStackInHand(hand));
-        this.setOwner(player);
-        this.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, speed, 0);
+    public BulletEntity(LivingEntity livingEntity, ItemStack stack, Hand hand, Gun gun, float scale, double damage, float speed, double explosionPower, double repulsionPower, boolean isIncendiary) {
+        super(BULLET_ENTITY_TYPE, livingEntity.getPos().x, livingEntity.getPos().y + 1.75d, livingEntity.getPos().z, livingEntity.getEntityWorld(), stack, livingEntity.getStackInHand(hand));
+        this.setOwner(livingEntity);
+        this.setVelocity(livingEntity, livingEntity.getPitch(), livingEntity.getYaw(), 0.0F, speed, 0);
         this.pickupType = PickupPermission.DISALLOWED;
         this.setDamage(damage);
         this.setSilent(true);

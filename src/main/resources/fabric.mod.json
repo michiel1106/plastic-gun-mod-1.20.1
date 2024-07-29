@@ -8,6 +8,10 @@
   "contact": {},
   "license": "MIT",
   "icon": "assets/plasticgun/icon.png",
+  "accessWidener" : "plasticgun.accesswidener",
+  "mixins": [
+    "plasticgun.mixins.json"
+  ],
   "environment": "*",
   "entrypoints": {
     "main": [
