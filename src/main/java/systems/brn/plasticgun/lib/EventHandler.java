@@ -71,7 +71,7 @@ public class EventHandler {
                     Item itemInSlot = stackInSlot.getItem();
                     if (itemGrenadeItemMap.containsKey(itemInSlot)) {
                         decrementComponent(GRENADE_TIMER_COMPONENT, stackInSlot);
-                        GrenadeItem grenadeItem = itemGrenadeItemMap.get(itemInHand);
+                        GrenadeItem grenadeItem = itemGrenadeItemMap.get(itemInSlot);
                         GrenadeItem.updateDamage(stackInSlot, grenadeItem);
                         grenadeItem.checkExplosions(world, player, stackInSlot);
                     }
