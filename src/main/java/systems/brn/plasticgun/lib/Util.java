@@ -9,14 +9,19 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
@@ -26,6 +31,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.AdvancedExplosionBehavior;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +40,9 @@ import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.defence.WeaponArmor;
 
 import java.util.*;
+import java.util.function.Function;
 
+import static net.minecraft.entity.projectile.AbstractWindChargeEntity.EXPLOSION_BEHAVIOR;
 import static net.minecraft.world.explosion.Explosion.getExposure;
 import static systems.brn.plasticgun.PlasticGun.MOD_ID;
 import static systems.brn.plasticgun.PlasticGun.weaponArmors;
@@ -136,36 +144,6 @@ public class Util {
         return entity.getEntityWorld().getOtherEntities(entity, box);
     }
 
-    public static void applyKnockbackToEntities(Entity explodingEntity, Vec3d explosionPos, double power, double radius) {
-        List<Entity> entities = getEntitiesAround(explodingEntity, radius);
-
-        for (Entity entity : entities) {
-            double distanceRatio = Math.sqrt(entity.squaredDistanceTo(explosionPos)) / power;
-            if (distanceRatio > 1.0) {
-                continue;
-            }
-
-            double dx = entity.getX() - explosionPos.x;
-            double dy = entity.getY() - explosionPos.y;
-            double dz = entity.getZ() - explosionPos.z;
-            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-            if (distance == 0.0) {
-                continue;
-            }
-
-            dx /= distance;
-            dy /= distance;
-            dz /= distance;
-
-            double knockbackStrength = (1.0 - distanceRatio) * getExposure(explosionPos, entity);
-            double knockback = knockbackStrength * (1.0 - (entity instanceof LivingEntity livingEntity ? livingEntity.getAttributeValue(EntityAttributes.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE) : 0.0));
-
-            Vec3d knockbackVec = new Vec3d(dx * knockback, dy * knockback, dz * knockback);
-            entity.setVelocity(entity.getVelocity().add(knockbackVec));
-        }
-    }
-
     public static void setProjectileData(List<DataTracker.SerializedEntry<?>> data, boolean initial, float scale, ItemStack itemStack) {
         if (initial) {
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.TELEPORTATION_DURATION, 2));
@@ -176,13 +154,13 @@ public class Util {
         }
     }
 
-    public static void hitDamage(Vec3d pos, double explosionPower, double repulsionPower, World worldTemp, @Nullable Entity entity, boolean isIncendiary, int radius, @Nullable ExplosionBehavior explosionBehavior) {
+    public static void hitDamage(Vec3d pos, double explosionPower, double repulsionPower, World worldTemp, @Nullable Entity entity, boolean isIncendiary, @Nullable ExplosionBehavior explosionBehavior) {
         if (worldTemp instanceof ServerWorld world) {
             if (explosionPower > 0) {
                 world.createExplosion(entity, Explosion.createDamageSource(world, entity), explosionBehavior, pos.getX(), pos.getY(), pos.getZ(), (float) explosionPower, isIncendiary, ServerWorld.ExplosionSourceType.TNT);
             }
             if (repulsionPower > 0) {
-                applyKnockbackToEntities(entity, pos, repulsionPower * 100, radius);
+                world.createExplosion(entity, null, new AdvancedExplosionBehavior(false, false, Optional.empty(), Optional.empty()), pos.getX(), pos.getY(), pos.getZ(), (float) repulsionPower, false, World.ExplosionSourceType.TRIGGER, ParticleTypes.GUST_EMITTER_SMALL, ParticleTypes.GUST_EMITTER_LARGE, SoundEvents.ENTITY_BREEZE_WIND_BURST);
             }
         }
     }

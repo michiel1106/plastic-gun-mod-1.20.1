@@ -88,17 +88,17 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("force_container", 99, 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("forcegun", 0, 2, 5, 20, 10, 888, 0, 0, 20, 0f, 0f, 5f, 10f, 0, 0)); // 0
-        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 5, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1)); // 1.8
-        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 5, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1)); // 3
-        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
-        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 5, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1)); // 3.6
-        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 14, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1)); // 2.8
-        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 5, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1)); // 4.8
-        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 5, 0, 0, 1.5f, 2.5f, 0.25f, 0.5f, -1, 1)); // 7
-        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 14, 0, 0, 2, 4, 0.2f, 0.5f, -1, 1)); // 8
-        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 20, 0, 0, 2f, 8, 0.3f, 0.6f, -1, 1)); // 4
-        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 8, 20, 0, 3f, 0.5f, 1, 2, -1, 1)); // 8
+        guns.add(new Gun("forcegun", 0, 4, 5, 10, 10, 888, 5, 0, 2, 0f, 0f, 5f, 10f, 0, 0)); // 0
+        guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 10, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1)); // 1.8
+        guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 10, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1)); // 3
+        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 1, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
+        guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 10, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1)); // 3.6
+        guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 20, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1)); // 2.8
+        guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 10, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1)); // 4.8
+        guns.add(new Gun("tokarev_tt_33", 0.7, 10, 5, 8, 45, 762, 10, 0, 0, 1.5f, 2.5f, 0.25f, 0.5f, -1, 1)); // 7
+        guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 20, 0, 0, 2, 4, 0.2f, 0.5f, -1, 1)); // 8
+        guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 40, 0, 0, 2f, 8, 0.3f, 0.6f, -1, 1)); // 4
+        guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 20, 20, 0, 3f, 0.5f, 1, 2, -1, 1)); // 8
 
 
         grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 30)); // 0.02

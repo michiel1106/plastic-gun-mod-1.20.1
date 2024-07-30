@@ -104,7 +104,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.setOnFire(true);
         super.onBlockHit(blockHitResult);
         this.setOnFire(false);
-        hitDamage(blockHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, 5, null);
+        hitDamage(blockHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, null);
         this.discard();
     }
 
@@ -119,7 +119,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         }
 
         super.onEntityHit(entityHitResult);
-        hitDamage(entityHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, 5, null);
+        hitDamage(entityHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, null);
         this.discard();
     }
 
