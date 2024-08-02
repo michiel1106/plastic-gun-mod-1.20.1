@@ -13,10 +13,13 @@ import net.minecraft.world.World;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static systems.brn.plasticgun.PlasticGun.BULLET_ENTITY_TYPE;
+import static systems.brn.plasticgun.PlasticGun.clientsWithMod;
 import static systems.brn.plasticgun.lib.Util.setProjectileData;
 
 public class ThrowableProjectile extends PersistentProjectileEntity implements PolymerEntity {
     private ItemStack itemStack = Items.ARROW.getDefaultStack();
+    public final EntityType<? extends PersistentProjectileEntity> entityType;
     private final float scale;
 
     public ThrowableProjectile(EntityType<? extends ThrowableProjectile> entityType, World world, Vec3d pos, ItemStack itemStack, float scale, double damage, PickupPermission pickupPermission, byte penetration) {
@@ -25,6 +28,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
         this.setDamage(damage);
         this.setSilent(true);
         this.scale = scale;
+        this.entityType = entityType;
         this.setCustomPierceLevel(penetration);
         this.setItemStack(itemStack.copy());
     }
@@ -37,6 +41,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
         this.setDamage(damage);
         this.setSilent(true);
         this.scale = scale;
+        this.entityType = entityType;
         this.setCustomPierceLevel(penetration);
         this.setItemStack(itemStack);
     }

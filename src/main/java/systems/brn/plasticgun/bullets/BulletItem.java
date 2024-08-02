@@ -23,9 +23,9 @@ public class BulletItem extends SimpleItem {
                 new Settings()
                         .maxCount(maxCount)
                         .component(DataComponentTypes.LORE, new LoreComponent(List.of(
+                                Text.translatable("gun.description.caliber", caliber),
                                 Text.translatable("gun.description.speed", damageCoefficient),
                                 Text.translatable("gun.description.explosion_coefficient", explosionPowerCoefficient),
-                                Text.translatable("gun.description.repulsion_efficient", repulsionPowerCoefficient),
                                 Text.translatable("gun.description.repulsion_efficient", repulsionPowerCoefficient),
                                 Text.translatable(isIncendiary ? "gun.description.incendiary_yes" :  "gun.description.incendiary_no")
                         ))

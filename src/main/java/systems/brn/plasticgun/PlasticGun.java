@@ -64,15 +64,31 @@ public class PlasticGun implements ModInitializer {
     public static Map<Item, GrenadeItem> itemGrenadeItemMap;
     public static Map<Item, ShurikenItem> itemShurikenItemMap;
 
-    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE;
+    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE = Registry.register(
+            Registries.ENTITY_TYPE,
+            id("bullet"),
+            EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
+    );
 
-    public static EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE;
+    public static EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE = Registry.register(
+            Registries.ENTITY_TYPE,
+            id("grenade"),
+            EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build()
+    );
 
     public static final ArrayList<WeaponArmor> weaponArmors = new ArrayList<>();
 
-    public static EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE;
+    public static EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
+            Registries.ENTITY_TYPE,
+            id("shuriken"),
+            EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build()
+    );
 
-    public static EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE;
+    public static EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
+            Registries.ENTITY_TYPE,
+            id("damagetester"),
+            EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build()
+    );
 
     public static final Logger logger = LoggerFactory.getLogger(MOD_ID);
 
@@ -80,8 +96,8 @@ public class PlasticGun implements ModInitializer {
 
     public static final ArrayList<Item> clickEventItems = new ArrayList<>();
 
-    public static final RegistryEntry.Reference<StatusEffect> flashbangEffect =  Registry.registerReference(Registries.STATUS_EFFECT, id("flashbang"), new FlashbangEffect());
-    public static final RegistryEntry.Reference<StatusEffect> stunEffect =  Registry.registerReference(Registries.STATUS_EFFECT, id("stun"), new StunEffect());
+    public static final RegistryEntry.Reference<StatusEffect> flashbangEffect = Registry.registerReference(Registries.STATUS_EFFECT, id("flashbang"), new FlashbangEffect());
+    public static final RegistryEntry.Reference<StatusEffect> stunEffect = Registry.registerReference(Registries.STATUS_EFFECT, id("stun"), new StunEffect());
 
     @Override
     public void onInitialize() {
@@ -107,7 +123,7 @@ public class PlasticGun implements ModInitializer {
         bullets.add(new BulletItem("force_container", 99, 0, 888, false, 0, 1));
 
         // Guns
-        guns.add(new Gun("forcegun", 0, 4, 5, 10, 10, 888, 5, 0, 2, 0f, 0f, 5f, 10f, 0, 0)); // 0
+        guns.add(new Gun("forcegun", 0, 4, 5, 10, 10, 888, 5, 0, 4, 0f, 0f, 5f, 10f, 0, 0)); // 0
         guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 10, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1)); // 1.8
         guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 10, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1)); // 3
         guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
@@ -178,32 +194,11 @@ public class PlasticGun implements ModInitializer {
         registerIntoClickEvents(grenades);
         registerIntoClickEvents(shurikens);
 
-        GRENADE_ENTITY_TYPE = Registry.register(
-                Registries.ENTITY_TYPE,
-                id("grenade"),
-                EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build()
-        );
         PolymerEntityUtils.registerType(GRENADE_ENTITY_TYPE);
-
-        BULLET_ENTITY_TYPE = Registry.register(
-                Registries.ENTITY_TYPE,
-                id("bullet"),
-                EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
-        );
         PolymerEntityUtils.registerType(BULLET_ENTITY_TYPE);
-
-        SHURIKEN_ENTITY_TYPE = Registry.register(
-                Registries.ENTITY_TYPE,
-                id("shuriken"),
-                EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build()
-        );
         PolymerEntityUtils.registerType(SHURIKEN_ENTITY_TYPE);
 
-        DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
-                Registries.ENTITY_TYPE,
-                id("damagetester"),
-                EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build()
-        );
+
         FabricDefaultAttributeRegistry.register(DAMAGE_TESTER_ENTITY_TYPE, DamageTester.createDamageTesterAttributes());
         PolymerEntityUtils.registerType(DAMAGE_TESTER_ENTITY_TYPE);
 

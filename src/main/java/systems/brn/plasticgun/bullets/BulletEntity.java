@@ -16,6 +16,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.world.World;
+import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.grenades.GrenadeExplosionBehavior;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.lib.WeaponDamageType;
