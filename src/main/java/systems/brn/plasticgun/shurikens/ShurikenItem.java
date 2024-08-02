@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -43,7 +44,7 @@ public class ShurikenItem extends SimpleItem implements PolymerItem {
     }
 
 
-    public void chuck(World world, PlayerEntity user, Hand hand) {
+    public void chuck(ServerWorld world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             ShurikenEntity ShurikenEntity = new ShurikenEntity(player, stack, speed, damage);

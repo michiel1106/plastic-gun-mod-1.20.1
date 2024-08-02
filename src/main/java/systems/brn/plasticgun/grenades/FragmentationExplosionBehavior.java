@@ -13,6 +13,7 @@ import systems.brn.plasticgun.lib.WeaponDamageType;
 
 import java.util.ArrayList;
 
+import static systems.brn.plasticgun.lib.Util.entityHitParticles;
 import static systems.brn.plasticgun.lib.Util.getFinalDamage;
 
 public class FragmentationExplosionBehavior extends ExplosionBehavior {
@@ -66,6 +67,9 @@ public class FragmentationExplosionBehavior extends ExplosionBehavior {
         float original = super.calculateDamage(explosion, entity);
         if (entity instanceof LivingEntity livingEntity) {
             original = (float) getFinalDamage(livingEntity, WeaponDamageType.FRAGMENTATION_GRENADE, original);
+            if (original > 0) {
+                entityHitParticles(livingEntity, original);
+            }
         }
         return original;
     }

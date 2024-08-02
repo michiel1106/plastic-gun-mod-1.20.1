@@ -63,6 +63,17 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .component(GUN_AMMO_COMPONENT, ItemStack.EMPTY)
                         .component(GUN_COOLDOWN_COMPONENT, 0)
                         .component(GUN_RELOAD_COOLDOWN_COMPONENT, 0)
+                        .component(DataComponentTypes.LORE, new LoreComponent(List.of(
+                                Text.translatable("gun.description.caliber", caliber),
+                                Text.translatable("gun.description.damage_absolute", damage),
+                                Text.translatable("gun.description.speed", speed),
+                                Text.translatable("gun.description.clip_size", clipSize),
+                                Text.translatable("gun.description.reload_cooldown", reloadTarget),
+                                Text.translatable("gun.description.reload_cycles", reloadCount),
+                                Text.translatable("gun.description.shoot_cooldown", cooldownTarget),
+                                Text.translatable("gun.description.explosion_power", explosionPowerGun),
+                                Text.translatable("gun.description.repulsion_power", repulsionPowerGun)
+                        )))
                         .maxDamage(clipSize + 1)
                 , id(path), Items.WOODEN_SWORD
         );
@@ -118,7 +129,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                                 stack.remove(GUN_AMMO_COMPONENT);
                             } else {
                                 stack.set(GUN_AMMO_COMPONENT, chamber);
-                                stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
+                                stack.set(GUN_LAST_LOADED_AMMO, chamber);
                                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
                             }
                             stack.set(GUN_LOADING_COMPONENT, 1);
@@ -133,7 +144,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                                     stack.remove(GUN_AMMO_COMPONENT);
                                 } else {
                                     stack.set(GUN_AMMO_COMPONENT, chamber);
-                                    stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
+                                    stack.set(GUN_LAST_LOADED_AMMO, chamber);
                                     world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
                                 }
                                 bulletStack.decrement(targetCount);
@@ -143,12 +154,11 @@ public class Gun extends SimpleItem implements PolymerItem {
                     }
                 }
                 if (player.isCreative()) {
-                    stack.set(GUN_AMMO_COMPONENT, new ItemStack(ammo.getFirst(), clipSize)); // Ensure ammo.get(0) is a valid item
-                    stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
+                    ItemStack stackOfBullet = new ItemStack(ammo.getFirst(), clipSize);
+                    stack.set(GUN_AMMO_COMPONENT, stackOfBullet);
+                    stack.set(GUN_LAST_LOADED_AMMO, stackOfBullet);
                 }
                 updateDamage(stack);
-            } else {
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
             }
         }
     }
@@ -277,8 +287,6 @@ public class Gun extends SimpleItem implements PolymerItem {
                 } else {
                     stack.set(GUN_AMMO_COMPONENT, chamber);
                 }
-            } else if (cooldownTarget > 0) {
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.PLAYERS, 1.0f, 2.0f);
             } else if (currentReload > 1) {
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
             }

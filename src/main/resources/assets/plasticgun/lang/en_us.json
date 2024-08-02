@@ -75,6 +75,8 @@
   "item.plasticgun.netherite_shuriken": "Netherite Shuriken",
   "item.plasticgun.kevlar_vest": "Kevlar vest",
   "item.plasticgun.flak_vest": "Flak vest",
+  "effect.plasticgun.stun": "Stun",
+  "effect.plasticgun.flashbang": "Flashbang",
   "trinkets.slot.chest.vest": "Vest",
   "tag.item.trinkets.chest.vest": "Vest slot compatible",
   "gun.description.damage_coefficient": "Damage coefficient: %d",

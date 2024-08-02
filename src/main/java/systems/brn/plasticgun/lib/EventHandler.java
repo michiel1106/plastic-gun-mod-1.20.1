@@ -1,5 +1,6 @@
 package systems.brn.plasticgun.lib;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
@@ -8,6 +9,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -18,7 +21,12 @@ import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.guns.Gun;
+import systems.brn.plasticgun.packets.ModDetect;
+import systems.brn.plasticgun.packets.Reload;
+import systems.brn.plasticgun.packets.Shoot;
 import systems.brn.plasticgun.shurikens.ShurikenItem;
+
+import java.util.function.Predicate;
 
 import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.GunComponents.*;
@@ -26,65 +34,94 @@ import static systems.brn.plasticgun.lib.GunComponents.*;
 public class EventHandler {
     public static TypedActionResult<ItemStack> onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
         ItemStack stack = playerEntity.getStackInHand(hand);
-        if (!world.isClient) {
-            Item stackInHand = playerEntity.getStackInHand(hand).getItem();
-            if (itemGunMap.containsKey(stackInHand)) {
-                itemGunMap.get(stackInHand).reload(world, playerEntity, hand);
+        if (playerEntity instanceof ServerPlayerEntity serverPlayerEntity) {
+            if (!world.isClient && !clientsWithMod.contains(serverPlayerEntity)) {
+                rightClickWithItem(serverPlayerEntity, hand);
             }
-            if (itemGrenadeItemMap.containsKey(stackInHand)) {
-                itemGrenadeItemMap.get(stackInHand).unpin(world, playerEntity, hand);
-            }
-            if (itemShurikenItemMap.containsKey(stackInHand)) {
-                itemShurikenItemMap.get(stackInHand).chuck(world, playerEntity, hand);
-            }
-
         }
         return TypedActionResult.pass(stack);
     }
 
+    public static void rightClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
+        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+            Item stackInHand = serverPlayerEntity.getStackInHand(hand).getItem();
+            if (itemGunMap.containsKey(stackInHand)) {
+                itemGunMap.get(stackInHand).reload(world, serverPlayerEntity, hand);
+            }
+            if (itemGrenadeItemMap.containsKey(stackInHand)) {
+                itemGrenadeItemMap.get(stackInHand).unpin(world, serverPlayerEntity, hand);
+            }
+            if (itemShurikenItemMap.containsKey(stackInHand)) {
+                itemShurikenItemMap.get(stackInHand).chuck(world, serverPlayerEntity, hand);
+            }
+        }
 
-    public static void onServerWorldTick(ServerWorld world) {
-        // Iterate through all players to detect hand swings or item interactions
-        for (PlayerEntity player : world.getPlayers()) {
-            if (!world.isClient) {
-                Hand hand = player.getActiveHand();
-                ItemStack stackInHand = player.getStackInHand(hand);
-                Item itemInHand = stackInHand.getItem();
+    }
 
-                if (itemGunMap.containsKey(itemInHand)) {
-                    decrementComponent(GUN_COOLDOWN_COMPONENT, stackInHand);
-                    decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, stackInHand);
-                    if (player.handSwinging && player.handSwingTicks == -1) {
-                        itemGunMap.get(itemInHand).shoot(world, player, hand);
-                    }
-                }
-                if (itemGrenadeItemMap.containsKey(itemInHand)) {
-                    itemGrenadeItemMap.get(itemInHand).chuck(world, player, hand);
-                }
-                if (itemShurikenItemMap.containsKey(itemInHand)) {
-                    itemShurikenItemMap.get(itemInHand).chuck(world, player, hand);
-                }
+    public static void leftClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
+        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+            ItemStack stackInHand = serverPlayerEntity.getStackInHand(hand);
+            Item itemInHand = stackInHand.getItem();
+            if (itemGrenadeItemMap.containsKey(itemInHand)) {
+                itemGrenadeItemMap.get(itemInHand).chuck(world, serverPlayerEntity, hand);
+            } else if (itemShurikenItemMap.containsKey(itemInHand)) {
+                itemShurikenItemMap.get(itemInHand).chuck(world, serverPlayerEntity, hand);
+            } else if (itemGunMap.containsKey(itemInHand)) {
+                itemGunMap.get(itemInHand).shoot(world, serverPlayerEntity, hand);
+            }
+        }
+    }
 
-                PlayerInventory playerInventory = player.getInventory();
-                for (int i = 1; i < playerInventory.main.size(); i++) {
-                    ItemStack stackInSlot = playerInventory.main.get(i);
-                    Item itemInSlot = stackInSlot.getItem();
-                    if (itemGrenadeItemMap.containsKey(itemInSlot)) {
-                        decrementComponent(GRENADE_TIMER_COMPONENT, stackInSlot);
-                        GrenadeItem grenadeItem = itemGrenadeItemMap.get(itemInSlot);
-                        GrenadeItem.updateDamage(stackInSlot, grenadeItem);
-                        grenadeItem.checkExplosions(world, player, stackInSlot);
-                    }
+    public static void tickItemUpdate(ServerPlayerEntity serverPlayerEntity) {
+        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+            Hand hand = serverPlayerEntity.getActiveHand();
+            ItemStack stackInHand = serverPlayerEntity.getStackInHand(hand);
+            Item itemInHand = stackInHand.getItem();
+            if (itemGunMap.containsKey(itemInHand)) {
+                decrementComponent(GUN_COOLDOWN_COMPONENT, stackInHand);
+                decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, stackInHand);
+            }
+
+            PlayerInventory playerInventory = serverPlayerEntity.getInventory();
+            for (int i = 1; i < playerInventory.main.size(); i++) {
+                ItemStack stackInSlot = playerInventory.main.get(i);
+                Item itemInSlot = stackInSlot.getItem();
+                if (itemGrenadeItemMap.containsKey(itemInSlot)) {
+                    decrementComponent(GRENADE_TIMER_COMPONENT, stackInSlot);
+                    GrenadeItem grenadeItem = itemGrenadeItemMap.get(itemInSlot);
+                    GrenadeItem.updateDamage(stackInSlot, grenadeItem);
+                    grenadeItem.checkExplosions(world, serverPlayerEntity, stackInSlot);
                 }
             }
         }
-        for (SkeletonEntity skeletonEntity : world.getEntitiesByType(EntityType.SKELETON, entity -> true)) {
+    }
+
+
+    public static void mobTickUpdate(ServerWorld world) {
+        Predicate<Entity> allEntities = entity -> true;
+        for (SkeletonEntity skeletonEntity : world.getEntitiesByType(EntityType.SKELETON, allEntities)) {
             for (ItemStack itemStack : skeletonEntity.getEquippedItems()) {
                 if (itemGunMap.containsKey(itemStack.getItem())) {
                     decrementComponent(GUN_COOLDOWN_COMPONENT, itemStack);
                     decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, itemStack);
                 }
             }
+        }
+    }
+
+    public static void onServerWorldTick(ServerWorld world) {
+        // Iterate through all players to detect hand swings or item interactions
+        if (!world.isClient) {
+            for (ServerPlayerEntity player : world.getPlayers()) {
+                Hand hand = player.getActiveHand();
+                if (!clientsWithMod.contains(player)) {
+                    if (player.handSwinging && player.handSwingTicks == -1) {
+                        leftClickWithItem(player, hand);
+                    }
+                }
+                tickItemUpdate(player);
+            }
+            mobTickUpdate(world);
         }
     }
 
@@ -111,5 +148,31 @@ public class EventHandler {
                 }
             }
         }
+    }
+
+    public static void disconnect(ServerPlayNetworkHandler serverPlayNetworkHandler, MinecraftServer
+            minecraftServer) {
+        ServerPlayerEntity player = serverPlayNetworkHandler.getPlayer();
+        clientsWithMod.remove(player);
+    }
+
+    public static void onClientConfirm(ModDetect modDetect, ServerPlayNetworking.Context context) {
+        ServerPlayerEntity player = context.player();
+        if (!clientsWithMod.contains(player)) {
+            clientsWithMod.add(player);
+        }
+
+    }
+
+    public static void onClientReload(Reload reload, ServerPlayNetworking.Context context) {
+        ServerPlayerEntity player = context.player();
+        Hand hand = player.getActiveHand();
+        rightClickWithItem(player, hand);
+    }
+
+    public static void onClientShoot(Shoot shoot, ServerPlayNetworking.Context context) {
+        ServerPlayerEntity player = context.player();
+        Hand hand = player.getActiveHand();
+        leftClickWithItem(player, hand);
     }
 }

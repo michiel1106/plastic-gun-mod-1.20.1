@@ -7,7 +7,6 @@
     "AbstractSkeletonEntityGunMixin",
     "ZombieGrenadeMixin"
   ],
-  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

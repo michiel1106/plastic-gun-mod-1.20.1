@@ -49,7 +49,7 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
                                 Text.translatable("gun.description.repulsion_power", repulsionPower),
                                 Text.translatable("gun.description.explosion_time", explosionTarget),
                                 Text.translatable("gun.description.speed", speed),
-                                Text.translatable(isIncendiary ? "gun.description.incendiary_yes" :  "gun.description.incendiary_no"),
+                                Text.translatable(isIncendiary ? "gun.description.incendiary_yes" : "gun.description.incendiary_no"),
                                 Text.translatable("gun.description.fragmentation_grenade", isFragmentation),
                                 Text.translatable("gun.description.flashbang_duration", flashBangDuration),
                                 Text.translatable("gun.description.stun_duration", stunDuration),
@@ -104,8 +104,9 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
                 if (!player.isCreative()) {
                     stack.decrement(1);
                 }
-                    if (!stack.isEmpty()) {
+                if (!stack.isEmpty()) {
                     stack.setDamage(0);
+                    user.setStackInHand(hand, stack);
                 }
             }
         }

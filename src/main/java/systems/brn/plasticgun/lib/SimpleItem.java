@@ -8,6 +8,7 @@ import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import systems.brn.plasticgun.PlasticGun;
 
 public abstract class SimpleItem extends SimplePolymerItem implements PolymerItem {
     private final PolymerModelData polymerModel;
@@ -21,6 +22,9 @@ public abstract class SimpleItem extends SimplePolymerItem implements PolymerIte
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+        if (PlasticGun.clientsWithMod.contains(player)) {
+            return this;
+        }
         return this.polymerModel.item();
     }
 

@@ -5,6 +5,10 @@ import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.particle.BlockDustParticle;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,10 +16,14 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
@@ -44,8 +52,7 @@ import java.util.function.Function;
 
 import static net.minecraft.entity.projectile.AbstractWindChargeEntity.EXPLOSION_BEHAVIOR;
 import static net.minecraft.world.explosion.Explosion.getExposure;
-import static systems.brn.plasticgun.PlasticGun.MOD_ID;
-import static systems.brn.plasticgun.PlasticGun.weaponArmors;
+import static systems.brn.plasticgun.PlasticGun.*;
 
 public class Util {
 
@@ -209,6 +216,16 @@ public class Util {
         return itemMap;
     }
 
+    public static void registerIntoClickEvents(Collection<? extends Item> items) {
+        clickEventItems.addAll(items);
+    }
+
+    public static boolean shouldSendClickEvents(PlayerEntity player) {
+        Item mainItem = player.getMainHandStack().getItem();
+        Item offItem = player.getOffHandStack().getItem();
+        return clickEventItems.contains(mainItem) || clickEventItems.contains(offItem);
+    }
+
     public static int getDifficultyAdjustedChance(LocalDifficulty localDifficulty, World world) {
         Difficulty worldDifficulty = world.getDifficulty();
 
@@ -238,5 +255,62 @@ public class Util {
 
         // Ensure index is within bounds
         return Math.min(index, size - 1);
+    }
+
+    public static void blockHitParticles(Vec3d pos, BlockState blockState, World worldTemp, double damage) {
+        if (worldTemp instanceof ServerWorld world) {
+            int particleCount = (int) damage * 4; // Number of particles
+            double radius = 1;
+            double heightOffset = 1;
+
+
+            for (int i = 0; i < particleCount; i++) {
+                double angle = (2 * Math.PI / particleCount) * i;
+                double xOffset = radius * Math.cos(angle);
+                double zOffset = radius * Math.sin(angle);
+
+                BlockStateParticleEffect blockStateParticleEffect = new BlockStateParticleEffect(ParticleTypes.BLOCK, blockState);
+                world.spawnParticles(
+                        blockStateParticleEffect,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        1,  // Number of particles to spawn per location
+                        xOffset,  // Offset in the x-direction
+                        (heightOffset / particleCount) * i,  // Offset in the y-direction
+                        zOffset,  // Offset in the z-direction
+                        4   // Speed of particles
+                );
+            }
+        }
+    }
+
+    public static void entityHitParticles(LivingEntity livingEntity, double damage) {
+        if (livingEntity.getEntityWorld() instanceof ServerWorld world) {
+            Vec3d pos = livingEntity.getPos();
+            int particleCount = (int) damage * 4; // Number of particles
+            double radius = livingEntity.getWidth() / 2 + 0.5;    // Radius of the circle
+            double heightOffset = livingEntity.getHeight(); // Height offset from the entity's position
+
+
+            for (int i = 0; i < particleCount; i++) {
+                double angle = (2 * Math.PI / particleCount) * i;
+                double xOffset = radius * Math.cos(angle);
+                double zOffset = radius * Math.sin(angle);
+
+                BlockStateParticleEffect blockStateParticleEffect = new BlockStateParticleEffect(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.getDefaultState());
+                world.spawnParticles(
+                        blockStateParticleEffect,
+                        pos.x,
+                        pos.y,
+                        pos.z,
+                        1,  // Number of particles to spawn per location
+                        xOffset,  // Offset in the x-direction
+                        (heightOffset / particleCount) * i,  // Offset in the y-direction
+                        zOffset,  // Offset in the z-direction
+                        4   // Speed of particles
+                );
+            }
+        }
     }
 }

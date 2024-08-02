@@ -7,7 +7,7 @@
   "authors": [],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/plasticgun/icon.png",
+  "icon": "assets/plasticgun/textures/icon.png",
   "accessWidener" : "plasticgun.accesswidener",
   "mixins": [
     "plasticgun.mixins.json"
@@ -16,11 +16,15 @@
   "entrypoints": {
     "main": [
       "systems.brn.plasticgun.PlasticGun"
+    ],
+    "client": [
+      "systems.brn.plasticgun.companion.PlasticGunClient"
     ]
   },
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "${minecraft_version}",
+    "trinkets": ">=${trinkets_version}"
   }
 }

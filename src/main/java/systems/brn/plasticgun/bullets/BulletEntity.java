@@ -16,6 +16,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.world.World;
+import systems.brn.plasticgun.grenades.GrenadeExplosionBehavior;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.lib.WeaponDamageType;
 
@@ -95,7 +96,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.setPosition(blockHitResult.getPos());
         if (blockHitResult.getType() == HitResult.Type.BLOCK) {
             BlockState block = this.getWorld().getBlockState(blockHitResult.getBlockPos());
-
+            blockHitParticles(this.getPos(), block, this.getWorld(), this.getDamage() * this.getVelocity().length());
             SoundEvent soundEvent = block.getSoundGroup().getHitSound();
             setSilent(false);
             playSound(soundEvent, 4.0F, 1.0F);
@@ -104,7 +105,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.setOnFire(true);
         super.onBlockHit(blockHitResult);
         this.setOnFire(false);
-        hitDamage(blockHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, null);
+        hitDamage(blockHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, new GrenadeExplosionBehavior());
         this.discard();
     }
 
@@ -114,12 +115,14 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         setSilent(false);
         playSound(SoundEvents.BLOCK_BAMBOO_HIT, 4.0F, 1.0F);
         setSilent(true);
+
         if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
             this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.BULLET, this.getDamage()));
+            entityHitParticles(livingEntity, this.getDamage() * this.getVelocity().length());
         }
 
         super.onEntityHit(entityHitResult);
-        hitDamage(entityHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, null);
+        hitDamage(entityHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, new GrenadeExplosionBehavior());
         this.discard();
     }
 

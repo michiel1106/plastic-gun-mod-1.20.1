@@ -14,11 +14,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import systems.brn.plasticgun.effects.FlashbangEffect;
 import systems.brn.plasticgun.throwables.ThrowableProjectile;
 
 import java.util.List;
 
-import static systems.brn.plasticgun.PlasticGun.GRENADE_ENTITY_TYPE;
+import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.Util.*;
 
 public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity {
@@ -118,8 +119,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         if (stunDuration > 0) {
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, stunDuration, 255, true, false));
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, stunDuration, 255, true, false));
+                    livingEntity.addStatusEffect(new StatusEffectInstance(stunEffect, flashBangDuration, 255, true, false));
                 }
             }
             stunDuration = 0;
@@ -128,7 +128,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         if (flashBangDuration > 0) {
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, flashBangDuration, 255, true, false));
+                    livingEntity.addStatusEffect(new StatusEffectInstance(flashbangEffect, flashBangDuration, 255, true, false));
                 }
             }
             flashBangDuration = 0;

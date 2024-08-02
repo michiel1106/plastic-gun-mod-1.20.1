@@ -3,26 +3,39 @@ package systems.brn.plasticgun;
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.defence.WeaponArmor;
+import systems.brn.plasticgun.effects.FlashbangEffect;
+import systems.brn.plasticgun.effects.StunEffect;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.lib.CraftingItem;
 import systems.brn.plasticgun.lib.EventHandler;
 import systems.brn.plasticgun.lib.ItemGroups;
+import systems.brn.plasticgun.packets.ModDetect;
+import systems.brn.plasticgun.packets.Reload;
+import systems.brn.plasticgun.packets.Shoot;
 import systems.brn.plasticgun.shurikens.ShurikenEntity;
 import systems.brn.plasticgun.shurikens.ShurikenItem;
 import systems.brn.plasticgun.testing.DamageTester;
@@ -30,8 +43,7 @@ import systems.brn.plasticgun.testing.DamageTester;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static systems.brn.plasticgun.lib.Util.generateItemMap;
-import static systems.brn.plasticgun.lib.Util.id;
+import static systems.brn.plasticgun.lib.Util.*;
 
 public class PlasticGun implements ModInitializer {
 
@@ -64,6 +76,13 @@ public class PlasticGun implements ModInitializer {
 
     public static final Logger logger = LoggerFactory.getLogger(MOD_ID);
 
+    public static final ArrayList<ServerPlayerEntity> clientsWithMod = new ArrayList<>();
+
+    public static final ArrayList<Item> clickEventItems = new ArrayList<>();
+
+    public static final RegistryEntry.Reference<StatusEffect> flashbangEffect =  Registry.registerReference(Registries.STATUS_EFFECT, id("flashbang"), new FlashbangEffect());
+    public static final RegistryEntry.Reference<StatusEffect> stunEffect =  Registry.registerReference(Registries.STATUS_EFFECT, id("stun"), new StunEffect());
+
     @Override
     public void onInitialize() {
 
@@ -91,7 +110,7 @@ public class PlasticGun implements ModInitializer {
         guns.add(new Gun("forcegun", 0, 4, 5, 10, 10, 888, 5, 0, 2, 0f, 0f, 5f, 10f, 0, 0)); // 0
         guns.add(new Gun("p2022", 0.2, 12, 5, 10, 41, 9, 10, 0, 0, 1f, 4, 0.1f, 0.25f, -1, 1)); // 1.8
         guns.add(new Gun("colt_1903", 0.3, 10, 5, 8, 38, 32, 10, 0, 0, 1, 3, 0.1f, 0.3f, -1, 1)); // 3
-        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 1, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
+        guns.add(new Gun("ak_47", 0.2, 4, 5, 30, 45, 762, 0, 0, 0, 1f, 2, 0.2f, 0.4f, -1, 1)); // 9
         guns.add(new Gun("colt_45", 0.4, 9, 5, 7, 48, 45, 10, 0, 0, 1.5f, 2, 0.15f, 0.4f, -1, 1)); // 3.6
         guns.add(new Gun("snub_nosed_revolver", 0.4, 7, 3, 5, 36, 38, 20, 0, 0, 1f, 2, 0.2f, 0.45f, -1, 1)); // 2.8
         guns.add(new Gun("colt_peacemaker", 0.6, 8, 5, 6, 43, 45, 10, 0, 0, 0.9f, 2, 0.2f, 0.5f, -1, 1)); // 4.8
@@ -155,6 +174,10 @@ public class PlasticGun implements ModInitializer {
         itemGrenadeItemMap = generateItemMap(grenades);
         itemShurikenItemMap = generateItemMap(shurikens);
 
+        registerIntoClickEvents(guns);
+        registerIntoClickEvents(grenades);
+        registerIntoClickEvents(shurikens);
+
         GRENADE_ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
                 id("grenade"),
@@ -194,7 +217,18 @@ public class PlasticGun implements ModInitializer {
 
         ServerEntityEvents.ENTITY_LOAD.register(EventHandler::onEntityLoad);
 
+        ServerPlayConnectionEvents.DISCONNECT.register(EventHandler::disconnect);
+
         ItemGroups.register();
+
+        PayloadTypeRegistry.playC2S().register(ModDetect.PACKET_ID, ModDetect.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(Reload.PACKET_ID, Reload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(Shoot.PACKET_ID, Shoot.PACKET_CODEC);
+
+        // Register the global receiver
+        ServerPlayNetworking.registerGlobalReceiver(ModDetect.PACKET_ID, EventHandler::onClientConfirm);
+        ServerPlayNetworking.registerGlobalReceiver(Reload.PACKET_ID, EventHandler::onClientReload);
+        ServerPlayNetworking.registerGlobalReceiver(Shoot.PACKET_ID, EventHandler::onClientShoot);
 
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         PolymerResourcePackUtils.markAsRequired();

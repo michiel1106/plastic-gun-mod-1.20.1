@@ -16,7 +16,7 @@ import systems.brn.plasticgun.lib.WeaponDamageType;
 import systems.brn.plasticgun.throwables.ThrowableProjectile;
 
 import static systems.brn.plasticgun.PlasticGun.*;
-import static systems.brn.plasticgun.lib.Util.getFinalDamage;
+import static systems.brn.plasticgun.lib.Util.*;
 
 public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity {
     public ShurikenEntity(ServerPlayerEntity player, ItemStack itemStack, float speed, double damage) {
@@ -33,6 +33,7 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
         if (blockHitResult.getType() == HitResult.Type.BLOCK) {
             BlockState block = this.getWorld().getBlockState(blockHitResult.getBlockPos());
 
+            blockHitParticles(this.getPos(), block, this.getWorld(), this.getDamage() * this.getVelocity().length());
             SoundEvent soundEvent = block.getSoundGroup().getHitSound();
             setSilent(false);
             playSound(soundEvent, 4.0F, 1.0F);
@@ -54,6 +55,7 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
             this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.SHURIKEN, this.getDamage()));
+            entityHitParticles(livingEntity, this.getDamage());
         }
 
         super.onEntityHit(entityHitResult);
