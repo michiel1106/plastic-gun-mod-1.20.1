@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.ColorHelper;
 import systems.brn.plasticgun.packets.ModDetect;
 import systems.brn.plasticgun.packets.Reload;

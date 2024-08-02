@@ -9,7 +9,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import systems.brn.plasticgun.PlasticGun;
 
-import static systems.brn.plasticgun.PlasticGun.flashbangEffect;
 import static systems.brn.plasticgun.PlasticGun.stunEffect;
 
 public class StunEffect extends StatusEffect implements PolymerStatusEffect {

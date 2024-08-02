@@ -3,7 +3,6 @@ package systems.brn.plasticgun;
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -19,7 +18,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import systems.brn.plasticgun.bullets.BulletEntity;
@@ -64,13 +62,13 @@ public class PlasticGun implements ModInitializer {
     public static Map<Item, GrenadeItem> itemGrenadeItemMap;
     public static Map<Item, ShurikenItem> itemShurikenItemMap;
 
-    public static EntityType<BulletEntity> BULLET_ENTITY_TYPE = Registry.register(
+    public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("bullet"),
             EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
     );
 
-    public static EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE = Registry.register(
+    public static final EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("grenade"),
             EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build()
@@ -78,13 +76,13 @@ public class PlasticGun implements ModInitializer {
 
     public static final ArrayList<WeaponArmor> weaponArmors = new ArrayList<>();
 
-    public static EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
+    public static final EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("shuriken"),
             EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build()
     );
 
-    public static EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
+    public static final EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("damagetester"),
             EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build()

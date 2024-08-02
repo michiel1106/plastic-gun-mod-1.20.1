@@ -20,11 +20,9 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
-import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.packets.ModDetect;
 import systems.brn.plasticgun.packets.Reload;
 import systems.brn.plasticgun.packets.Shoot;
-import systems.brn.plasticgun.shurikens.ShurikenItem;
 
 import java.util.function.Predicate;
 

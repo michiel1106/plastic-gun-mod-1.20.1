@@ -13,8 +13,6 @@ import net.minecraft.world.World;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static systems.brn.plasticgun.PlasticGun.BULLET_ENTITY_TYPE;
-import static systems.brn.plasticgun.PlasticGun.clientsWithMod;
 import static systems.brn.plasticgun.lib.Util.setProjectileData;
 
 public class ThrowableProjectile extends PersistentProjectileEntity implements PolymerEntity {
