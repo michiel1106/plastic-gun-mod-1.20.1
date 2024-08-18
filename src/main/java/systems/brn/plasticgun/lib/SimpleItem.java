@@ -22,9 +22,9 @@ public abstract class SimpleItem extends SimplePolymerItem implements PolymerIte
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        if(PlasticGun.clientsWithMod.contains(player)){
-            return this;
-        }
+//        if(PlasticGun.clientsWithMod.contains(player)){
+//            return this;
+//        }
         return this.polymerModel.item();
     }
 
