@@ -14,6 +14,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
+import net.minecraft.loot.LootTables;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -57,6 +58,8 @@ public class PlasticGun implements ModInitializer {
 
     public static final ArrayList<CraftingItem> craftingItems = new ArrayList<>();
 
+    public static final ArrayList<WeaponArmor> weaponArmors = new ArrayList<>();
+
     public static Map<Item, Gun> itemGunMap;
     public static Map<Item, BulletItem> itemBulletItemMap;
     public static Map<Item, GrenadeItem> itemGrenadeItemMap;
@@ -73,8 +76,6 @@ public class PlasticGun implements ModInitializer {
             id("grenade"),
             EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build()
     );
-
-    public static final ArrayList<WeaponArmor> weaponArmors = new ArrayList<>();
 
     public static final EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
@@ -182,6 +183,129 @@ public class PlasticGun implements ModInitializer {
         craftingItems.add(new CraftingItem("silicon_wafer"));
         craftingItems.add(new CraftingItem("titanium_alloy"));
         craftingItems.add(new CraftingItem("trigger_mechanism"));
+
+
+        for (Item craftingItem : craftingItems) {
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, craftingItem, 2);
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, craftingItem, 6);
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, craftingItem, 6);
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, craftingItem, 5);
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, craftingItem, 2);
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_ARMORER_GIFT_GAMEPLAY, craftingItem, 1);
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, craftingItem, 2);
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, craftingItem, 10);
+            addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, craftingItem, 4);
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, craftingItem, 4);
+        }
+
+        int i = 0;
+        for (Item shuriken : shurikens) {
+            float weightCoeff = (float) i / shurikens.size();
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, shuriken, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, shuriken, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, shuriken, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, shuriken, getAfterWeight(weightCoeff, 5));
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, shuriken, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, shuriken, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, shuriken, getAfterWeight(weightCoeff, 10));
+            addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
+            i++;
+        }
+
+        for (Item weaponArmor : weaponArmors) {
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, weaponArmor, 4);
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, weaponArmor, 12);
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, weaponArmor, 12);
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, weaponArmor, 10);
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, weaponArmor, 8);
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, weaponArmor, 2);
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, weaponArmor, 4);
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, weaponArmor, 4);
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, weaponArmor, 2);
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_ARMORER_GIFT_GAMEPLAY, weaponArmor, 10);
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, weaponArmor, 2);
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, weaponArmor, 10);
+            addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, weaponArmor, 20);
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, weaponArmor, 4);
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, weaponArmor, 4);
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, weaponArmor, 4);
+        }
+
+        i = 0;
+        for (Item gun : guns) {
+            float weightCoeff = (float) i / guns.size();
+            weightCoeff *= 5;
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, gun, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, gun, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, gun, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, gun, getAfterWeight(weightCoeff, 5));
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, gun, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, gun, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, gun, getAfterWeight(weightCoeff, 10));
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, gun, getAfterWeight(weightCoeff, 4));
+            i++;
+        }
+
+        i = 0;
+        for (Item grenade : grenades) {
+            float weightCoeff = (float) i / grenades.size();
+            weightCoeff *= 6;
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, grenade, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, grenade, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, grenade, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, grenade, getAfterWeight(weightCoeff, 5));
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, grenade, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, grenade, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, grenade, getAfterWeight(weightCoeff, 10));
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, grenade, getAfterWeight(weightCoeff, 4));
+            i++;
+        }
+
+        i = 0;
+        for (Item bullet : bullets) {
+            float weightCoeff = (float) i / bullets.size();
+            weightCoeff *= 8;
+            addItemToLootTable(LootTables.ABANDONED_MINESHAFT_CHEST, bullet, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.ANCIENT_CITY_CHEST, bullet, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.ANCIENT_CITY_ICE_BOX_CHEST, bullet, getAfterWeight(weightCoeff, 6));
+            addItemToLootTable(LootTables.END_CITY_TREASURE_CHEST, bullet, getAfterWeight(weightCoeff, 5));
+            addItemToLootTable(LootTables.BASTION_BRIDGE_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_HOGLIN_STABLE_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_OTHER_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BASTION_TREASURE_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.BURIED_TREASURE_CHEST, bullet, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.HERO_OF_THE_VILLAGE_WEAPONSMITH_GIFT_GAMEPLAY, bullet, getAfterWeight(weightCoeff, 2));
+            addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, bullet, getAfterWeight(weightCoeff, 10));
+            addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, bullet, getAfterWeight(weightCoeff, 4));
+            i++;
+        }
 
         itemGunMap = generateItemMap(guns);
         itemBulletItemMap = generateItemMap(bullets);

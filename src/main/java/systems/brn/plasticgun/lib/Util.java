@@ -5,6 +5,7 @@ import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketInventory;
 import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -17,8 +18,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -299,5 +303,15 @@ public class Util {
                 );
             }
         }
+    }
+    public static void addItemToLootTable(RegistryKey<LootTable> tableId, Item item, Integer weight) {
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
+            if (source.isBuiltin() && tableId.equals(key)) {
+                tableBuilder.modifyPools(poolBuilder -> poolBuilder.with(ItemEntry.builder(item).weight(weight)));
+            }
+        });
+    }
+    public static int getAfterWeight(float coeff, int weight) {
+       return (int) Math.ceil(coeff * weight);
     }
 }
