@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.effect.StatusEffect;
@@ -22,7 +21,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import systems.brn.plasticgun.bullets.BulletEntity;
@@ -44,7 +42,6 @@ import systems.brn.plasticgun.testing.DamageTester;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static net.fabricmc.loader.impl.FabricLoaderImpl.MOD_ID;
 import static systems.brn.plasticgun.lib.Util.*;
 
 public class PlasticGun implements ModInitializer {
@@ -324,8 +321,8 @@ public class PlasticGun implements ModInitializer {
         PolymerEntityUtils.registerType(SHURIKEN_ENTITY_TYPE);
 
 
-        FabricDefaultAttributeRegistry.register(DAMAGE_TESTER_ENTITY_TYPE, DamageTester.createDamageTesterAttributes());
         PolymerEntityUtils.registerType(DAMAGE_TESTER_ENTITY_TYPE);
+        FabricDefaultAttributeRegistry.register(DAMAGE_TESTER_ENTITY_TYPE, DamageTester.createDamageTesterAttributes());
 
 
         // Detect item use

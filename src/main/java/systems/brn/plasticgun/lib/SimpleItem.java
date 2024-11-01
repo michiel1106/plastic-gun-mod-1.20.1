@@ -4,10 +4,7 @@ import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.item.SimplePolymerItem;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.item.*;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-import systems.brn.plasticgun.PlasticGun;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 public abstract class SimpleItem extends SimplePolymerItem implements PolymerItem {
