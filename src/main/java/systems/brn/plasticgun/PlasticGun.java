@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.effect.StatusEffect;
@@ -17,8 +18,11 @@ import net.minecraft.item.Item;
 import net.minecraft.loot.LootTables;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import systems.brn.plasticgun.bullets.BulletEntity;
@@ -33,8 +37,6 @@ import systems.brn.plasticgun.lib.CraftingItem;
 import systems.brn.plasticgun.lib.EventHandler;
 import systems.brn.plasticgun.lib.ItemGroups;
 import systems.brn.plasticgun.packets.ModDetect;
-import systems.brn.plasticgun.packets.Reload;
-import systems.brn.plasticgun.packets.Shoot;
 import systems.brn.plasticgun.shurikens.ShurikenEntity;
 import systems.brn.plasticgun.shurikens.ShurikenItem;
 import systems.brn.plasticgun.testing.DamageTester;
@@ -42,6 +44,7 @@ import systems.brn.plasticgun.testing.DamageTester;
 import java.util.ArrayList;
 import java.util.Map;
 
+import static net.fabricmc.loader.impl.FabricLoaderImpl.MOD_ID;
 import static systems.brn.plasticgun.lib.Util.*;
 
 public class PlasticGun implements ModInitializer {
@@ -68,25 +71,25 @@ public class PlasticGun implements ModInitializer {
     public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("bullet"),
-            EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build()
+            EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("bullet")))
     );
 
     public static final EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("grenade"),
-            EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build()
+            EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("grenade")))
     );
 
     public static final EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("shuriken"),
-            EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build()
+            EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("shuriken")))
     );
 
     public static final EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("damagetester"),
-            EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build()
+            EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("damagetester")))
     );
 
     public static final Logger logger = LoggerFactory.getLogger(MOD_ID);
@@ -339,13 +342,9 @@ public class PlasticGun implements ModInitializer {
         ItemGroups.register();
 
         PayloadTypeRegistry.playC2S().register(ModDetect.PACKET_ID, ModDetect.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(Reload.PACKET_ID, Reload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(Shoot.PACKET_ID, Shoot.PACKET_CODEC);
 
         // Register the global receiver
         ServerPlayNetworking.registerGlobalReceiver(ModDetect.PACKET_ID, EventHandler::onClientConfirm);
-        ServerPlayNetworking.registerGlobalReceiver(Reload.PACKET_ID, EventHandler::onClientReload);
-        ServerPlayNetworking.registerGlobalReceiver(Shoot.PACKET_ID, EventHandler::onClientShoot);
 
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         PolymerResourcePackUtils.markAsRequired();

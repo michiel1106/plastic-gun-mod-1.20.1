@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 public class PlasticGunClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientTickEvents.END_CLIENT_TICK.register(ClientEvents::tick);
         ClientPlayConnectionEvents.JOIN.register(ClientEvents::join);
         HudRenderCallback.EVENT.register(ClientEvents::HUDDraw);
     }

@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -46,6 +47,11 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
 
 
     @Override
+    public EntityType<?> getPolymerEntityType(PacketContext context) {
+        return EntityType.ITEM_DISPLAY;
+    }
+
+    @Override
     public void modifyRawTrackedData(List<DataTracker.SerializedEntry<?>> data, ServerPlayerEntity player, boolean initial) {
         setProjectileData(data, initial, scale, this.itemStack);
     }
@@ -71,11 +77,6 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     @Override
     protected ItemStack getDefaultItemStack() {
         return this.itemStack();
-    }
-
-    @Override
-    public EntityType<?> getPolymerEntityType(ServerPlayerEntity player) {
-        return EntityType.ITEM_DISPLAY;
     }
 
 }

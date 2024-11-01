@@ -15,29 +15,25 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.packets.ModDetect;
-import systems.brn.plasticgun.packets.Reload;
-import systems.brn.plasticgun.packets.Shoot;
-
 import java.util.function.Predicate;
 
 import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.GunComponents.*;
 
 public class EventHandler {
-    public static TypedActionResult<ItemStack> onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
-        ItemStack stack = playerEntity.getStackInHand(hand);
+    public static ActionResult onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
         if (playerEntity instanceof ServerPlayerEntity serverPlayerEntity) {
             if (!world.isClient && !clientsWithMod.contains(serverPlayerEntity)) {
                 rightClickWithItem(serverPlayerEntity, hand);
             }
         }
-        return TypedActionResult.pass(stack);
+        return ActionResult.PASS;
     }
 
     public static void rightClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
@@ -160,17 +156,5 @@ public class EventHandler {
             clientsWithMod.add(player);
         }
 
-    }
-
-    public static void onClientReload(Reload reload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
-        Hand hand = player.getActiveHand();
-        rightClickWithItem(player, hand);
-    }
-
-    public static void onClientShoot(Shoot shoot, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
-        Hand hand = player.getActiveHand();
-        leftClickWithItem(player, hand);
     }
 }

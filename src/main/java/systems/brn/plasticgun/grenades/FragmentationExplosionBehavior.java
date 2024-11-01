@@ -63,8 +63,8 @@ public class FragmentationExplosionBehavior extends ExplosionBehavior {
     }
 
     @Override
-    public float calculateDamage(Explosion explosion, Entity entity) {
-        float original = super.calculateDamage(explosion, entity);
+    public float calculateDamage(Explosion explosion, Entity entity, float amount) {
+        float original = super.calculateDamage(explosion, entity, amount);
         if (entity instanceof LivingEntity livingEntity) {
             original = (float) getFinalDamage(livingEntity, WeaponDamageType.FRAGMENTATION_GRENADE, original);
             if (original > 0) {

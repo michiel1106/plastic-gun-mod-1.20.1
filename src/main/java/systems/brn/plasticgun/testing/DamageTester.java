@@ -11,10 +11,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.world.World;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.Collections;
 
@@ -25,10 +27,10 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
+    public boolean damage(ServerWorld world, DamageSource source, float amount) {
         Entity attacker = source.getAttacker();
         if (attacker instanceof PlayerEntity player) {
-            player.sendMessage(Text.literal("You damaged by " + amount));
+            player.sendMessage(Text.literal("You damaged by " + amount), false);
             if (player.isSneaking()) {
                 this.remove(RemovalReason.KILLED);
             }
@@ -39,13 +41,8 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
 
     public static DefaultAttributeContainer.Builder createDamageTesterAttributes() {
         return LivingEntity.createLivingAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 1.0)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.0);
-    }
-
-    @Override
-    public EntityType<?> getPolymerEntityType(ServerPlayerEntity player) {
-        return EntityType.ZOMBIE;
+                .add(EntityAttributes.MAX_HEALTH, 1.0)
+                .add(EntityAttributes.ATTACK_DAMAGE, 0.0);
     }
 
     @Override
@@ -66,5 +63,10 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     @Override
     public Arm getMainArm() {
         return Arm.RIGHT;
+    }
+
+    @Override
+    public EntityType<?> getPolymerEntityType(PacketContext context) {
+        return EntityType.ZOMBIE;
     }
 }

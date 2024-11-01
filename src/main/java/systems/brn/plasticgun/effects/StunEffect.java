@@ -7,7 +7,9 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import systems.brn.plasticgun.PlasticGun;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import static systems.brn.plasticgun.PlasticGun.stunEffect;
 
@@ -34,16 +36,16 @@ public class StunEffect extends StatusEffect implements PolymerStatusEffect {
 
     // Called when the effect is applied.
     @Override
-    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         applied = true;
         entity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, stunDuration, 255, true, false));
         entity.addStatusEffect(new StatusEffectInstance(StatusEffects.JUMP_BOOST, stunDuration, 255, true, false));
-        return super.applyUpdateEffect(entity, amplifier);
+        return super.applyUpdateEffect(world, entity, amplifier);
     }
 
     @Override
-    public StatusEffect getPolymerReplacement(ServerPlayerEntity player) {
-        if (PlasticGun.clientsWithMod.contains(player)){
+    public StatusEffect getPolymerReplacement(PacketContext packetContext) {
+        if (PlasticGun.clientsWithMod.contains(packetContext.getPlayer())){
             return stunEffect.value();
         }
         return null;

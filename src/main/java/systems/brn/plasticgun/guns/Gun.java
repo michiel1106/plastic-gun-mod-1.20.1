@@ -254,7 +254,7 @@ public class Gun extends SimpleItem implements PolymerItem {
             yaw -= (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
 
 
-            entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch);
+            entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch, true);
             double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
             if (velocityRecoil > 0) {
                 entity.setVelocity(currentLook.multiply(velocityRecoil));

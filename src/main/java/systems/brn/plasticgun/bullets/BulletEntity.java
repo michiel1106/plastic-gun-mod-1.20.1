@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeExplosionBehavior;
 import systems.brn.plasticgun.guns.Gun;
 import systems.brn.plasticgun.lib.WeaponDamageType;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -87,7 +88,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
     }
 
     @Override
-    public EntityType<?> getPolymerEntityType(ServerPlayerEntity player) {
+    public EntityType<?> getPolymerEntityType(PacketContext packetContext) {
         return EntityType.ITEM_DISPLAY;
     }
 
