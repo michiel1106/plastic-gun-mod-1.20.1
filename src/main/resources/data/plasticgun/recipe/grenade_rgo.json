@@ -6,10 +6,10 @@
     " T "
   ],
   "key": {
-    "P": { "item": "plasticgun:plasma_core" },
-    "C": { "item": "plasticgun:composite_resin" },
-    "E": { "item": "plasticgun:explosive_powder" },
-    "T": { "item": "plasticgun:titanium_alloy" }
+    "P": "plasticgun:plasma_core",
+    "C": "plasticgun:composite_resin",
+    "E": "plasticgun:explosive_powder",
+    "T": "plasticgun:titanium_alloy"
   },
   "result": {
     "id": "plasticgun:grenade_rgo",

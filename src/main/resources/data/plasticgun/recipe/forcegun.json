@@ -6,10 +6,10 @@
     " H "
   ],
   "key": {
-    "C": { "item": "plasticgun:composite_resin" },
-    "P": { "item": "plasticgun:plasma_core" },
-    "G": { "item": "plasticgun:graphene_sheet" },
-    "H": { "item": "plasticgun:hardened_steel" }
+    "C": "plasticgun:composite_resin",
+    "P": "plasticgun:plasma_core",
+    "G": "plasticgun:graphene_sheet",
+    "H": "plasticgun:hardened_steel"
   },
   "result": {
     "id": "plasticgun:forcegun",

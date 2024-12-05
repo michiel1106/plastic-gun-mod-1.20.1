@@ -6,10 +6,10 @@
     " T "
   ],
   "key": {
-    "P": { "item": "plasticgun:plasma_core" },
-    "G": { "item": "plasticgun:graphene_sheet" },
-    "H": { "item": "plasticgun:hardened_steel" },
-    "T": { "item": "plasticgun:trigger_mechanism" }
+    "P": "plasticgun:plasma_core",
+    "G": "plasticgun:graphene_sheet",
+    "H": "plasticgun:hardened_steel",
+    "T": "plasticgun:trigger_mechanism"
   },
   "result": {
     "id": "plasticgun:rpg9",

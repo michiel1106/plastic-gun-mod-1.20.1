@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "plasticgun:enhanced_gunpowder" },
-    { "item": "plasticgun:ceramic_plate" },
-    { "item": "plasticgun:kevlar_sheet" }
+    "plasticgun:enhanced_gunpowder",
+    "plasticgun:ceramic_plate",
+    "plasticgun:kevlar_sheet"
   ],
   "result": {
     "id": "plasticgun:38_special_p",

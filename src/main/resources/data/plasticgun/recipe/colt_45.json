@@ -6,12 +6,12 @@
     " RC"
   ],
   "key": {
-    "C": { "item": "plasticgun:composite_frame" },
-    "H": { "item": "plasticgun:hardened_steel" },
-    "P": { "item": "plasticgun:precision_gear" },
-    "T": { "item": "plasticgun:trigger_mechanism" },
-    "I": { "item": "plasticgun:iron_shuriken" },
-    "R": { "item": "plasticgun:reinforced_fiber" }
+    "C": "plasticgun:composite_frame",
+    "H": "plasticgun:hardened_steel",
+    "P": "plasticgun:precision_gear",
+    "T": "plasticgun:trigger_mechanism",
+    "I": "plasticgun:iron_shuriken",
+    "R": "plasticgun:reinforced_fiber"
   },
   "result": {
     "id": "plasticgun:colt_45",

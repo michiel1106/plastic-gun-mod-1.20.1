@@ -5,6 +5,8 @@ import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import systems.brn.plasticgun.lib.SimpleItem;
 
@@ -28,8 +30,8 @@ public class BulletItem extends SimpleItem {
                                 Text.translatable("gun.description.explosion_coefficient", explosionPowerCoefficient),
                                 Text.translatable("gun.description.repulsion_efficient", repulsionPowerCoefficient),
                                 Text.translatable(isIncendiary ? "gun.description.incendiary_yes" :  "gun.description.incendiary_no")
-                        ))
-)
+                        )))
+                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
                 ,
                 id(path),
                 Items.STICK);

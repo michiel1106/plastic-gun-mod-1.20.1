@@ -1,33 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    {
-      "item": "minecraft:sand"
-    },
-    {
-      "item": "minecraft:quartz"
-    },
-    {
-      "item": "minecraft:sand"
-    },
-    {
-      "item": "minecraft:quartz"
-    },
-    {
-      "item": "minecraft:sand"
-    },
-    {
-      "item": "minecraft:quartz"
-    },
-    {
-      "item": "minecraft:sand"
-    },
-    {
-      "item": "minecraft:quartz"
-    },
-    {
-      "item": "minecraft:quartz"
-    }
+    "minecraft:sand",
+    "minecraft:quartz",
+    "minecraft:sand",
+    "minecraft:quartz",
+    "minecraft:sand",
+    "minecraft:quartz",
+    "minecraft:sand",
+    "minecraft:quartz",
+    "minecraft:quartz"
   ],
   "result": {
     "id": "plasticgun:silicon_mixture",

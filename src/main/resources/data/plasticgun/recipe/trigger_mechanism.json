@@ -6,11 +6,11 @@
     "IRI"
   ],
   "key": {
-    "I": { "item": "minecraft:iron_ingot" },
-    "G": { "item": "plasticgun:precision_gear" },
-    "C": { "item": "plasticgun:ceramic_plate" },
-    "S": { "item": "minecraft:string" },
-    "R": { "item": "plasticgun:reinforced_fiber" }
+    "I": "minecraft:iron_ingot",
+    "G": "plasticgun:precision_gear",
+    "C": "plasticgun:ceramic_plate",
+    "S": "minecraft:string",
+    "R": "plasticgun:reinforced_fiber"
   },
   "result": {
     "id": "plasticgun:trigger_mechanism",

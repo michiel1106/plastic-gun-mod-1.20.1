@@ -6,8 +6,8 @@
     " H "
   ],
   "key": {
-    "H": { "item": "plasticgun:hardened_steel" },
-    "T": { "item": "plasticgun:titanium_alloy" }
+    "H": "plasticgun:hardened_steel",
+    "T": "plasticgun:titanium_alloy"
   },
   "result": {
     "id": "plasticgun:alloy_wheel",

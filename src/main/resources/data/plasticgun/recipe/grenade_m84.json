@@ -6,10 +6,10 @@
     " P "
   ],
   "key": {
-    "E": { "item": "plasticgun:explosive_powder" },
-    "G": { "item": "plasticgun:graphene_sheet" },
-    "C": { "item": "plasticgun:composite_frame" },
-    "P": { "item": "plasticgun:plasma_core" }
+    "E": "plasticgun:explosive_powder",
+    "G": "plasticgun:graphene_sheet",
+    "C": "plasticgun:composite_frame",
+    "P": "plasticgun:plasma_core"
   },
   "result": {
     "id": "plasticgun:grenade_m84",

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.8-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -36,7 +36,6 @@ dependencies {
     modImplementation include("eu.pb4:polymer-blocks:${project.polymer_version}")
     modImplementation include("eu.pb4:polymer-resource-pack:${project.polymer_version}")
     modImplementation include("eu.pb4:polymer-autohost:${project.polymer_version}")
-    modImplementation "eu.pb4.polyport:trinkets:${project.trinkets_version}"
 
     modImplementation include("xyz.nucleoid:server-translations-api:${project.server_translations_api_version}")
 
@@ -48,14 +47,12 @@ processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
-    inputs.property "trinkets_version", project.trinkets_version
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
                 "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version,
-                "trinkets_version": project.trinkets_version
+                "loader_version": project.loader_version
     }
 }
 

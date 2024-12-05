@@ -157,7 +157,7 @@ public class WeaponShootGoal<T extends HostileEntity & RangedAttackMob> extends 
                     ItemStack chamber = gunStack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
                     if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0 && lockedTicks >= 10) {
                         if (this.actor.getEntityWorld() instanceof ServerWorld serverWorld) {
-                            gun.shoot(serverWorld, this.actor, gunHand);
+                            this.targetSeeingTicker -= gun.shoot(serverWorld, this.actor, gunHand);
                         }
                     }
                 }

@@ -6,10 +6,10 @@
     " G "
   ],
   "key": {
-    "T": { "item": "plasticgun:titanium_alloy" },
-    "C": { "item": "plasticgun:composite_frame" },
-    "E": { "item": "plasticgun:explosive_powder" },
-    "G": { "item": "plasticgun:graphene_sheet" }
+    "T": "plasticgun:titanium_alloy",
+    "C": "plasticgun:composite_frame",
+    "E": "plasticgun:explosive_powder",
+    "G": "plasticgun:graphene_sheet"
   },
   "result": {
     "id": "plasticgun:grenade_thermite",

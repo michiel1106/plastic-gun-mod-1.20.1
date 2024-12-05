@@ -8,6 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -57,6 +59,7 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
                                 Text.translatable("gun.description.effect_radius", effectRadius),
                                 Text.translatable("gun.description.particle_count", smokeCount)
                         )))
+                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
                         .maxDamage(explosionTarget + 1)
                 , id(path), Items.STICK
         );

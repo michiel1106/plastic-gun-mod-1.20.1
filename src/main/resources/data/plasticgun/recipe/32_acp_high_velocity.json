@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "plasticgun:enhanced_gunpowder" },
-    { "item": "minecraft:copper_ingot" },
-    { "item": "plasticgun:kevlar_sheet" }
+    "plasticgun:enhanced_gunpowder",
+    "minecraft:copper_ingot",
+    "plasticgun:kevlar_sheet"
   ],
   "result": {
     "id": "plasticgun:32_acp_high_velocity",

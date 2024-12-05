@@ -1,8 +1,6 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": {
-    "item": "plasticgun:ceramic_mixture"
-  },
+  "ingredient": "plasticgun:ceramic_mixture",
   "result": {
     "id": "plasticgun:ceramic_plate"
   },

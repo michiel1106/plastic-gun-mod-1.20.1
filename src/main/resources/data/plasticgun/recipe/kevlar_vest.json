@@ -6,9 +6,7 @@
     "KKK"
   ],
   "key": {
-    "K": {
-      "item": "plasticgun:kevlar_sheet"
-    }
+    "K": "plasticgun:kevlar_sheet"
   },
   "result": {
     "id": "plasticgun:kevlar_vest"

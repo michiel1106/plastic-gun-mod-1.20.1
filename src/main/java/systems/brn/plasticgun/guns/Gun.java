@@ -10,6 +10,8 @@ import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -28,6 +30,8 @@ import systems.brn.plasticgun.lib.SimpleItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static systems.brn.plasticgun.PlasticGun.bullets;
 import static systems.brn.plasticgun.PlasticGun.itemBulletItemMap;
 import static systems.brn.plasticgun.lib.GunComponents.*;
@@ -73,6 +77,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                                 Text.translatable("gun.description.explosion_power", explosionPowerGun),
                                 Text.translatable("gun.description.repulsion_power", repulsionPowerGun)
                         )))
+                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
                         .maxDamage(clipSize + 1)
                 , id(path), Items.WOODEN_SWORD
         );
@@ -242,7 +247,7 @@ public class Gun extends SimpleItem implements PolymerItem {
         stack.set(DataComponentTypes.LORE, newLore);
     }
 
-    public void doRecoil(LivingEntity entity) {
+    public int doRecoil(LivingEntity entity) {
         if (entity.getEntityWorld() instanceof ServerWorld serverWorld) {
             Random rng = entity.getWorld().getRandom();
             // Get the entity's current position and yaw
@@ -250,19 +255,22 @@ public class Gun extends SimpleItem implements PolymerItem {
             float yaw = entity.getYaw();
             float newPitch = entity.getPitch();
             Vec3d currentLook = entity.getRotationVector().multiply(-1);
-            newPitch -= verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
-            yaw -= (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
-
-
+            float yawChange = verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
+            float pitchChange = (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
+            newPitch -= yawChange;
+            yaw -= pitchChange;
             entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch, true);
             double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
             if (velocityRecoil > 0) {
                 entity.setVelocity(currentLook.multiply(velocityRecoil));
             }
+            return (int) ((abs(yawChange) + abs(pitchChange) + abs(velocityRecoil) + max(abs(yawChange), max(abs(pitchChange), abs(velocityRecoil)))) / 4f) * 40;
         }
+        return 0;
     }
 
-    public void shoot(ServerWorld world, LivingEntity user, Hand hand) {
+    public int shoot(ServerWorld world, LivingEntity user, Hand hand) {
+        int stunLen = 0;
         if (!world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
             int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
@@ -280,7 +288,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
                 stack.set(GUN_COOLDOWN_COMPONENT, cooldownTarget);
-                doRecoil(user);
+                stunLen = doRecoil(user);
                 if (chamber.isEmpty()) {
                     stack.remove(GUN_AMMO_COMPONENT);
                 } else {
@@ -291,6 +299,7 @@ public class Gun extends SimpleItem implements PolymerItem {
             }
             updateDamage(stack);
         }
+        return stunLen;
     }
 
     private @NotNull BulletEntity getBulletEntity(LivingEntity entity, Hand hand, BulletItem bullet, ItemStack chamber) {

@@ -6,9 +6,9 @@
     " S "
   ],
   "key": {
-    "S": { "item": "plasticgun:silicon_wafer" },
-    "R": { "item": "minecraft:redstone" },
-    "I": { "item": "plasticgun:advanced_circuit" }
+    "S": "plasticgun:silicon_wafer",
+    "R": "minecraft:redstone",
+    "I": "plasticgun:advanced_circuit"
   },
   "result": {
     "id": "plasticgun:microchip",

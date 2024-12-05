@@ -6,10 +6,10 @@
     " T "
   ],
   "key": {
-    "G": { "item": "plasticgun:graphene_sheet" },
-    "C": { "item": "plasticgun:composite_frame" },
-    "E": { "item": "plasticgun:explosive_powder" },
-    "T": { "item": "plasticgun:titanium_alloy" }
+    "G": "plasticgun:graphene_sheet",
+    "C": "plasticgun:composite_frame",
+    "E": "plasticgun:explosive_powder",
+    "T": "plasticgun:titanium_alloy"
   },
   "result": {
     "id": "plasticgun:grenade_mk3a2",

@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:gunpowder" },
-    { "item": "minecraft:iron_nugget" }
+    "minecraft:gunpowder",
+    "minecraft:iron_nugget"
   ],
   "result": {
     "id": "plasticgun:45_acp",

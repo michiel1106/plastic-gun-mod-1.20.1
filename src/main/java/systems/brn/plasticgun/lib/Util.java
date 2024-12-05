@@ -1,14 +1,11 @@
 package systems.brn.plasticgun.lib;
 
-import dev.emi.trinkets.api.SlotReference;
-import dev.emi.trinkets.api.TrinketComponent;
-import dev.emi.trinkets.api.TrinketInventory;
-import dev.emi.trinkets.api.TrinketsApi;
 import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.decoration.DisplayEntity;
@@ -27,7 +24,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -165,36 +161,26 @@ public class Util {
     }
 
     public static double getFinalDamage(LivingEntity livingEntity, WeaponDamageType damageType, double damage) {
-        Optional<TrinketComponent> trinketComponentTemp = TrinketsApi.getTrinketComponent(livingEntity);
-        if (trinketComponentTemp.isPresent()) {
-            TrinketComponent trinketComponent = trinketComponentTemp.get();
-            for (WeaponArmor weaponArmor : weaponArmors) {
-                if (weaponArmor.resistances.containsKey(damageType)) {
+        for (WeaponArmor weaponArmor : weaponArmors) {
+            if (weaponArmor.resistances.containsKey(damageType)) {
 
-                    List<Pair<SlotReference, ItemStack>> vestsComponents = trinketComponent.getEquipped(weaponArmor);
-                    if (!vestsComponents.isEmpty()) {
-                        Pair<SlotReference, ItemStack> vestComponent = vestsComponents.getFirst();
-                        TrinketInventory trinketInventory = vestComponent.getLeft().inventory();
-                        int currentDamage = vestComponent.getRight().getDamage();
-                        int maxDamage = vestComponent.getRight().getMaxDamage();
-                        double reducedDamage = 0;
-                        if (currentDamage < maxDamage) {
-                            double coefficient = weaponArmor.resistances.get(damageType);
-                            reducedDamage = (1 - coefficient) * damage;
-                            damage *= coefficient;
-                        }
-
-                        int nextDamage = currentDamage + (int) reducedDamage;
-                        int inventoryIndex = vestComponent.getLeft().index();
-                        ItemStack vestStack = trinketInventory.getStack(inventoryIndex);
-                        if (nextDamage >= maxDamage) {
-                            vestStack.setCount(0);
-                        } else {
-                            vestStack.setDamage(nextDamage);
-                        }
-                        trinketInventory.setStack(inventoryIndex, vestStack);
-                    }
+                ItemStack chestStack = livingEntity.getEquippedStack(EquipmentSlot.CHEST);
+                int currentDamage = chestStack.getDamage();
+                int maxDamage = chestStack.getMaxDamage();
+                double reducedDamage = 0;
+                if (currentDamage < maxDamage) {
+                    double coefficient = weaponArmor.resistances.get(damageType);
+                    reducedDamage = (1 - coefficient) * damage;
+                    damage *= coefficient;
                 }
+
+                int nextDamage = currentDamage + (int) reducedDamage;
+                if (nextDamage >= maxDamage) {
+                    chestStack.setCount(0);
+                } else {
+                    chestStack.setDamage(nextDamage);
+                }
+                livingEntity.equipStack(EquipmentSlot.CHEST, chestStack);
             }
         }
         return damage;
@@ -304,6 +290,7 @@ public class Util {
             }
         }
     }
+
     public static void addItemToLootTable(RegistryKey<LootTable> tableId, Item item, Integer weight) {
         LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
             if (source.isBuiltin() && tableId.equals(key)) {
@@ -311,7 +298,8 @@ public class Util {
             }
         });
     }
+
     public static int getAfterWeight(float coeff, int weight) {
-       return (int) Math.ceil(coeff * weight);
+        return (int) Math.ceil(coeff * weight);
     }
 }

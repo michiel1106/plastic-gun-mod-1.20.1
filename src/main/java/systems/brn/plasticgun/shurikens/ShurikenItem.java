@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -35,6 +37,7 @@ public class ShurikenItem extends SimpleItem implements PolymerItem {
                                 Text.translatable("gun.description.speed", speed),
                                 Text.translatable("gun.description.damage_with_coefficient_max_speed", speed, speed * damage)
                         )))
+                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
                 , id(path), Items.WOODEN_PICKAXE
         );
         Registry.register(Registries.ITEM, id(path), this);

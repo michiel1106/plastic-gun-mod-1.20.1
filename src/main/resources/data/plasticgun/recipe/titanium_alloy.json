@@ -6,8 +6,8 @@
     "NNN"
   ],
   "key": {
-    "N": { "item": "plasticgun:nano_tubes" },
-    "I": { "item": "minecraft:iron_ingot" }
+    "N": "plasticgun:nano_tubes",
+    "I": "minecraft:iron_ingot"
   },
   "result": {
     "id": "plasticgun:titanium_alloy",

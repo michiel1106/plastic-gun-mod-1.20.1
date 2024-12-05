@@ -6,10 +6,10 @@
     " R "
   ],
   "key": {
-    "P": { "item": "plasticgun:plasma_core" },
-    "C": { "item": "plasticgun:composite_frame" },
-    "E": { "item": "plasticgun:explosive_powder" },
-    "R": { "item": "plasticgun:reinforced_fiber" }
+    "P": "plasticgun:plasma_core",
+    "C": "plasticgun:composite_frame",
+    "E": "plasticgun:explosive_powder",
+    "R": "plasticgun:reinforced_fiber"
   },
   "result": {
     "id": "plasticgun:grenade_m18",

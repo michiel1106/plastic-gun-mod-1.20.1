@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    { "item": "minecraft:coal_block" },
-    { "item": "minecraft:shears" }
+    "minecraft:coal_block",
+    "minecraft:shears"
   ],
   "result": {
     "id": "plasticgun:graphene_sheet",

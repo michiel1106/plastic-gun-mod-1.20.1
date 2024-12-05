@@ -2,7 +2,6 @@ package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.item.SimplePolymerItem;
-import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import xyz.nucleoid.packettweaker.PacketContext;
@@ -14,7 +13,7 @@ public abstract class SimpleItem extends SimplePolymerItem implements PolymerIte
     public SimpleItem(Settings settings, Identifier identifier, Item replacement) {
         super(settings, replacement);
         this.identifier = identifier;
-        this.polymerModel = PolymerResourcePackUtils.getBridgedModelId(identifier.withPath("item/" + identifier.getPath()));
+        this.polymerModel = identifier.withPath("item/" + identifier.getPath());
     }
 
     @Override

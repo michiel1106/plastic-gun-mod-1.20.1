@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
 import systems.brn.plasticgun.packets.ModDetect;
+
 import java.util.function.Predicate;
 
 import static systems.brn.plasticgun.PlasticGun.*;
@@ -29,7 +30,7 @@ import static systems.brn.plasticgun.lib.GunComponents.*;
 public class EventHandler {
     public static ActionResult onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
         if (playerEntity instanceof ServerPlayerEntity serverPlayerEntity) {
-            if (!world.isClient && !clientsWithMod.contains(serverPlayerEntity)) {
+            if (!world.isClient) {
                 rightClickWithItem(serverPlayerEntity, hand);
             }
         }
@@ -108,10 +109,8 @@ public class EventHandler {
         if (!world.isClient) {
             for (ServerPlayerEntity player : world.getPlayers()) {
                 Hand hand = player.getActiveHand();
-                if (!clientsWithMod.contains(player)) {
-                    if (player.handSwinging && player.handSwingTicks == -1) {
-                        leftClickWithItem(player, hand);
-                    }
+                if (player.handSwinging && player.handSwingTicks == -1) {
+                    leftClickWithItem(player, hand);
                 }
                 tickItemUpdate(player);
             }

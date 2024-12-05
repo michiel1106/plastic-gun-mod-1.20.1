@@ -6,7 +6,7 @@
     " S "
   ],
   "key": {
-    "S": { "item": "minecraft:cobblestone" }
+    "S": "minecraft:cobblestone"
   },
   "result": {
     "id": "plasticgun:stone_shuriken"

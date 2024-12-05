@@ -6,9 +6,9 @@
     " C "
   ],
   "key": {
-    "C": { "item": "plasticgun:composite_resin" },
-    "G": { "item": "plasticgun:graphene_sheet" },
-    "P": { "item": "plasticgun:plasma_core" }
+    "C": "plasticgun:composite_resin",
+    "G": "plasticgun:graphene_sheet",
+    "P": "plasticgun:plasma_core"
   },
   "result": {
     "id": "plasticgun:force_container",
