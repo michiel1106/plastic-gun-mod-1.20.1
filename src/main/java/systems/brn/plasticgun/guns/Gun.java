@@ -30,10 +30,8 @@ import systems.brn.plasticgun.lib.SimpleItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static systems.brn.plasticgun.PlasticGun.bullets;
-import static systems.brn.plasticgun.PlasticGun.itemBulletItemMap;
+import static java.lang.Math.*;
+import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.GunComponents.*;
 import static systems.brn.plasticgun.lib.Util.*;
 
@@ -81,12 +79,21 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .maxDamage(clipSize + 1)
                 , id(path), Items.WOODEN_SWORD
         );
-        this.verticalRecoilMin = verticalRecoilMin;
-        this.verticalRecoilMax = verticalRecoilMax;
+        this.verticalRecoilMin = verticalRecoilMin / 10f;
+        this.verticalRecoilMax = verticalRecoilMax / 10f;
         this.velocityRecoilMin = velocityRecoilMin;
         this.velocityRecoilMax = velocityRecoilMax;
-        this.horizontalRecoilMin = horizontalRecoilMin;
-        this.horizontalRecoilMax = horizontalRecoilMax;
+        this.horizontalRecoilMin = horizontalRecoilMin / 10f;
+        this.horizontalRecoilMax = horizontalRecoilMax / 10f;
+        if (verticalRecoilMin > verticalRecoilMax) {
+            logger.error("verticalRecoilMin > verticalRecoilMax for {}", path);
+        }
+        if (horizontalRecoilMin > horizontalRecoilMax) {
+            logger.error("horizontalRecoilMin > horizontalRecoilMax for {}", path);
+        }
+        if (velocityRecoilMin > velocityRecoilMax) {
+            logger.error("velocityRecoilMin > velocityRecoilMax for {}", path);
+        }
         Registry.register(Registries.ITEM, id(path), this);
         this.damage = damage;
         this.reloadCount = reloadCount;
