@@ -45,11 +45,6 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     }
 
     @Override
-    public Iterable<ItemStack> getArmorItems() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public ItemStack getEquippedStack(EquipmentSlot slot) {
         return Items.WITHER_SKELETON_SKULL.getDefaultStack();
     }

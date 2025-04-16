@@ -78,8 +78,8 @@ public class EventHandler {
             }
 
             PlayerInventory playerInventory = serverPlayerEntity.getInventory();
-            for (int i = 1; i < playerInventory.main.size(); i++) {
-                ItemStack stackInSlot = playerInventory.main.get(i);
+            for (int i = 1; i < playerInventory.getMainStacks().size(); i++) {
+                ItemStack stackInSlot = playerInventory.getMainStacks().get(i);
                 Item itemInSlot = stackInSlot.getItem();
                 if (itemGrenadeItemMap.containsKey(itemInSlot)) {
                     decrementComponent(GRENADE_TIMER_COMPONENT, stackInSlot);
@@ -95,12 +95,11 @@ public class EventHandler {
     public static void mobTickUpdate(ServerWorld world) {
         Predicate<Entity> allEntities = entity -> true;
         for (SkeletonEntity skeletonEntity : world.getEntitiesByType(EntityType.SKELETON, allEntities)) {
-            for (ItemStack itemStack : skeletonEntity.getEquippedItems()) {
+            ItemStack itemStack = skeletonEntity.getActiveItem();
                 if (itemGunMap.containsKey(itemStack.getItem())) {
                     decrementComponent(GUN_COOLDOWN_COMPONENT, itemStack);
                     decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, itemStack);
                 }
-            }
         }
     }
 

@@ -2,4 +2,5 @@ accessWidener v2 named
 accessible field net/minecraft/entity/mob/MobEntity goalSelector Lnet/minecraft/entity/ai/goal/GoalSelector;
 accessible field net/minecraft/entity/mob/AbstractSkeletonEntity bowAttackGoal Lnet/minecraft/entity/ai/goal/BowAttackGoal;
 accessible field net/minecraft/entity/mob/AbstractSkeletonEntity meleeAttackGoal Lnet/minecraft/entity/ai/goal/MeleeAttackGoal;
+accessible field net/minecraft/entity/projectile/PersistentProjectileEntity damage D
 accessible method net/minecraft/entity/mob/MobEntity initEquipment (Lnet/minecraft/util/math/random/Random;Lnet/minecraft/world/LocalDifficulty;)V

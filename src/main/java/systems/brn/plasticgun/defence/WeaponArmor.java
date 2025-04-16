@@ -1,5 +1,7 @@
 package systems.brn.plasticgun.defence;
 
+import dev.emi.trinkets.api.Trinket;
+import dev.emi.trinkets.api.TrinketsApi;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.Item;
@@ -16,7 +18,7 @@ import java.util.List;
 
 import static systems.brn.plasticgun.lib.Util.id;
 
-public class WeaponArmor extends TrinketPolymerItem {
+public class WeaponArmor extends TrinketPolymerItem implements Trinket {
     public final HashMap<WeaponDamageType, Double> resistances = new HashMap<>();
 
     public WeaponArmor(String name, int durability, double grenadeDamageCoefficient, double fragmentationDamageCoefficient, double bulletDamageCoefficient, double shurikenDamageCoefficient) {
@@ -30,6 +32,7 @@ public class WeaponArmor extends TrinketPolymerItem {
                 , name)
         ;
         Registry.register(Registries.ITEM, id(name), this);
+        TrinketsApi.registerTrinket(this, this);
         resistances.put(WeaponDamageType.BULLET, bulletDamageCoefficient);
         resistances.put(WeaponDamageType.FRAGMENTATION_GRENADE, fragmentationDamageCoefficient);
         resistances.put(WeaponDamageType.GRENADE, grenadeDamageCoefficient);

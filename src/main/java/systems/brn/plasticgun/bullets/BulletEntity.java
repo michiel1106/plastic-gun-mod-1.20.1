@@ -97,7 +97,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.setPosition(blockHitResult.getPos());
         if (blockHitResult.getType() == HitResult.Type.BLOCK) {
             BlockState block = this.getWorld().getBlockState(blockHitResult.getBlockPos());
-            blockHitParticles(this.getPos(), block, this.getWorld(), this.getDamage() * this.getVelocity().length());
+            blockHitParticles(this.getPos(), block, this.getWorld(), this.damage * this.getVelocity().length());
             SoundEvent soundEvent = block.getSoundGroup().getHitSound();
             setSilent(false);
             playSound(soundEvent, 4.0F, 1.0F);
@@ -118,8 +118,8 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         setSilent(true);
 
         if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.BULLET, this.getDamage()));
-            entityHitParticles(livingEntity, this.getDamage() * this.getVelocity().length());
+            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.BULLET, this.damage));
+            entityHitParticles(livingEntity, this.damage * this.getVelocity().length());
         }
 
         super.onEntityHit(entityHitResult);

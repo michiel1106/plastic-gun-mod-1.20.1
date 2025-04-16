@@ -10,6 +10,7 @@ import systems.brn.plasticgun.PlasticGun;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 import static systems.brn.plasticgun.PlasticGun.flashbangEffect;
+import static systems.brn.plasticgun.PlasticGun.stunEffect;
 
 public class FlashbangEffect extends StatusEffect implements PolymerStatusEffect {
     public FlashbangEffect() {
@@ -30,11 +31,10 @@ public class FlashbangEffect extends StatusEffect implements PolymerStatusEffect
     public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
         return super.applyUpdateEffect(world, entity, amplifier);
     }
-
     @Override
-    public StatusEffect getPolymerReplacement(PacketContext packetContext){
+    public StatusEffect getPolymerReplacement(StatusEffect potion, PacketContext packetContext) {
         if (PlasticGun.clientsWithMod.contains(packetContext.getPlayer())){
-            return flashbangEffect.value();
+            return stunEffect.value();
         }
         return StatusEffects.BLINDNESS.value();
     }

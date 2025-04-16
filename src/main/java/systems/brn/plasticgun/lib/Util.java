@@ -14,7 +14,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -52,7 +51,7 @@ public class Util {
         if (bulletItem == null || bulletItem.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        for (ItemStack itemStack : player.getInventory().main) {
+        for (ItemStack itemStack : player.getInventory().getMainStacks()) {
             for (Item item : bulletItem) {
                 if (item == itemStack.getItem()) {
                     return itemStack;
@@ -68,8 +67,8 @@ public class Util {
 
         if (inventory instanceof PlayerInventory playerInventory) {
             // Iterate through the slots in the player's inventory
-            for (int i = 0; i < playerInventory.main.size(); i++) {
-                ItemStack slotStack = playerInventory.main.get(i);
+            for (int i = 0; i < playerInventory.getMainStacks().size(); i++) {
+                ItemStack slotStack = playerInventory.getMainStacks().get(i);
                 maxInsert = canInsertToStack(slotStack, itemStack, maxInsert);
             }
         } else {
@@ -145,7 +144,6 @@ public class Util {
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.SCALE, new Vector3f(scale)));
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.BILLBOARD, (byte) DisplayEntity.BillboardMode.CENTER.ordinal()));
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.Item.ITEM, itemStack));
-            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.Item.ITEM_DISPLAY, ModelTransformationMode.FIXED.getIndex()));
         }
     }
 

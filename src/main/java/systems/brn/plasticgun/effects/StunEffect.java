@@ -43,7 +43,7 @@ public class StunEffect extends StatusEffect implements PolymerStatusEffect {
     }
 
     @Override
-    public StatusEffect getPolymerReplacement(PacketContext packetContext) {
+    public StatusEffect getPolymerReplacement(StatusEffect potion, PacketContext packetContext) {
         if (PlasticGun.clientsWithMod.contains(packetContext.getPlayer())){
             return stunEffect.value();
         }

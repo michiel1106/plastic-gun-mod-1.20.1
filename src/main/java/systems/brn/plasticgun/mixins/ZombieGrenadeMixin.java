@@ -52,7 +52,9 @@ public abstract class ZombieGrenadeMixin extends MobEntity {
             } else if (i < 14) {
                 int grenadeIndex = selectWeaponIndex(random, localDifficulty, grenades.size());
                 stackToEquip = new ItemStack(grenades.get(grenadeIndex));
-                Arrays.fill(this.handDropChances, 0F);
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
+                this.setEquipmentDropChance(slot, 0f);
+                }
             } else {
                 stackToEquip = new ItemStack(Items.IRON_SHOVEL);
             }

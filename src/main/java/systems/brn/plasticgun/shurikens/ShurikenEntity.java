@@ -33,7 +33,7 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
         if (blockHitResult.getType() == HitResult.Type.BLOCK) {
             BlockState block = this.getWorld().getBlockState(blockHitResult.getBlockPos());
 
-            blockHitParticles(this.getPos(), block, this.getWorld(), this.getDamage() * this.getVelocity().length());
+            blockHitParticles(this.getPos(), block, this.getWorld(), this.damage * this.getVelocity().length());
             SoundEvent soundEvent = block.getSoundGroup().getHitSound();
             setSilent(false);
             playSound(soundEvent, 4.0F, 1.0F);
@@ -54,8 +54,8 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (entityHitResult.getEntity() instanceof LivingEntity livingEntity) {
-            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.SHURIKEN, this.getDamage()));
-            entityHitParticles(livingEntity, this.getDamage());
+            this.setDamage(getFinalDamage(livingEntity, WeaponDamageType.SHURIKEN, this.damage));
+            entityHitParticles(livingEntity, this.damage);
         }
 
         super.onEntityHit(entityHitResult);

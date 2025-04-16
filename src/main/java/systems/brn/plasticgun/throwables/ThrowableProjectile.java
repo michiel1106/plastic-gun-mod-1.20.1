@@ -21,6 +21,10 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     public final EntityType<? extends PersistentProjectileEntity> entityType;
     private final float scale;
 
+    public double prevX;
+    public double prevY;
+    public double prevZ;
+
     public ThrowableProjectile(EntityType<? extends ThrowableProjectile> entityType, World world, Vec3d pos, ItemStack itemStack, float scale, double damage, PickupPermission pickupPermission, byte penetration) {
         super(entityType, pos.getX(), pos.getY() + 1.5d, pos.getZ(), world, itemStack, null);
         this.pickupType = pickupPermission;
