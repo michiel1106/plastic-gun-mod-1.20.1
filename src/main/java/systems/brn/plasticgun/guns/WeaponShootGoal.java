@@ -147,7 +147,7 @@ public class WeaponShootGoal<T extends HostileEntity & RangedAttackMob> extends 
             if (itemGunMap.containsKey(gunStack.getItem())) {
                 Gun gun = itemGunMap.get(gunStack.getItem());
                 // Handle item usage
-                gun.reload(this.actor.getEntityWorld(), this.actor, gunHand, this.actor.getRandom(), this.actor.getWorld().getLocalDifficulty(this.actor.getBlockPos()));
+                gun.reload(this.actor.getWorld(), this.actor, gunHand, this.actor.getRandom(), this.actor.getWorld().getLocalDifficulty(this.actor.getBlockPos()));
                 if (!canSeeTarget && this.targetSeeingTicker < -60) {
                     this.actor.clearActiveItem();
                 } else if (canSeeTarget) {
@@ -156,7 +156,7 @@ public class WeaponShootGoal<T extends HostileEntity & RangedAttackMob> extends 
                     int currentCooldown = gunStack.getOrDefault(GUN_COOLDOWN_COMPONENT, 1);
                     ItemStack chamber = gunStack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
                     if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0 && lockedTicks >= 10) {
-                        if (this.actor.getEntityWorld() instanceof ServerWorld serverWorld) {
+                        if (this.actor.getWorld() instanceof ServerWorld serverWorld) {
                             this.targetSeeingTicker -= gun.shoot(serverWorld, this.actor, gunHand);
                         }
                     }

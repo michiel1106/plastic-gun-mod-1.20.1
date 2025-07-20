@@ -38,7 +38,7 @@ public class EventHandler {
     }
 
     public static void rightClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
-        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+        if (serverPlayerEntity.getWorld() instanceof ServerWorld world) {
             Item stackInHand = serverPlayerEntity.getStackInHand(hand).getItem();
             if (itemGunMap.containsKey(stackInHand)) {
                 itemGunMap.get(stackInHand).reload(world, serverPlayerEntity, hand);
@@ -54,7 +54,7 @@ public class EventHandler {
     }
 
     public static void leftClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
-        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+        if (serverPlayerEntity.getWorld() instanceof ServerWorld world) {
             ItemStack stackInHand = serverPlayerEntity.getStackInHand(hand);
             Item itemInHand = stackInHand.getItem();
             if (itemGrenadeItemMap.containsKey(itemInHand)) {
@@ -68,7 +68,7 @@ public class EventHandler {
     }
 
     public static void tickItemUpdate(ServerPlayerEntity serverPlayerEntity) {
-        if (serverPlayerEntity.getEntityWorld() instanceof ServerWorld world) {
+        if (serverPlayerEntity.getWorld() instanceof ServerWorld world) {
             Hand hand = serverPlayerEntity.getActiveHand();
             ItemStack stackInHand = serverPlayerEntity.getStackInHand(hand);
             Item itemInHand = stackInHand.getItem();

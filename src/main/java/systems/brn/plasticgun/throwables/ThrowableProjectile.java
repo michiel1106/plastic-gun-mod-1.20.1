@@ -37,7 +37,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     }
 
     public ThrowableProjectile(EntityType<? extends PersistentProjectileEntity> entityType, ServerPlayerEntity player, ItemStack itemStack, float scale, float speed, double damage, PickupPermission pickupPermission, byte penetration) {
-        super(entityType, player.getPos().x, player.getPos().y + 1.5d, player.getPos().z, player.getServerWorld(), itemStack, itemStack);
+        super(entityType, player.getPos().x, player.getPos().y + 1.5d, player.getPos().z, player.getWorld(), itemStack, itemStack);
         this.setOwner(player);
         this.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, speed, 0);
         this.pickupType = pickupPermission;

@@ -79,12 +79,12 @@ public class Gun extends SimpleItem implements PolymerItem {
                         .maxDamage(clipSize + 1)
                 , id(path), Items.WOODEN_SWORD
         );
-        this.verticalRecoilMin = verticalRecoilMin / 10f;
-        this.verticalRecoilMax = verticalRecoilMax / 10f;
+        this.verticalRecoilMin = verticalRecoilMin / 100f;
+        this.verticalRecoilMax = verticalRecoilMax / 100f;
         this.velocityRecoilMin = velocityRecoilMin;
         this.velocityRecoilMax = velocityRecoilMax;
-        this.horizontalRecoilMin = horizontalRecoilMin / 10f;
-        this.horizontalRecoilMax = horizontalRecoilMax / 10f;
+        this.horizontalRecoilMin = horizontalRecoilMin / 100f;
+        this.horizontalRecoilMax = horizontalRecoilMax / 100f;
         if (verticalRecoilMin > verticalRecoilMax) {
             logger.error("verticalRecoilMin > verticalRecoilMax for {}", path);
         }
@@ -255,7 +255,7 @@ public class Gun extends SimpleItem implements PolymerItem {
     }
 
     public int doRecoil(LivingEntity entity) {
-        if (entity.getEntityWorld() instanceof ServerWorld serverWorld) {
+        if (entity.getWorld() instanceof ServerWorld serverWorld) {
             Random rng = entity.getWorld().getRandom();
             // Get the entity's current position and yaw
             Vec3d pos = entity.getPos();

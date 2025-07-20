@@ -117,14 +117,14 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
 
     public void turnIntoEntity(ServerPlayerEntity player, @Nullable ItemStack stack, int speed, int timer) {
         GrenadeEntity grenadeEntity = new GrenadeEntity(player, stack, timer, 0.5f, speed, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
-        player.getServerWorld().spawnEntity(grenadeEntity);
-        player.getServerWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+        player.getWorld().spawnEntity(grenadeEntity);
+        player.getWorld().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
     }
 
     public void turnIntoEntity(Entity entity, @Nullable ItemStack stack, int speed, int timer) {
-        GrenadeEntity grenadeEntity = new GrenadeEntity(entity.getEntityWorld(), entity.getPos(), stack, timer, 1f, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
-        entity.getEntityWorld().spawnEntity(grenadeEntity);
-        entity.getEntityWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+        GrenadeEntity grenadeEntity = new GrenadeEntity(entity.getWorld(), entity.getPos(), stack, timer, 1f, explosionPower, repulsionPower, isIncendiary, isFragmentation, flashBangDuration, stunDuration, smokeTicks, 8, smokeCount);
+        entity.getWorld().spawnEntity(grenadeEntity);
+        entity.getWorld().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
     }
 
     public void checkExplosions(ServerWorld world, PlayerEntity playerEntity, ItemStack stackInSlot) {

@@ -36,7 +36,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
     private final float scale;
 
     public BulletEntity(LivingEntity livingEntity, ItemStack stack, Hand hand, Gun gun, float scale, double damage, float speed, double explosionPower, double repulsionPower, boolean isIncendiary) {
-        super(BULLET_ENTITY_TYPE, livingEntity.getPos().x, livingEntity.getPos().y + 1.75d, livingEntity.getPos().z, livingEntity.getEntityWorld(), stack, livingEntity.getStackInHand(hand));
+        super(BULLET_ENTITY_TYPE, livingEntity.getPos().x, livingEntity.getPos().y + 1.75d, livingEntity.getPos().z, livingEntity.getWorld(), stack, livingEntity.getStackInHand(hand));
         this.setOwner(livingEntity);
         this.setVelocity(livingEntity, livingEntity.getPitch(), livingEntity.getYaw(), 0.0F, speed, 0);
         this.pickupType = PickupPermission.DISALLOWED;

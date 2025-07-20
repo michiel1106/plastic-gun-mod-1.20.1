@@ -135,7 +135,7 @@ public class Util {
         int minZ = MathHelper.floor(pos.z - radius - 1.0);
         int maxZ = MathHelper.floor(pos.z + radius + 1.0);
         Box box = new Box(minX, minY, minZ, maxX, maxY, maxZ);
-        return entity.getEntityWorld().getOtherEntities(entity, box);
+        return entity.getWorld().getOtherEntities(entity, box);
     }
 
     public static void setProjectileData(List<DataTracker.SerializedEntry<?>> data, boolean initial, float scale, ItemStack itemStack) {
@@ -261,7 +261,13 @@ public class Util {
     }
 
     public static void entityHitParticles(LivingEntity livingEntity, double damage) {
-        if (livingEntity.getEntityWorld() instanceof ServerWorld world) {
+        if (livingEntity.getWorld() instanceof ServerWorld world) {
+            if (livingEntity instanceof ServerPlayerEntity) {
+                ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) livingEntity;
+                if (serverPlayerEntity.isCreative()) {
+                    return;
+                }
+            }
             Vec3d pos = livingEntity.getPos();
             int particleCount = (int) damage * 4; // Number of particles
             double radius = livingEntity.getWidth() / 2 + 0.5;    // Radius of the circle
