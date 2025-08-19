@@ -1,8 +1,7 @@
 package systems.brn.plasticgun.grenades;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
@@ -41,27 +40,24 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
     public final int smokeCount;
 
 
-    public GrenadeItem(String path, int speed, double explosionPower, double repulsionPower, int explosionTarget, boolean isIncendiary, boolean isFragmentation, int flashBangDuration, int stunDuration, int smokeTicks, int effectRadius, int smokeCount) {
+    public GrenadeItem(String path,
+                       int speed,
+                       double explosionPower,
+                       double repulsionPower,
+                       int explosionTarget,
+                       boolean isIncendiary,
+                       boolean isFragmentation,
+                       int flashBangDuration,
+                       int stunDuration,
+                       int smokeTicks,
+                       int effectRadius,
+                       int smokeCount) {
         super(
-                new Settings()
+                new Item.Settings()
                         .maxCount(16)
-                        .component(GRENADE_TIMER_COMPONENT, -1)
-                        .component(DataComponentTypes.LORE, new LoreComponent(List.of(
-                                Text.translatable("gun.description.explosion_power", explosionPower),
-                                Text.translatable("gun.description.repulsion_power", repulsionPower),
-                                Text.translatable("gun.description.explosion_time", explosionTarget),
-                                Text.translatable("gun.description.speed", speed),
-                                Text.translatable(isIncendiary ? "gun.description.incendiary_yes" : "gun.description.incendiary_no"),
-                                Text.translatable("gun.description.fragmentation_grenade", isFragmentation),
-                                Text.translatable("gun.description.flashbang_duration", flashBangDuration),
-                                Text.translatable("gun.description.stun_duration", stunDuration),
-                                Text.translatable("gun.description.smoke_ticks", smokeTicks),
-                                Text.translatable("gun.description.effect_radius", effectRadius),
-                                Text.translatable("gun.description.particle_count", smokeCount)
-                        )))
-                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
-                        .maxDamage(explosionTarget + 1)
-                , id(path), Items.STICK
+                        .maxDamage(explosionTarget + 1), // grenades "fuse timer" as durability
+                id(path),
+                Items.STICK
         );
         this.explosionTarget = explosionTarget;
         this.isIncendiary = isIncendiary;
@@ -77,23 +73,48 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
         this.isFragmentation = isFragmentation;
     }
 
+    @Override
+    public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, net.minecraft.client.item.TooltipContext context) {
+        tooltip.add(Text.translatable("gun.description.explosion_power", explosionPower));
+        tooltip.add(Text.translatable("gun.description.repulsion_power", repulsionPower));
+        tooltip.add(Text.translatable("gun.description.explosion_time", explosionTarget));
+        tooltip.add(Text.translatable("gun.description.speed", speed));
+        tooltip.add(Text.translatable(isIncendiary ? "gun.description.incendiary_yes" : "gun.description.incendiary_no"));
+        tooltip.add(Text.translatable("gun.description.fragmentation_grenade", isFragmentation));
+        tooltip.add(Text.translatable("gun.description.flashbang_duration", flashBangDuration));
+        tooltip.add(Text.translatable("gun.description.stun_duration", stunDuration));
+        tooltip.add(Text.translatable("gun.description.smoke_ticks", smokeTicks));
+        tooltip.add(Text.translatable("gun.description.effect_radius", smokeRadius));
+        tooltip.add(Text.translatable("gun.description.particle_count", smokeCount));
+    }
+
     public void unpin(World world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            int timer = stack.getOrDefault(GRENADE_TIMER_COMPONENT, -1);
+            var nbt = stack.getOrCreateNbt();
+
+            int timer = nbt.contains("grenade_timer") ? nbt.getInt("grenade_timer") : -1;
             if (timer == -1) {
-                stack.set(GRENADE_TIMER_COMPONENT, explosionTarget);
-                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
+                nbt.putInt("grenade_timer", explosionTarget);
+
+                world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS,
+                        1f, 2.5f);
+
                 updateDamage(stack, this);
             }
         }
     }
 
     public static void updateDamage(ItemStack stack, GrenadeItem grenadeItem) {
-        int timer = stack.getOrDefault(GRENADE_TIMER_COMPONENT, -1);
+        var nbt = stack.getOrCreateNbt();
+
+        int timer = nbt.contains("grenade_timer") ? nbt.getInt("grenade_timer") : -1;
         if (timer < 0) {
             timer = grenadeItem.explosionTarget + 1;
         }
+
+        // durability bar reflects fuse progress
         stack.setDamage((1 + grenadeItem.explosionTarget) - timer);
     }
 
@@ -101,14 +122,19 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
     public void chuck(ServerWorld world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            int timer = stack.getOrDefault(GRENADE_TIMER_COMPONENT, -1);
+            var nbt = stack.getOrCreateNbt();
+
+            int timer = nbt.contains("grenade_timer") ? nbt.getInt("grenade_timer") : -1;
             if (timer > 0) {
+                // spawn grenade entity with timer
                 turnIntoEntity(player, stack.copy(), speed, timer);
+
                 if (!player.isCreative()) {
                     stack.decrement(1);
                 }
+
                 if (!stack.isEmpty()) {
-                    stack.setDamage(0);
+                    stack.setDamage(0); // reset durability bar
                     user.setStackInHand(hand, stack);
                 }
             }
@@ -129,17 +155,23 @@ public class GrenadeItem extends SimpleItem implements PolymerItem {
 
     public void checkExplosions(ServerWorld world, PlayerEntity playerEntity, ItemStack stackInSlot) {
         if (playerEntity instanceof ServerPlayerEntity player && !world.isClient()) {
-            int timer = stackInSlot.getOrDefault(GRENADE_TIMER_COMPONENT, -1);
+            var nbt = stackInSlot.getOrCreateNbt();
+            int timer = nbt.contains("grenade_timer") ? nbt.getInt("grenade_timer") : -1;
+
             if (timer == 0) {
                 turnIntoEntity(player, getDefaultStack(), 0, 0);
+
                 if (!player.isCreative()) {
                     stackInSlot.decrement(1);
                 } else {
-                    stackInSlot.set(GRENADE_TIMER_COMPONENT, -1);
-                    stackInSlot.setDamage(0);
+                    nbt.putInt("grenade_timer", -1); // reset grenade fuse
+                    stackInSlot.setDamage(0);        // reset durability bar
                 }
             }
         }
-
     }
+
+
+
+
 }

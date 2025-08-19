@@ -1,12 +1,14 @@
 package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.virtualentity.api.tracker.DisplayTrackedData;
-import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,7 +32,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.AdvancedExplosionBehavior;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,9 @@ public class Util {
         if (bulletItem == null || bulletItem.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        for (ItemStack itemStack : player.getInventory().getMainStacks()) {
+
+
+        for (ItemStack itemStack : player.getInventory().main) {
             for (Item item : bulletItem) {
                 if (item == itemStack.getItem()) {
                     return itemStack;
@@ -67,8 +70,8 @@ public class Util {
 
         if (inventory instanceof PlayerInventory playerInventory) {
             // Iterate through the slots in the player's inventory
-            for (int i = 0; i < playerInventory.getMainStacks().size(); i++) {
-                ItemStack slotStack = playerInventory.getMainStacks().get(i);
+            for (int i = 0; i < playerInventory.main.size(); i++) {
+                ItemStack slotStack = playerInventory.main.get(i);
                 maxInsert = canInsertToStack(slotStack, itemStack, maxInsert);
             }
         } else {
@@ -94,7 +97,7 @@ public class Util {
     }
 
     public static boolean canCombine(ItemStack stack1, ItemStack stack2) {
-        return !stack1.isEmpty() && stack1.getItem() == stack2.getItem() && ItemStack.areItemsAndComponentsEqual(stack1, stack2);
+        return !stack1.isEmpty() && stack1.getItem() == stack2.getItem() && ItemStack.areEqual(stack1, stack2);
     }
 
     public static void insertStackIntoInventory(Inventory inventory, ItemStack stack) {
@@ -140,7 +143,7 @@ public class Util {
 
     public static void setProjectileData(List<DataTracker.SerializedEntry<?>> data, boolean initial, float scale, ItemStack itemStack) {
         if (initial) {
-            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.TELEPORTATION_DURATION, 2));
+            data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.INTERPOLATION_DURATION, 2));
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.SCALE, new Vector3f(scale)));
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.BILLBOARD, (byte) DisplayEntity.BillboardMode.CENTER.ordinal()));
             data.add(DataTracker.SerializedEntry.of(DisplayTrackedData.Item.ITEM, itemStack));
@@ -150,10 +153,11 @@ public class Util {
     public static void hitDamage(Vec3d pos, double explosionPower, double repulsionPower, World worldTemp, @Nullable Entity entity, boolean isIncendiary, @Nullable ExplosionBehavior explosionBehavior) {
         if (worldTemp instanceof ServerWorld world) {
             if (explosionPower > 0) {
-                world.createExplosion(entity, Explosion.createDamageSource(world, entity), explosionBehavior, pos.getX(), pos.getY(), pos.getZ(), (float) explosionPower, isIncendiary, ServerWorld.ExplosionSourceType.TNT);
+                world.createExplosion(entity, world.getDamageSources().create(DamageTypes.EXPLOSION), explosionBehavior, pos.x, pos.y, pos.z, (float) explosionPower, isIncendiary, World.ExplosionSourceType.BLOCK);
             }
             if (repulsionPower > 0) {
-                world.createExplosion(entity, null, new AdvancedExplosionBehavior(false, false, Optional.empty(), Optional.empty()), pos.getX(), pos.getY(), pos.getZ(), (float) repulsionPower, false, World.ExplosionSourceType.TRIGGER, ParticleTypes.GUST_EMITTER_SMALL, ParticleTypes.GUST_EMITTER_LARGE, SoundEvents.ENTITY_BREEZE_WIND_BURST);
+
+                world.createExplosion(entity, null, null, pos.x, pos.y, pos.z, (float) repulsionPower, false, World.ExplosionSourceType.NONE);
             }
         }
     }
@@ -295,9 +299,10 @@ public class Util {
         }
     }
 
-    public static void addItemToLootTable(RegistryKey<LootTable> tableId, Item item, Integer weight) {
-        LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
-            if (source.isBuiltin() && tableId.equals(key)) {
+    public static void addItemToLootTable(Identifier tableId, Item item, Integer weight) {
+        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+            if (source.isBuiltin() && tableId.equals(id)) {
+
                 tableBuilder.modifyPools(poolBuilder -> poolBuilder.with(ItemEntry.builder(item).weight(weight)));
             }
         });

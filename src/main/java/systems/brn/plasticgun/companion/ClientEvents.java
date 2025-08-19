@@ -1,5 +1,6 @@
 package systems.brn.plasticgun.companion;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -14,15 +15,18 @@ import static systems.brn.plasticgun.PlasticGun.flashbangEffect;
 public class ClientEvents {
     public static void join(ClientPlayNetworkHandler clientPlayNetworkHandler, PacketSender packetSender, MinecraftClient minecraftClient) {
         UUID joinUUID = UUID.randomUUID();
-        packetSender.sendPacket(new ModDetect(joinUUID));
+        ClientPlayNetworking.send(ModDetect.CHANNEL_ID, ModDetect.toBuf(new ModDetect(joinUUID)));
+
     }
 
-    public static void HUDDraw(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    public static void HUDDraw(DrawContext drawContext, float renderTickCounter) {
         if (MinecraftClient.getInstance().player != null) {
-            if (MinecraftClient.getInstance().player.hasStatusEffect(flashbangEffect)) {
+            if (MinecraftClient.getInstance().player.hasStatusEffect(flashbangEffect.value())) {
                 int width = drawContext.getScaledWindowWidth();
                 int height = drawContext.getScaledWindowHeight();
-                drawContext.fill(0, 0, width, height, ColorHelper.fromFloats(1, 1, 1, 1));
+
+
+                drawContext.fill(0, 0, width, height, ColorHelper.Argb.getArgb(1, 1, 1, 1));
             }
         }
     }

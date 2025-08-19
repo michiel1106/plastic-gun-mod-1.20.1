@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.explosion.Explosion;
@@ -12,6 +13,7 @@ import net.minecraft.world.explosion.ExplosionBehavior;
 import systems.brn.plasticgun.lib.WeaponDamageType;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static systems.brn.plasticgun.lib.Util.entityHitParticles;
 import static systems.brn.plasticgun.lib.Util.getFinalDamage;
@@ -63,6 +65,13 @@ public class FragmentationExplosionBehavior extends ExplosionBehavior {
     }
 
     @Override
+    public Optional<Float> getBlastResistance(Explosion explosion, BlockView world, BlockPos pos, BlockState blockState, FluidState fluidState) {
+        return super.getBlastResistance(explosion, world, pos, blockState, fluidState);
+    }
+
+    /*
+
+    @Override
     public float calculateDamage(Explosion explosion, Entity entity, float amount) {
         float original = super.calculateDamage(explosion, entity, amount);
         if (entity instanceof LivingEntity livingEntity) {
@@ -73,4 +82,5 @@ public class FragmentationExplosionBehavior extends ExplosionBehavior {
         }
         return original;
     }
+     */
 }

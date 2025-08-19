@@ -26,7 +26,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     public double prevZ;
 
     public ThrowableProjectile(EntityType<? extends ThrowableProjectile> entityType, World world, Vec3d pos, ItemStack itemStack, float scale, double damage, PickupPermission pickupPermission, byte penetration) {
-        super(entityType, pos.getX(), pos.getY() + 1.5d, pos.getZ(), world, itemStack, null);
+        super(entityType, pos.getX(), pos.getY() + 1.5d, pos.getZ(), world);
         this.pickupType = pickupPermission;
         this.setDamage(damage);
         this.setSilent(true);
@@ -37,7 +37,7 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     }
 
     public ThrowableProjectile(EntityType<? extends PersistentProjectileEntity> entityType, ServerPlayerEntity player, ItemStack itemStack, float scale, float speed, double damage, PickupPermission pickupPermission, byte penetration) {
-        super(entityType, player.getPos().x, player.getPos().y + 1.5d, player.getPos().z, player.getWorld(), itemStack, itemStack);
+        super(entityType, player.getPos().x, player.getPos().y + 1.5d, player.getPos().z, player.getWorld());
         this.setOwner(player);
         this.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, speed, 0);
         this.pickupType = pickupPermission;
@@ -50,8 +50,10 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
     }
 
 
+
+
     @Override
-    public EntityType<?> getPolymerEntityType(PacketContext context) {
+    public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
         return EntityType.ITEM_DISPLAY;
     }
 
@@ -78,10 +80,10 @@ public class ThrowableProjectile extends PersistentProjectileEntity implements P
         }
     }
 
-    @Override
-    protected ItemStack getDefaultItemStack() {
-        return this.itemStack();
-    }
 
+    @Override
+    protected ItemStack asItemStack() {
+        return this.itemStack;
+    }
 }
 

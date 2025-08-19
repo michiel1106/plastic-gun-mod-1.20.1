@@ -12,15 +12,7 @@ import static systems.brn.plasticgun.lib.Util.getFinalDamage;
 public class GrenadeExplosionBehavior extends ExplosionBehavior {
 
 
-    @Override
-    public float calculateDamage(Explosion explosion, Entity entity, float amount) {
-        float original = super.calculateDamage(explosion, entity, amount);
-        if (entity instanceof LivingEntity livingEntity) {
-            original = (float) getFinalDamage(livingEntity, WeaponDamageType.GRENADE, original);
-            if (original > 0) {
-                entityHitParticles(livingEntity, original);
-            }
-        }
-        return original;
-    }
+
+
+
 }

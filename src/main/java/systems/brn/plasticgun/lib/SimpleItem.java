@@ -2,9 +2,11 @@ package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.item.SimplePolymerItem;
-import eu.pb4.polymer.resourcepack.extras.api.ResourcePackExtras;
+
 import net.minecraft.item.*;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 public abstract class SimpleItem extends SimplePolymerItem implements PolymerItem {
@@ -17,13 +19,13 @@ public abstract class SimpleItem extends SimplePolymerItem implements PolymerIte
         this.polymerModel = identifier;
     }
 
-    @Override
-    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
-        return this.polymerModel;
+
+    public Identifier getPolymerModel() {
+        return polymerModel;
     }
 
     @Override
-    public Item getPolymerItem(ItemStack itemStack, PacketContext player) {
+    public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
         return Items.STICK;
     }
 

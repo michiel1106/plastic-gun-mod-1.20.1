@@ -10,6 +10,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
@@ -26,7 +27,7 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     }
 
     @Override
-    public boolean damage(ServerWorld world, DamageSource source, float amount) {
+    public boolean damage( DamageSource source, float amount) {
         Entity attacker = source.getAttacker();
         if (attacker instanceof PlayerEntity player) {
             player.sendMessage(Text.literal("You damaged by " + amount), false);
@@ -38,10 +39,16 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     }
 
 
+
     public static DefaultAttributeContainer.Builder createDamageTesterAttributes() {
         return LivingEntity.createLivingAttributes()
-                .add(EntityAttributes.MAX_HEALTH, 1.0)
-                .add(EntityAttributes.ATTACK_DAMAGE, 0.0);
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 1.0)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0.0);
+    }
+
+    @Override
+    public Iterable<ItemStack> getArmorItems() {
+        return null;
     }
 
     @Override
@@ -59,8 +66,9 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
         return Arm.RIGHT;
     }
 
+
     @Override
-    public EntityType<?> getPolymerEntityType(PacketContext context) {
+    public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
         return EntityType.ZOMBIE;
     }
 }

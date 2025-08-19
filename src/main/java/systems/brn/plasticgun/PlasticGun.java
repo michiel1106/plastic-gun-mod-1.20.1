@@ -6,7 +6,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -17,8 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.loot.LootTables;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.slf4j.Logger;
@@ -68,25 +66,24 @@ public class PlasticGun implements ModInitializer {
     public static final EntityType<BulletEntity> BULLET_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("bullet"),
-            EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("bullet")))
-    );
+            EntityType.Builder.<BulletEntity>create(BulletEntity::new, SpawnGroup.MISC).build(id("bullet").toString()));
 
     public static final EntityType<GrenadeEntity> GRENADE_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("grenade"),
-            EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("grenade")))
+            EntityType.Builder.<GrenadeEntity>create(GrenadeEntity::new, SpawnGroup.MISC).build( id("grenade").toString())
     );
 
     public static final EntityType<ShurikenEntity> SHURIKEN_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("shuriken"),
-            EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("shuriken")))
+            EntityType.Builder.<ShurikenEntity>create(ShurikenEntity::new, SpawnGroup.MISC).build(id("shuriken").toString())
     );
 
     public static final EntityType<DamageTester> DAMAGE_TESTER_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             id("damagetester"),
-            EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, id("damagetester")))
+            EntityType.Builder.create(DamageTester::new, SpawnGroup.MISC).build(id("damagetester").toString())
     );
 
     public static final Logger logger = LoggerFactory.getLogger(MOD_ID);
@@ -201,7 +198,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, craftingItem, 4);
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, craftingItem, 4);
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, craftingItem, 4);
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, craftingItem, 4);
         }
 
         int i = 0;
@@ -221,7 +217,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, shuriken, getAfterWeight(weightCoeff, 4));
             i++;
         }
 
@@ -241,7 +236,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_ARMORER_CHEST, weaponArmor, 20);
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, weaponArmor, 4);
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, weaponArmor, 4);
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, weaponArmor, 4);
         }
 
         i = 0;
@@ -261,7 +255,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, gun, getAfterWeight(weightCoeff, 10));
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, gun, getAfterWeight(weightCoeff, 4));
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, gun, getAfterWeight(weightCoeff, 4));
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, gun, getAfterWeight(weightCoeff, 4));
             i++;
         }
 
@@ -282,7 +275,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, grenade, getAfterWeight(weightCoeff, 10));
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, grenade, getAfterWeight(weightCoeff, 4));
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, grenade, getAfterWeight(weightCoeff, 4));
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, grenade, getAfterWeight(weightCoeff, 4));
             i++;
         }
 
@@ -303,7 +295,6 @@ public class PlasticGun implements ModInitializer {
             addItemToLootTable(LootTables.VILLAGE_WEAPONSMITH_CHEST, bullet, getAfterWeight(weightCoeff, 10));
             addItemToLootTable(LootTables.DESERT_PYRAMID_CHEST, bullet, getAfterWeight(weightCoeff, 4));
             addItemToLootTable(LootTables.WOODLAND_MANSION_CHEST, bullet, getAfterWeight(weightCoeff, 4));
-            addItemToLootTable(LootTables.TRIAL_CHAMBERS_REWARD_CHEST, bullet, getAfterWeight(weightCoeff, 4));
             i++;
         }
 
@@ -336,12 +327,11 @@ public class PlasticGun implements ModInitializer {
 
         ServerPlayConnectionEvents.DISCONNECT.register(EventHandler::disconnect);
 
-        ItemGroups.register();
 
-        PayloadTypeRegistry.playC2S().register(ModDetect.PACKET_ID, ModDetect.PACKET_CODEC);
 
         // Register the global receiver
-        ServerPlayNetworking.registerGlobalReceiver(ModDetect.PACKET_ID, EventHandler::onClientConfirm);
+        ServerPlayNetworking.registerGlobalReceiver(ModDetect.CHANNEL_ID, EventHandler::onClientConfirm);
+
 
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         PolymerResourcePackUtils.markAsRequired();

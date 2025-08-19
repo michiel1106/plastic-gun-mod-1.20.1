@@ -5,7 +5,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import org.jetbrains.annotations.Nullable;
 import systems.brn.plasticgun.PlasticGun;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -26,16 +28,19 @@ public class FlashbangEffect extends StatusEffect implements PolymerStatusEffect
         return true;
     }
 
+
+
+
     // Called when the effect is applied.
     @Override
-    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        return super.applyUpdateEffect(world, entity, amplifier);
+    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+        super.applyUpdateEffect(entity, amplifier);
     }
     @Override
-    public StatusEffect getPolymerReplacement(StatusEffect potion, PacketContext packetContext) {
-        if (PlasticGun.clientsWithMod.contains(packetContext.getPlayer())){
+    public @Nullable StatusEffect getPolymerReplacement(ServerPlayerEntity player) {
+        if (PlasticGun.clientsWithMod.contains(player)){
             return stunEffect.value();
         }
-        return StatusEffects.BLINDNESS.value();
+        return StatusEffects.BLINDNESS;
     }
 }

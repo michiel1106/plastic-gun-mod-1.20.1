@@ -38,7 +38,7 @@ public class ShurikenEntity extends ThrowableProjectile implements PolymerEntity
             setSilent(false);
             playSound(soundEvent, 4.0F, 1.0F);
             setSilent(true);
-            ItemStack itemStack = getItemStack();
+            ItemStack itemStack = itemStack();
             int maxDamage = itemStack.getMaxDamage();
             int currentDamage = itemStack.getDamage();
             currentDamage += 1;

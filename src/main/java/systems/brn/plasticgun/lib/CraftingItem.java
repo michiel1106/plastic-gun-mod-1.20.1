@@ -11,7 +11,7 @@ import static systems.brn.plasticgun.lib.Util.id;
 public class CraftingItem extends SimpleItem{
 
     public CraftingItem(String name) {
-        super(new Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, id(name))), id(name), Items.STICK);
+        super(new Settings(), id(name), Items.STICK);
         Registry.register(Registries.ITEM, id(name), this);
     }
 }

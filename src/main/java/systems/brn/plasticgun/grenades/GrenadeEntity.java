@@ -13,6 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.throwables.ThrowableProjectile;
 
 import java.util.List;
@@ -71,7 +72,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         this.prevZ = this.getZ();
         Vec3d vec3d = this.getVelocity();
 
-        this.applyGravity();
+
 
         if (!this.getWorld().isClient) {
             this.noClip = !this.getWorld().isSpaceEmpty(this, this.getBoundingBox().contract(1.0E-7));
@@ -111,13 +112,18 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         }
     }
 
+    @Override
+    protected ItemStack asItemStack() {
+        return this.itemStack();
+    }
+
     private void explode() {
         hitDamage(getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, isFragmentation ? new FragmentationExplosionBehavior() : new GrenadeExplosionBehavior());
         List<Entity> nearbyEntities = getEntitiesAround(this, effectRadius);
         if (stunDuration > 0) {
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.addStatusEffect(new StatusEffectInstance(stunEffect, flashBangDuration, 255, true, false));
+                    livingEntity.addStatusEffect(new StatusEffectInstance(stunEffect.value(), flashBangDuration, 255, true, false));
                 }
             }
             stunDuration = 0;
@@ -126,7 +132,7 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         if (flashBangDuration > 0) {
             for (Entity entity : nearbyEntities) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.addStatusEffect(new StatusEffectInstance(flashbangEffect, flashBangDuration, 255, true, false));
+                    livingEntity.addStatusEffect(new StatusEffectInstance(flashbangEffect.value(), flashBangDuration, 255, true, false));
                 }
             }
             flashBangDuration = 0;
@@ -174,4 +180,8 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         this.isFragmentation = false;
     }
 
+    @Override
+    public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
+        return GRENADE_ENTITY_TYPE;
+    }
 }

@@ -13,10 +13,12 @@ import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 
+import static systems.brn.plasticgun.PlasticGun.guns;
 import static systems.brn.plasticgun.PlasticGun.itemGunMap;
 import static systems.brn.plasticgun.lib.GunComponents.*;
 
@@ -152,9 +154,18 @@ public class WeaponShootGoal<T extends HostileEntity & RangedAttackMob> extends 
                     this.actor.clearActiveItem();
                 } else if (canSeeTarget) {
                     this.actor.clearActiveItem();
-                    int currentReload = gunStack.getOrDefault(GUN_LOADING_COMPONENT, 1);
-                    int currentCooldown = gunStack.getOrDefault(GUN_COOLDOWN_COMPONENT, 1);
-                    ItemStack chamber = gunStack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+                    int currentReload = gunStack.getOrCreateNbt().getInt("gun_load");
+                    int currentCooldown = gunStack.getOrCreateNbt().getInt("gun_cooldown");
+
+
+                    ItemStack chamber = ItemStack.EMPTY;
+
+                    NbtCompound nbt = gunStack.getNbt();
+                    if (nbt != null && nbt.contains("gun_ammo")) {
+                        NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
+                        chamber = ItemStack.fromNbt(ammoNbt).copy(); // converts NBT back to ItemStack
+                    }
+
                     if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0 && lockedTicks >= 10) {
                         if (this.actor.getWorld() instanceof ServerWorld serverWorld) {
                             this.targetSeeingTicker -= gun.shoot(serverWorld, this.actor, gunHand);

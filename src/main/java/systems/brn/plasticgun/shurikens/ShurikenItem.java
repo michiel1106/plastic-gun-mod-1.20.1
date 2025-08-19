@@ -1,8 +1,8 @@
 package systems.brn.plasticgun.shurikens;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
+
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,6 +16,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import systems.brn.plasticgun.lib.SimpleItem;
 
 import java.util.List;
@@ -28,23 +30,20 @@ public class ShurikenItem extends SimpleItem implements PolymerItem {
     public final float speed;
 
     public ShurikenItem(String path, double damage, int durability, float speed) {
-        super(
-                new Settings()
-                        .maxCount(16)
-                        .maxDamage(durability)
-                        .component(DataComponentTypes.LORE, new LoreComponent(List.of(
-                                Text.translatable("gun.description.damage", damage),
-                                Text.translatable("gun.description.speed", speed),
-                                Text.translatable("gun.description.damage_with_coefficient_max_speed", speed, speed * damage)
-                        )))
-                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
-                , id(path), Items.WOODEN_PICKAXE
-        );
+        super(new Settings().maxCount(16).maxDamage(durability), id(path), Items.WOODEN_PICKAXE);
         Registry.register(Registries.ITEM, id(path), this);
         this.damage = damage;
         this.speed = speed;
     }
 
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+
+        tooltip.add(Text.translatable("gun.description.damage", damage));
+        tooltip.add(Text.translatable("gun.description.speed", speed));
+        tooltip.add(Text.translatable("gun.description.damage_with_coefficient_max_speed", speed, speed * damage));
+        super.appendTooltip(stack, world, tooltip, context);
+    }
 
     public void chuck(ServerWorld world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {

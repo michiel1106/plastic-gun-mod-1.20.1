@@ -36,7 +36,7 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
     private final float scale;
 
     public BulletEntity(LivingEntity livingEntity, ItemStack stack, Hand hand, Gun gun, float scale, double damage, float speed, double explosionPower, double repulsionPower, boolean isIncendiary) {
-        super(BULLET_ENTITY_TYPE, livingEntity.getPos().x, livingEntity.getPos().y + 1.75d, livingEntity.getPos().z, livingEntity.getWorld(), stack, livingEntity.getStackInHand(hand));
+        super(BULLET_ENTITY_TYPE, livingEntity.getPos().x, livingEntity.getPos().y + 1.75d, livingEntity.getPos().z, livingEntity.getWorld());
         this.setOwner(livingEntity);
         this.setVelocity(livingEntity, livingEntity.getPitch(), livingEntity.getYaw(), 0.0F, speed, 0);
         this.pickupType = PickupPermission.DISALLOWED;
@@ -49,6 +49,11 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.explosionPower = explosionPower;
         this.repulsionPower = repulsionPower;
         this.isIncendiary = isIncendiary;
+    }
+
+    @Override
+    public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
+        return EntityType.ITEM_DISPLAY;
     }
 
     @Override
@@ -78,19 +83,8 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.scale = 1f;
     }
 
-    @Override
-    protected ItemStack getDefaultItemStack() {
-        if (gun != null) {
-            return gun.ammo.getFirst().getDefaultStack();
-        } else {
-            return bullets.getFirst().getDefaultStack();
-        }
-    }
 
-    @Override
-    public EntityType<?> getPolymerEntityType(PacketContext packetContext) {
-        return EntityType.ITEM_DISPLAY;
-    }
+
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
@@ -108,6 +102,15 @@ public class BulletEntity extends PersistentProjectileEntity implements PolymerE
         this.setOnFire(false);
         hitDamage(blockHitResult.getPos(), explosionPower, repulsionPower, getWorld(), this, isIncendiary, new GrenadeExplosionBehavior());
         this.discard();
+    }
+
+    @Override
+    protected ItemStack asItemStack() {
+        if (gun != null) {
+            return gun.ammo.stream().findFirst().get().getDefaultStack();
+        } else {
+            return bullets.stream().findFirst().get().getDefaultStack();
+        }
     }
 
     @Override

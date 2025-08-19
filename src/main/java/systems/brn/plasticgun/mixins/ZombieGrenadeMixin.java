@@ -65,7 +65,7 @@ public abstract class ZombieGrenadeMixin extends MobEntity {
     }
 
     @Inject(method = "dropEquipment", at = @At("RETURN"))
-    protected void dropEquipment(ServerWorld world, DamageSource source, boolean causedByPlayer, CallbackInfo ci) {
+    protected void dropEquipment(DamageSource source, int lootingMultiplier, boolean allowDrops, CallbackInfo ci) {
         ItemStack mainHandItem = this.getEquippedStack(EquipmentSlot.MAINHAND);
         ItemStack offHandItem = this.getEquippedStack(EquipmentSlot.OFFHAND);
         for (GrenadeItem grenadeItem : grenades) {

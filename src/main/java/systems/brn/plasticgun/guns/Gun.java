@@ -1,12 +1,13 @@
 package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -58,27 +59,33 @@ public class Gun extends SimpleItem implements PolymerItem {
     private final double horizontalRecoilMax;
 
     public Gun(String path, double damage, int reloadCount, int reloadTarget, int clipSize, int speed, int caliber, int cooldownTarget, double explosionPowerGun, double repulsionPowerGun, float verticalRecoilMin, float verticalRecoilMax, float velocityRecoilMin, float velocityRecoilMax, double horizontalRecoilMin, double horizontalRecoilMax) {
-        super(
-                new Settings()
-                        .maxCount(1)
-                        .component(GUN_AMMO_COMPONENT, ItemStack.EMPTY)
-                        .component(GUN_COOLDOWN_COMPONENT, 0)
-                        .component(GUN_RELOAD_COOLDOWN_COMPONENT, 0)
-                        .component(DataComponentTypes.LORE, new LoreComponent(List.of(
-                                Text.translatable("gun.description.caliber", caliber),
-                                Text.translatable("gun.description.damage_absolute", damage),
-                                Text.translatable("gun.description.speed", speed),
-                                Text.translatable("gun.description.clip_size", clipSize),
-                                Text.translatable("gun.description.reload_cooldown", reloadTarget),
-                                Text.translatable("gun.description.reload_cycles", reloadCount),
-                                Text.translatable("gun.description.shoot_cooldown", cooldownTarget),
-                                Text.translatable("gun.description.explosion_power", explosionPowerGun),
-                                Text.translatable("gun.description.repulsion_power", repulsionPowerGun)
-                        )))
-                        .registryKey(RegistryKey.of(RegistryKeys.ITEM, id(path)))
-                        .maxDamage(clipSize + 1)
-                , id(path), Items.WOODEN_SWORD
-        );
+        super(new Settings().maxCount(1).maxDamage(clipSize + 1), id(path), Items.WOODEN_SWORD);
+
+
+        ItemStack stack = new ItemStack(this);
+        NbtCompound nbt = stack.getOrCreateNbt();
+
+        nbt.put("GunAmmo", ItemStack.EMPTY.writeNbt(new NbtCompound())); // if you want to store an ItemStack
+        nbt.putInt("GunCooldown", 0);
+        nbt.putInt("GunReloadCooldown", 0);
+
+        NbtCompound display = nbt.getCompound("display");
+        NbtList loreList = new NbtList();
+        loreList.add(NbtString.of(Text.translatable("gun.description.caliber", caliber).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.damage_absolute", damage).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.speed", speed).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.clip_size", clipSize).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.reload_cooldown", reloadTarget).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.reload_cycles", reloadCount).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.shoot_cooldown", cooldownTarget).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.explosion_power", explosionPowerGun).getString()));
+        loreList.add(NbtString.of(Text.translatable("gun.description.repulsion_power", repulsionPowerGun).getString()));
+        display.put("Lore", loreList);
+        nbt.put("display", display);
+
+        stack.setNbt(nbt);
+
+
         this.verticalRecoilMin = verticalRecoilMin / 100f;
         this.verticalRecoilMax = verticalRecoilMax / 100f;
         this.velocityRecoilMin = velocityRecoilMin;
@@ -116,17 +123,38 @@ public class Gun extends SimpleItem implements PolymerItem {
     public void reload(World world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            int currentReloadCooldown = stack.getOrDefault(GUN_RELOAD_COOLDOWN_COMPONENT, 0);
+            int currentReloadCooldown = stack.getOrCreateNbt().getInt("gun_reload_cooldown");
             if (currentReloadCooldown == 0) {
-                stack.set(GUN_RELOAD_COOLDOWN_COMPONENT, reloadTarget);
+                NbtCompound orCreateNbt1 = stack.getOrCreateNbt();
+                orCreateNbt1.putInt("gun_reload_cooldown", reloadTarget);
+                stack.setNbt(orCreateNbt1);
+
                 ItemStack bulletStack = findBulletStack(ammo, player);
-                ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+                ItemStack chamber = ItemStack.EMPTY;
+
+                if (stack.hasNbt()) {
+                    NbtCompound nbt = stack.getNbt();
+                    if (nbt.contains("gun_ammo")) {
+                        NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
+                        chamber = ItemStack.fromNbt(ammoNbt); // converts NBT back to ItemStack
+                    }
+                }
+
+// Optional: make a copy if needed
+                chamber = chamber.copy();
+
+
                 int bulletsInChamber = chamber.getCount();
-                int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+                int currentReload = stack.getOrCreateNbt().getInt("gun_load");
 
                 if (bulletStack != null && !bulletStack.isEmpty()) { //we have ammo
                     if (currentReload < reloadCount) { //still reloading
-                        stack.set(GUN_LOADING_COMPONENT, currentReload + 1);
+
+                        NbtCompound orCreateNbt = stack.getOrCreateNbt();
+                        orCreateNbt.putInt("gun_load", currentReload + 1);
+
+                        stack.setNbt(orCreateNbt);
+
                         world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.PLAYERS, 0.1f, 1.8f);
                     } else if (currentReload == reloadCount) { //now reload
                         int addedBullets = Math.min(bulletStack.getCount(), clipSize - bulletsInChamber); //how many
@@ -137,13 +165,22 @@ public class Gun extends SimpleItem implements PolymerItem {
                             chamber.setCount(bulletsInChamber + addedBullets);
                             bulletStack.decrement(addedBullets);
                             if (chamber.isEmpty()) {
-                                stack.remove(GUN_AMMO_COMPONENT);
+                                if (stack.hasNbt()) {
+                                    if (stack.getNbt() != null) {
+                                        stack.getNbt().remove("gun_ammo");
+                                    }
+                                }
                             } else {
-                                stack.set(GUN_AMMO_COMPONENT, chamber);
-                                stack.set(GUN_LAST_LOADED_AMMO, chamber);
+
+                                NbtCompound nbt = stack.getOrCreateNbt();
+                                nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
+                                nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
+
                                 world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
                             }
-                            stack.set(GUN_LOADING_COMPONENT, 1);
+                            stack.getOrCreateNbt().putInt("gun_load", 1);
+
+
                         } else {
                             if (canInsertItemIntoInventory(player.getInventory(), chamber.copy()) == chamber.getCount()) { //can take out chamber
                                 insertStackIntoInventory(player.getInventory(), chamber.copy());
@@ -152,22 +189,38 @@ public class Gun extends SimpleItem implements PolymerItem {
                                 chamber = bulletStack.copy();
                                 chamber.setCount(targetCount);
                                 if (chamber.isEmpty()) {
-                                    stack.remove(GUN_AMMO_COMPONENT);
+
+                                    if (stack.getNbt() != null) {
+                                        stack.getNbt().remove("gun_ammo");
+                                    }
+
                                 } else {
-                                    stack.set(GUN_AMMO_COMPONENT, chamber);
-                                    stack.set(GUN_LAST_LOADED_AMMO, chamber);
+                                    NbtCompound nbt = stack.getOrCreateNbt();
+                                    nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
+                                    nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
+
+
+
                                     world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
                                 }
                                 bulletStack.decrement(targetCount);
-                                stack.set(GUN_LOADING_COMPONENT, 1);
+
+                                NbtCompound nbtCompound = stack.getOrCreateNbt();
+                                nbtCompound.putInt("gun_load", 1);
+                                stack.setNbt(nbtCompound);
+
+
                             }
                         }
                     }
                 }
                 if (player.isCreative()) {
-                    ItemStack stackOfBullet = new ItemStack(ammo.getFirst(), clipSize);
-                    stack.set(GUN_AMMO_COMPONENT, stackOfBullet);
-                    stack.set(GUN_LAST_LOADED_AMMO, stackOfBullet);
+                    ItemStack stackOfBullet = new ItemStack(ammo.stream().findFirst().get(), clipSize);
+
+
+                    NbtCompound nbt = stack.getOrCreateNbt();
+                    nbt.put("gun_ammo", stackOfBullet.writeNbt(new NbtCompound()));
+                    nbt.put("gun_last_load", stackOfBullet.writeNbt(new NbtCompound()));
                 }
                 updateDamage(stack);
             }
@@ -177,27 +230,68 @@ public class Gun extends SimpleItem implements PolymerItem {
     public void reload(World world, MobEntity mobEntity, Hand hand, Random random, LocalDifficulty localDifficulty) {
         if (!world.isClient()) {
             ItemStack stack = mobEntity.getStackInHand(hand);
-            int currentReloadCooldown = stack.getOrDefault(GUN_RELOAD_COOLDOWN_COMPONENT, 0);
-            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY);
+            int currentReloadCooldown = stack.getOrCreateNbt().getInt("gun_reload_cooldown");
+
+            ItemStack chamber = ItemStack.EMPTY;
+
+
+            NbtCompound nbt = stack.getNbt();
+            if (nbt.contains("gun_ammo")) {
+                NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
+                chamber = ItemStack.fromNbt(ammoNbt); // converts NBT back to ItemStack
+            }
+
+
             int bulletsInChamber = chamber.getCount();
-            int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+
+            int currentReload = stack.getOrCreateNbt().getInt("gun_load");
+
+
             if (currentReload == 1 && bulletsInChamber > 0) {
                 return;
             }
             if (currentReloadCooldown == 0) {
-                stack.set(GUN_RELOAD_COOLDOWN_COMPONENT, reloadTarget);
-                ItemStack oldChamber = stack.getOrDefault(GUN_LAST_LOADED_AMMO, ItemStack.EMPTY);
+
+                NbtCompound nbtCompound = stack.getOrCreateNbt();
+                nbtCompound.putInt("gun_reload_cooldown", reloadTarget);
+                stack.setNbt(nbtCompound);
+
+
+                ItemStack oldChamber = ItemStack.EMPTY;
+
+
+                NbtCompound nbt1 = stack.getNbt();
+                if (nbt1.contains("gun_last_load")) {
+                    NbtCompound ammoNbt1 = nbt1.getCompound("gun_last_load");
+                    oldChamber = ItemStack.fromNbt(ammoNbt1); // converts NBT back to ItemStack
+                }
+
+
+
+
                 Item ammoItem = (oldChamber == null || oldChamber.isEmpty())
                         ? ammo.get(selectWeaponIndex(random, localDifficulty, ammo.size()))
                         : oldChamber.getItem();
                 ItemStack bulletStack = new ItemStack(ammoItem, world.getRandom().nextBetween(1, ammoItem.getMaxCount()));
                 if (!bulletStack.isEmpty()) { // we have ammo
                     if (currentReload < reloadCount) { // still reloading
-                        stack.set(GUN_LOADING_COMPONENT, currentReload + 1);
+
+                        NbtCompound orCreateNbt = stack.getOrCreateNbt();
+                        orCreateNbt.putInt("gun_load", currentReload + 1);
+                        stack.setNbt(orCreateNbt);
+
+
                     } else if (currentReload == reloadCount) { // now reload
-                        stack.set(GUN_AMMO_COMPONENT, bulletStack);
-                        stack.set(GUN_LAST_LOADED_AMMO, bulletStack);
-                        stack.set(GUN_LOADING_COMPONENT, 1);
+
+
+                        NbtCompound nbt2 = stack.getOrCreateNbt();
+                        nbt.put("gun_ammo", bulletStack.writeNbt(new NbtCompound()));
+                        nbt.put("gun_last_load", bulletStack.writeNbt(new NbtCompound()));
+                        stack.setNbt(nbt2);
+
+                        NbtCompound orCreateNbt = stack.getOrCreateNbt();
+                        orCreateNbt.putInt("gun_load", currentReload + 1);
+                        stack.setNbt(orCreateNbt);
                     }
                 }
             }
@@ -205,7 +299,15 @@ public class Gun extends SimpleItem implements PolymerItem {
     }
 
     public void updateDamage(ItemStack stack) {
-        ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+
+        ItemStack chamber = ItemStack.EMPTY;
+
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains("gun_ammo")) {
+            NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
+            chamber = ItemStack.fromNbt(ammoNbt); // converts NBT back to ItemStack
+        }
+
         BulletItem bulletItem = null;
         for (BulletItem bulletTemp : bullets) {
             if (bulletTemp == chamber.getItem()) {
@@ -214,7 +316,10 @@ public class Gun extends SimpleItem implements PolymerItem {
             }
         }
         int numBullets = chamber.getCount();
-        int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
+
+        int currentReload = stack.getOrCreateNbt().getInt("gun_load");
+
+
         if (currentReload != 1) {
             numBullets = -clipSize;
         }
@@ -249,30 +354,43 @@ public class Gun extends SimpleItem implements PolymerItem {
             loreList.add(Text.translatable("gun.description.magazine_bullet", "Empty"));
         }
 
-        LoreComponent newLore = new LoreComponent(loreList);
 
-        stack.set(DataComponentTypes.LORE, newLore);
+
+        setLore(stack, loreList);
+
+    }
+
+    public static void setLore(ItemStack stack, List<Text> lines) {
+        NbtCompound display = stack.getOrCreateSubNbt("display");
+
+        NbtList loreList = new NbtList();
+        for (Text line : lines) {
+            // Lore must be JSON text
+            loreList.add(NbtString.of("{\"text\":\"" + line + "\"}"));
+        }
+
+        display.put("Lore", loreList);
     }
 
     public int doRecoil(LivingEntity entity) {
-        if (entity.getWorld() instanceof ServerWorld serverWorld) {
-            Random rng = entity.getWorld().getRandom();
-            // Get the entity's current position and yaw
-            Vec3d pos = entity.getPos();
-            float yaw = entity.getYaw();
-            float newPitch = entity.getPitch();
-            Vec3d currentLook = entity.getRotationVector().multiply(-1);
-            float yawChange = verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
-            float pitchChange = (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
-            newPitch -= yawChange;
-            yaw -= pitchChange;
-            entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch, true);
-            double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
-            if (velocityRecoil > 0) {
-                entity.setVelocity(currentLook.multiply(velocityRecoil));
-            }
-            return (int) ((abs(yawChange) + abs(pitchChange) + abs(velocityRecoil) + max(abs(yawChange), max(abs(pitchChange), abs(velocityRecoil)))) / 4f) * 40;
-        }
+       // if (entity.getWorld() instanceof ServerWorld serverWorld) {
+       //     Random rng = entity.getWorld().getRandom();
+       //     // Get the entity's current position and yaw
+       //     Vec3d pos = entity.getPos();
+       //     float yaw = entity.getYaw();
+       //     float newPitch = entity.getPitch();
+       //     Vec3d currentLook = entity.getRotationVector().multiply(-1);
+       //     float yawChange = verticalRecoilMin + rng.nextFloat() * (verticalRecoilMax - verticalRecoilMin);
+       //     float pitchChange = (float) (horizontalRecoilMin + rng.nextFloat() * (horizontalRecoilMax - horizontalRecoilMin));
+       //     newPitch -= yawChange;
+       //     yaw -= pitchChange;
+       //     entity.teleport(serverWorld, pos.x, pos.y, pos.z, PositionFlag.ROT, yaw, newPitch, true);
+       //     double velocityRecoil = rng.nextDouble() * (velocityRecoilMax - velocityRecoilMin);
+       //     if (velocityRecoil > 0) {
+       //         entity.setVelocity(currentLook.multiply(velocityRecoil));
+       //     }
+       //     return (int) ((abs(yawChange) + abs(pitchChange) + abs(velocityRecoil) + max(abs(yawChange), max(abs(pitchChange), abs(velocityRecoil)))) / 4f) * 40;
+       // }
         return 0;
     }
 
@@ -280,9 +398,20 @@ public class Gun extends SimpleItem implements PolymerItem {
         int stunLen = 0;
         if (!world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            int currentReload = stack.getOrDefault(GUN_LOADING_COMPONENT, 1);
-            int currentCooldown = stack.getOrDefault(GUN_COOLDOWN_COMPONENT, 0);
-            ItemStack chamber = stack.getOrDefault(GUN_AMMO_COMPONENT, ItemStack.EMPTY).copy();
+
+            int currentReload = stack.getOrCreateNbt().getInt("gun_load");
+            int currentCooldown = stack.getOrCreateNbt().getInt("gun_cooldown");
+
+
+            ItemStack chamber = ItemStack.EMPTY;
+
+
+            NbtCompound nbt1 = stack.getNbt();
+            if (nbt1.contains("gun_ammo")) {
+                NbtCompound ammoNbt1 = nbt1.getCompound("gun_ammo");
+                chamber = ItemStack.fromNbt(ammoNbt1); // converts NBT back to ItemStack
+            }
+
 
             BulletItem bullet = null;
             if (itemBulletItemMap.containsKey(chamber.getItem())) {
@@ -292,14 +421,33 @@ public class Gun extends SimpleItem implements PolymerItem {
             if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0) {
                 BulletEntity bulletEntity = getBulletEntity(user, hand, bullet, chamber);
                 world.spawnEntity(bulletEntity);
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE.value(), SoundCategory.PLAYERS, 0.1f, 1.2f);
+                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.1f, 1.2f);
                 chamber.decrement(1);
-                stack.set(GUN_COOLDOWN_COMPONENT, cooldownTarget);
+
+                NbtCompound orCreateNbt = stack.getOrCreateNbt();
+                orCreateNbt.putInt("gun_cooldown", cooldownTarget);
+
+                stack.setNbt(orCreateNbt);
+
                 stunLen = doRecoil(user);
                 if (chamber.isEmpty()) {
-                    stack.remove(GUN_AMMO_COMPONENT);
+
+                    NbtCompound orCreateNbt1 = stack.getOrCreateNbt();
+                    if (orCreateNbt1.contains("gun_ammo")) {
+                        orCreateNbt1.remove("gun_ammo");
+                        stack.setNbt(orCreateNbt1);
+
+                    }
                 } else {
-                    stack.set(GUN_AMMO_COMPONENT, chamber);
+
+                    NbtCompound nbt12 = stack.getNbt();
+                    if (nbt12.contains("gun_ammo")) {
+                        NbtCompound ammoNbt1 = nbt12.getCompound("gun_ammo");
+                        chamber = ItemStack.fromNbt(ammoNbt1); // converts NBT back to ItemStack
+                        stack.setNbt(ammoNbt1);
+                    }
+
+
                 }
             } else if (currentReload > 1) {
                 world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);

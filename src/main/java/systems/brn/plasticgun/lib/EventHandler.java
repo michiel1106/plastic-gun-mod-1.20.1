@@ -1,5 +1,6 @@
 package systems.brn.plasticgun.lib;
 
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,6 +19,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import systems.brn.plasticgun.grenades.GrenadeEntity;
 import systems.brn.plasticgun.grenades.GrenadeItem;
@@ -28,13 +31,15 @@ import static systems.brn.plasticgun.PlasticGun.*;
 import static systems.brn.plasticgun.lib.GunComponents.*;
 
 public class EventHandler {
-    public static ActionResult onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
+    public static TypedActionResult<ItemStack> onItemUse(PlayerEntity playerEntity, World world, Hand hand) {
         if (playerEntity instanceof ServerPlayerEntity serverPlayerEntity) {
             if (!world.isClient) {
                 rightClickWithItem(serverPlayerEntity, hand);
             }
         }
-        return ActionResult.PASS;
+
+        TypedActionResult<ItemStack> pass = TypedActionResult.pass(playerEntity.getMainHandStack());
+        return pass;
     }
 
     public static void rightClickWithItem(ServerPlayerEntity serverPlayerEntity, Hand hand) {
@@ -73,16 +78,17 @@ public class EventHandler {
             ItemStack stackInHand = serverPlayerEntity.getStackInHand(hand);
             Item itemInHand = stackInHand.getItem();
             if (itemGunMap.containsKey(itemInHand)) {
-                decrementComponent(GUN_COOLDOWN_COMPONENT, stackInHand);
-                decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, stackInHand);
+                decrementComponent("gun_cooldown", stackInHand);
+                decrementComponent("gun_reload_cooldown", stackInHand);
             }
 
             PlayerInventory playerInventory = serverPlayerEntity.getInventory();
-            for (int i = 1; i < playerInventory.getMainStacks().size(); i++) {
-                ItemStack stackInSlot = playerInventory.getMainStacks().get(i);
+            for (int i = 1; i < playerInventory.main.size(); i++) {
+                ItemStack stackInSlot = playerInventory.main.get(i);
                 Item itemInSlot = stackInSlot.getItem();
                 if (itemGrenadeItemMap.containsKey(itemInSlot)) {
-                    decrementComponent(GRENADE_TIMER_COMPONENT, stackInSlot);
+                    decrementComponent("grenade_tuner", stackInSlot);
+
                     GrenadeItem grenadeItem = itemGrenadeItemMap.get(itemInSlot);
                     GrenadeItem.updateDamage(stackInSlot, grenadeItem);
                     grenadeItem.checkExplosions(world, serverPlayerEntity, stackInSlot);
@@ -97,8 +103,8 @@ public class EventHandler {
         for (SkeletonEntity skeletonEntity : world.getEntitiesByType(EntityType.SKELETON, allEntities)) {
             ItemStack itemStack = skeletonEntity.getActiveItem();
                 if (itemGunMap.containsKey(itemStack.getItem())) {
-                    decrementComponent(GUN_COOLDOWN_COMPONENT, itemStack);
-                    decrementComponent(GUN_RELOAD_COOLDOWN_COMPONENT, itemStack);
+                    decrementComponent("gun_cooldown", itemStack);
+                    decrementComponent("gun_reload_cooldown", itemStack);
                 }
         }
     }
@@ -148,11 +154,11 @@ public class EventHandler {
         clientsWithMod.remove(player);
     }
 
-    public static void onClientConfirm(ModDetect modDetect, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+
+    public static void onClientConfirm(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         if (!clientsWithMod.contains(player)) {
+
             clientsWithMod.add(player);
         }
-
     }
 }

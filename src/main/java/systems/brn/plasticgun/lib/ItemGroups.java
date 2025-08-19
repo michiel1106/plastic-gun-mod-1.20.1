@@ -1,9 +1,12 @@
 package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
+import eu.pb4.polymer.core.impl.networking.packets.PolymerItemGroupContent;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import systems.brn.plasticgun.PlasticGun;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.defence.WeaponArmor;
@@ -14,8 +17,11 @@ import systems.brn.plasticgun.shurikens.ShurikenItem;
 import static systems.brn.plasticgun.lib.Util.id;
 
 public class ItemGroups {
+
+    /*
+
     public static final ItemGroup GUNS_GROUP = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.guns.getFirst()))
+            .icon(() -> new ItemStack(PlasticGun.guns.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.guns"))
             .entries(((context, entries) -> {
                 for (Gun gun : PlasticGun.guns) {
@@ -23,6 +29,12 @@ public class ItemGroups {
                 }
             }))
             .build();
+
+    public static final ItemGroup cool = PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of("d", "d"), );
+
+
+
+    PolymerItemGroupUtils.
 
     public static final ItemGroup AMMO_GROUP = PolymerItemGroupUtils.builder()
             .icon(() -> new ItemStack(PlasticGun.bullets.getFirst()))
@@ -82,4 +94,6 @@ public class ItemGroups {
         PolymerItemGroupUtils.registerPolymerItemGroup(id("materials"), MATERIALS_GROUPS);
         PolymerItemGroupUtils.registerPolymerItemGroup(id("defense"), DEFENSE);
     }
+
+     */
 }
