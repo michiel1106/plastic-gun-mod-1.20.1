@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RCR",
+    "ILI",
+    "RCR"
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "C": "minecraft:comparator",
+    "I": "minecraft:iron_ingot",
+    "L": "minecraft:lapis_lazuli"
+  },
+  "result": {
+    "item": "plasticgun:advanced_circuit",
+    "count": 1
+  }
+}

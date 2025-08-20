@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": "plasticgun:ceramic_mixture",
+  "result": {
+    "item": "plasticgun:ceramic_plate"
+  },
+  "experience": 0.3,
+  "cookingtime": 100
+}

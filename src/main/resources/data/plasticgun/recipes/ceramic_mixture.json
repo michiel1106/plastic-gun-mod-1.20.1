@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:clay_ball",
+    "minecraft:bone_meal"
+  ],
+  "result": {
+    "item": "plasticgun:ceramic_mixture",
+    "count": 1
+  }
+}

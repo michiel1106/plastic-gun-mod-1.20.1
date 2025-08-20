@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "CHC",
+    "CCC"
+  ],
+  "key": {
+    "C": "plasticgun:composite_resin",
+    "H": "plasticgun:hardened_steel"
+  },
+  "result": {
+    "item": "plasticgun:composite_frame",
+    "count": 1
+  }
+}

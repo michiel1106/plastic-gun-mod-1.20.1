@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "item": "plasticgun:45_acp",
+    "count": 4
+  }
+}

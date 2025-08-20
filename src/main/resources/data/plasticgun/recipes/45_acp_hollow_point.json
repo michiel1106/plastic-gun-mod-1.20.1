@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "plasticgun:enhanced_gunpowder",
+    "minecraft:iron_nugget",
+    "plasticgun:composite_resin"
+  ],
+  "result": {
+    "item": "plasticgun:45_acp_hollow_point",
+    "count": 4
+  }
+}

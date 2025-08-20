@@ -2,9 +2,12 @@ package systems.brn.plasticgun.lib;
 
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.core.impl.networking.packets.PolymerItemGroupContent;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import systems.brn.plasticgun.PlasticGun;
@@ -18,26 +21,20 @@ import static systems.brn.plasticgun.lib.Util.id;
 
 public class ItemGroups {
 
-    /*
 
-    public static final ItemGroup GUNS_GROUP = PolymerItemGroupUtils.builder()
+    public static final RegistryKey<ItemGroup> CUSTOM_ITEM_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), id("guns"));
+    public static final ItemGroup GUNS_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(PlasticGun.guns.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.guns"))
-            .entries(((context, entries) -> {
-                for (Gun gun : PlasticGun.guns) {
-                    entries.add(gun);
-                }
-            }))
             .build();
 
-    public static final ItemGroup cool = PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of("d", "d"), );
 
 
 
-    PolymerItemGroupUtils.
 
-    public static final ItemGroup AMMO_GROUP = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.bullets.getFirst()))
+
+    public static final ItemGroup AMMO_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(PlasticGun.bullets.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.ammo"))
             .entries(((context, entries) -> {
                 for (BulletItem bulletItem : PlasticGun.bullets) {
@@ -46,8 +43,8 @@ public class ItemGroups {
             }))
             .build();
 
-    public static final ItemGroup SHURIKEN_GROUP = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.shurikens.getFirst()))
+    public static final ItemGroup SHURIKEN_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(PlasticGun.shurikens.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.shurikens"))
             .entries(((context, entries) -> {
                 for (ShurikenItem shurikenItem : PlasticGun.shurikens) {
@@ -56,8 +53,8 @@ public class ItemGroups {
             }))
             .build();
 
-    public static final ItemGroup GRENADES_GROUP = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.grenades.getFirst()))
+    public static final ItemGroup GRENADES_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(PlasticGun.grenades.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.grenades"))
             .entries(((context, entries) -> {
                 for (GrenadeItem grenadeItem : PlasticGun.grenades) {
@@ -66,8 +63,8 @@ public class ItemGroups {
             }))
             .build();
 
-    public static final ItemGroup MATERIALS_GROUPS = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.craftingItems.getFirst()))
+    public static final ItemGroup MATERIALS_GROUPS = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(PlasticGun.craftingItems.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.materials"))
             .entries(((context, entries) -> {
                 for (CraftingItem craftingItem : PlasticGun.craftingItems) {
@@ -76,8 +73,8 @@ public class ItemGroups {
             }))
             .build();
 
-    public static final ItemGroup DEFENSE = PolymerItemGroupUtils.builder()
-            .icon(() -> new ItemStack(PlasticGun.weaponArmors.getFirst()))
+    public static final ItemGroup DEFENSE = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(PlasticGun.weaponArmors.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.defense"))
             .entries(((context, entries) -> {
                 for (WeaponArmor weaponArmor : PlasticGun.weaponArmors) {
@@ -95,5 +92,5 @@ public class ItemGroups {
         PolymerItemGroupUtils.registerPolymerItemGroup(id("defense"), DEFENSE);
     }
 
-     */
+
 }

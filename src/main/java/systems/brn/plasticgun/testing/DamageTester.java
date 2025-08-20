@@ -67,6 +67,7 @@ public class DamageTester extends LivingEntity implements PolymerEntity {
     }
 
 
+
     @Override
     public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
         return EntityType.ZOMBIE;

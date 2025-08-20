@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "plasticgun:hyperalloy",
+    "minecraft:iron_chestplate",
+    "plasticgun:hyperalloy",
+    "plasticgun:hyperalloy",
+    "plasticgun:hyperalloy"
+  ],
+  "result": {
+    "item": "plasticgun:flak_vest",
+    "count": 1
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "IRI",
+    " C "
+  ],
+  "key": {
+    "C": "plasticgun:copper_wiring",
+    "I": "minecraft:iron_ingot",
+    "R": "plasticgun:reinforced_fiber"
+  },
+  "result": {
+    "item": "plasticgun:magnetic_coil",
+    "count": 1
+  }
+}

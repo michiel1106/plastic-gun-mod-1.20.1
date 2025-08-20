@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " K ",
+    "KFK",
+    " K "
+  ],
+  "key": {
+    "K": "plasticgun:reinforced_fiber",
+    "F": "minecraft:feather"
+  },
+  "result": {
+    "item": "plasticgun:kevlar_sheet",
+    "count": 1
+  }
+}

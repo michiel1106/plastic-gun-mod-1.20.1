@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TTT",
+    "THR",
+    "TTT"
+  ],
+  "key": {
+    "T": "plasticgun:titanium_alloy",
+    "H": "plasticgun:hardened_steel",
+    "R": "plasticgun:reinforced_fiber"
+  },
+  "result": {
+    "item": "plasticgun:hyperalloy",
+    "count": 1
+  }
+}

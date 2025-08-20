@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "plasticgun:explosive_powder"
+  ],
+  "result": {
+    "item": "plasticgun:enhanced_gunpowder",
+    "count": 2
+  }
+}

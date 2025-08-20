@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NNN",
+    "NIN",
+    "NNN"
+  ],
+  "key": {
+    "N": "plasticgun:nano_tubes",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "item": "plasticgun:titanium_alloy",
+    "count": 1
+  }
+}

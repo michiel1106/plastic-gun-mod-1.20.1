@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "minecraft:iron_nugget",
+    "plasticgun:kevlar_sheet"
+  ],
+  "result": {
+    "item": "plasticgun:357_standard",
+    "count": 6
+  }
+}

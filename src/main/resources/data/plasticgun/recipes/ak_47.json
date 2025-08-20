@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "THH",
+    "PCC",
+    "I R"
+  ],
+  "key": {
+    "T": "plasticgun:titanium_alloy",
+    "H": "plasticgun:hardened_steel",
+    "P": "plasticgun:precision_gear",
+    "C": "plasticgun:composite_frame",
+    "I": "plasticgun:iron_shuriken",
+    "R": "plasticgun:reinforced_fiber"
+  },
+  "result": {
+    "item": "plasticgun:ak_47",
+    "count": 1
+  }
+}

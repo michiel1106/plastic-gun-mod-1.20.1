@@ -180,8 +180,10 @@ public class GrenadeEntity extends ThrowableProjectile implements PolymerEntity 
         this.isFragmentation = false;
     }
 
+
+
     @Override
     public EntityType<?> getPolymerEntityType(ServerPlayerEntity serverPlayerEntity) {
-        return GRENADE_ENTITY_TYPE;
+        return EntityType.ITEM_DISPLAY;
     }
 }

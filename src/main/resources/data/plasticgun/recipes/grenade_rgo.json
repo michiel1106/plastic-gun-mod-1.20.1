@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "CEC",
+    " T "
+  ],
+  "key": {
+    "P": "plasticgun:plasma_core",
+    "C": "plasticgun:composite_resin",
+    "E": "plasticgun:explosive_powder",
+    "T": "plasticgun:titanium_alloy"
+  },
+  "result": {
+    "item": "plasticgun:grenade_rgo",
+    "count": 1
+  }
+}

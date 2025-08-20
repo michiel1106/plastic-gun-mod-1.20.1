@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "GPG",
+    " E "
+  ],
+  "key": {
+    "E": "plasticgun:explosive_powder",
+    "G": "plasticgun:graphene_sheet",
+    "P": "plasticgun:plasma_core"
+  },
+  "result": {
+    "item": "plasticgun:rpg_shell_incendiary",
+    "count": 1
+  }
+}

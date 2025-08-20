@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "plasticgun:enhanced_gunpowder",
+    "minecraft:copper_ingot",
+    "plasticgun:kevlar_sheet"
+  ],
+  "result": {
+    "item": "plasticgun:32_acp_high_velocity",
+    "count": 8
+  }
+}

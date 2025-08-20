@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "T  ",
+    "HHC",
+    "PGR"
+  ],
+  "key": {
+    "T": "plasticgun:titanium_alloy",
+    "H": "plasticgun:hardened_steel",
+    "C": "plasticgun:composite_frame",
+    "P": "plasticgun:precision_gear",
+    "G": "plasticgun:graphene_sheet",
+    "R": "plasticgun:reinforced_fiber"
+  },
+  "result": {
+    "item": "plasticgun:awp",
+    "count": 1
+  }
+}

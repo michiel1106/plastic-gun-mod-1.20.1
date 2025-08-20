@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "minecraft:copper_ingot"
+  ],
+  "result": {
+    "item": "plasticgun:32_acp",
+    "count": 8
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:coal_block",
+    "minecraft:shears"
+  ],
+  "result": {
+    "item": "plasticgun:graphene_sheet",
+    "count": 1
+  }
+}

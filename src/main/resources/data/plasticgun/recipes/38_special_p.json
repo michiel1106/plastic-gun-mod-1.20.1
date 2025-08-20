@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "plasticgun:enhanced_gunpowder",
+    "plasticgun:ceramic_plate",
+    "plasticgun:kevlar_sheet"
+  ],
+  "result": {
+    "item": "plasticgun:38_special_p",
+    "count": 6
+  }
+}

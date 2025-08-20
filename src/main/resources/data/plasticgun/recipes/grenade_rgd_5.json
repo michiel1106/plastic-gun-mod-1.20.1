@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "CEC",
+    " P "
+  ],
+  "key": {
+    "G": "plasticgun:graphene_sheet",
+    "C": "plasticgun:composite_resin",
+    "E": "plasticgun:explosive_powder",
+    "P": "plasticgun:plasma_core"
+  },
+  "result": {
+    "item": "plasticgun:grenade_rgd_5",
+    "count": 1
+  }
+}

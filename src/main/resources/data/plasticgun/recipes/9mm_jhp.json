@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "plasticgun:kevlar_sheet"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    },
+    {
+      "item": "plasticgun:enhanced_gunpowder"
+    }
+  ],
+  "result": {
+    "item": "plasticgun:9mm_jhp",
+    "count": 8
+  }
+}

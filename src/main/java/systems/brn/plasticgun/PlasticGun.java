@@ -1,6 +1,7 @@
 package systems.brn.plasticgun;
 
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
+import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
@@ -130,6 +131,7 @@ public class PlasticGun implements ModInitializer {
         guns.add(new Gun("357_revolver", 1, 8, 5, 6, 45, 357, 20, 0, 0, 2, 3, 0.2f, 0.5f, -0.2, 0.2)); // 8
         guns.add(new Gun("awp", 1, 4, 20, 1, 75, 762, 40, 0, 0, 4f, 6f, 0.3f, 0.6f, -2, 2)); // 4
         guns.add(new Gun("rpg9", 2, 4, 20, 1, 10, 999, 20, 10, 0, 2f, 4f, 1, 2, -1, 1)); // 8
+
 
 
         grenades.add(new GrenadeItem("grenade_m18", 1, 0.1f, 0.2f, 50, false, false, 0, 0, 100, 15, 30)); // 0.02
@@ -327,6 +329,8 @@ public class PlasticGun implements ModInitializer {
 
         ServerPlayConnectionEvents.DISCONNECT.register(EventHandler::disconnect);
 
+
+        ItemGroups.register();
 
 
         // Register the global receiver

@@ -2,6 +2,8 @@ package systems.brn.plasticgun.lib;
 
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,6 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -17,9 +20,11 @@ import org.jetbrains.annotations.Nullable;
 import static systems.brn.plasticgun.lib.Util.id;
 
 public class TrinketPolymerItem extends ArmorItem implements PolymerItem {
-
+    PolymerModelData modelData;
     public TrinketPolymerItem(Item.Settings settings, String name) {
         super(ArmorMaterials.LEATHER, Type.CHESTPLATE, settings);
+
+        modelData = PolymerResourcePackUtils.requestModel(Items.STICK,  new Identifier("plasticgun", "item/" + name));
      //  super(ArmorMaterials.LEATHER, Type.CHESTPLATE, settings, id(name));
     }
 
@@ -44,6 +49,10 @@ public class TrinketPolymerItem extends ArmorItem implements PolymerItem {
         return false;
     }
 
+    @Override
+    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+        return modelData.value();
+    }
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
