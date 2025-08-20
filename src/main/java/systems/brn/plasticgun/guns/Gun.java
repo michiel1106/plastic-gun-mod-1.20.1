@@ -2,6 +2,7 @@ package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,7 +65,14 @@ public class Gun extends SimpleItem implements PolymerItem {
         super(new Settings().maxCount(1).maxDamage(clipSize + 1), id(path), Items.WOODEN_SWORD);
 
 
+        ItemStack stack = super.getDefaultStack();
+        NbtCompound nbt = stack.getOrCreateNbt();
 
+        // Initialize with empty ammo
+        nbt.put("gun_ammo", ItemStack.EMPTY.writeNbt(new NbtCompound()));
+        nbt.putInt("gun_cooldown", 0);
+        nbt.putInt("gun_reload_cooldown", 0);
+        nbt.putInt("gun_load", 1); // Start ready to fire
 
 
         this.verticalRecoilMin = verticalRecoilMin / 100f;
@@ -101,20 +109,6 @@ public class Gun extends SimpleItem implements PolymerItem {
         this.reloadTarget = reloadTarget + 1;
     }
 
-    @Override
-    public ItemStack getDefaultStack() {
-        ItemStack stack = super.getDefaultStack();
-        NbtCompound nbt = stack.getOrCreateNbt();
-
-        // Initialize with empty ammo
-        nbt.put("gun_ammo", ItemStack.EMPTY.writeNbt(new NbtCompound()));
-        nbt.putInt("gun_cooldown", 0);
-        nbt.putInt("gun_reload_cooldown", 0);
-        nbt.putInt("gun_load", 1); // Start ready to fire
-
-        return stack;
-    }
-
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> loreList, TooltipContext context) {
@@ -140,112 +134,111 @@ public class Gun extends SimpleItem implements PolymerItem {
 
     }
 
+
     public void reload(World world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-            int currentReloadCooldown = stack.getOrCreateNbt().getInt("gun_reload_cooldown");
-            if (currentReloadCooldown == 0) {
-                NbtCompound orCreateNbt1 = stack.getOrCreateNbt();
-                orCreateNbt1.putInt("gun_reload_cooldown", reloadTarget);
-                stack.setNbt(orCreateNbt1);
-
-                ItemStack bulletStack = findBulletStack(ammo, player);
-                ItemStack chamber = ItemStack.EMPTY;
-
-                if (stack.hasNbt()) {
-                    NbtCompound nbt = stack.getNbt();
-                    if (nbt.contains("gun_ammo")) {
-                        NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
-                        chamber = ItemStack.fromNbt(ammoNbt); // converts NBT back to ItemStack
-                    }
-                }
+            NbtCompound nbt = stack.getOrCreateNbt();
 
 
-                chamber = chamber.copy();
+            int currentReloadCooldown = nbt.getInt("gun_reload_cooldown");
+            if (currentReloadCooldown > 0) return; // Still on cooldown
 
+            // Set reload cooldown
+            nbt.putInt("gun_reload_cooldown", reloadTarget);
 
-                int bulletsInChamber = chamber.getCount();
-                int currentReload = stack.getOrCreateNbt().getInt("gun_load");
+            // Handle creative mode separately
+            if (player.isCreative()) {
+                ItemStack creativeAmmo = new ItemStack(ammo.get(0), clipSize);
+                nbt.put("gun_ammo", creativeAmmo.writeNbt(new NbtCompound()));
+                nbt.put("gun_last_load", creativeAmmo.writeNbt(new NbtCompound()));
+                nbt.putInt("gun_load", 1); // Set to ready state
+                updateDamage(stack);
+                world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
+                return;
+            }
 
-                if (bulletStack != null && !bulletStack.isEmpty()) { //we have ammo
-                    if (currentReload < reloadCount) { //still reloading
+            // Get current chamber contents
+            ItemStack chamber = ItemStack.EMPTY;
+            if (nbt.contains("gun_ammo")) {
+                chamber = ItemStack.fromNbt(nbt.getCompound("gun_ammo"));
+            }
 
-                        NbtCompound orCreateNbt = stack.getOrCreateNbt();
-                        orCreateNbt.putInt("gun_load", currentReload + 1);
+            int bulletsInChamber = chamber.getCount();
+            int currentReload = nbt.getInt("gun_load");
 
-                        stack.setNbt(orCreateNbt);
+            // Find compatible ammo in player's inventory
+            ItemStack bulletStack = findBulletStack(ammo, player);
 
-                        world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.PLAYERS, 0.1f, 1.8f);
-                    } else if (currentReload == reloadCount) { //now reload
-                        int addedBullets = Math.min(bulletStack.getCount(), clipSize - bulletsInChamber); //how many
+            if (bulletStack != null && !bulletStack.isEmpty()) {
+                if (currentReload < reloadCount) {
+                    // Still reloading - increment counter
+                    nbt.putInt("gun_load", currentReload + 1);
+                    world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.PLAYERS, 0.1f, 1.8f);
+                } else if (currentReload >= reloadCount) {
+                    // Complete the reload
+                    int addedBullets = Math.min(bulletStack.getCount(), clipSize - bulletsInChamber);
+
+                    if (addedBullets > 0) {
                         if (chamber.isEmpty() || chamber.getItem() == bulletStack.getItem()) {
+                            // Same ammo type or empty chamber
                             if (chamber.isEmpty()) {
-                                chamber = bulletStack.copy();
+                                chamber = new ItemStack(bulletStack.getItem(), 0);
                             }
                             chamber.setCount(bulletsInChamber + addedBullets);
                             bulletStack.decrement(addedBullets);
-                            if (chamber.isEmpty()) {
-                                if (stack.hasNbt()) {
-                                    if (stack.getNbt() != null) {
-                                        stack.getNbt().remove("gun_ammo");
-                                    }
-                                }
-                            } else {
 
-                                NbtCompound nbt = stack.getOrCreateNbt();
-                                nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
-                                nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
+                            nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
+                            nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
+                            nbt.putInt("gun_load", 1); // Reset to ready state
 
-                                world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
-                            }
-                            stack.getOrCreateNbt().putInt("gun_load", 1);
-
-
+                            world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                    SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 0.5f, 1.0f);
                         } else {
-                            if (canInsertItemIntoInventory(player.getInventory(), chamber.copy()) == chamber.getCount()) { //can take out chamber
-                                insertStackIntoInventory(player.getInventory(), chamber.copy());
-                                chamber.setCount(0); //empty
+                            // Different ammo type - need to swap
+                            if (player.getInventory().insertStack(chamber.copy())) {
+                                chamber = new ItemStack(bulletStack.getItem(), 0);
                                 int targetCount = Math.min(bulletStack.getCount(), clipSize);
-                                chamber = bulletStack.copy();
                                 chamber.setCount(targetCount);
-                                if (chamber.isEmpty()) {
-
-                                    if (stack.getNbt() != null) {
-                                        stack.getNbt().remove("gun_ammo");
-                                    }
-
-                                } else {
-                                    NbtCompound nbt = stack.getOrCreateNbt();
-                                    nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
-                                    nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
-
-
-
-                                    world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
-                                }
                                 bulletStack.decrement(targetCount);
 
-                                NbtCompound nbtCompound = stack.getOrCreateNbt();
-                                nbtCompound.putInt("gun_load", 1);
-                                stack.setNbt(nbtCompound);
+                                nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
+                                nbt.put("gun_last_load", chamber.writeNbt(new NbtCompound()));
+                                nbt.putInt("gun_load", 1); // Reset to ready state
 
-
+                                world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                        SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.PLAYERS, 1f, 2.5f);
+                            } else {
+                                // Couldn't insert old ammo, cancel reload
+                                System.out.println("1");
+                                nbt.putInt("gun_load", 1);
+                                world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                        SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 0.5f);
                             }
                         }
+                    } else {
+                        // No bullets to add
+                        nbt.putInt("gun_load", 1);
+                        System.out.println("2");
+                        world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                                SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 0.5f);
                     }
                 }
-                if (player.isCreative()) {
-                    ItemStack stackOfBullet = new ItemStack(ammo.stream().findFirst().get(), clipSize);
-
-
-                    NbtCompound nbt = stack.getOrCreateNbt();
-                    nbt.put("gun_ammo", stackOfBullet.writeNbt(new NbtCompound()));
-                    nbt.put("gun_last_load", stackOfBullet.writeNbt(new NbtCompound()));
-                }
-                updateDamage(stack);
+            } else {
+                // No ammo found
+                nbt.putInt("gun_load", 1); // Reset to ready state to prevent getting stuck
+                System.out.println("3");
+                world.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 0.5f);
             }
+
+            updateDamage(stack);
         }
     }
+
+
 
     public void reload(World world, MobEntity mobEntity, Hand hand, Random random, LocalDifficulty localDifficulty) {
         if (!world.isClient()) {
@@ -317,26 +310,19 @@ public class Gun extends SimpleItem implements PolymerItem {
             }
         }
     }
-
     public void updateDamage(ItemStack stack) {
         ItemStack chamber = ItemStack.EMPTY;
-
         NbtCompound nbt = stack.getNbt();
-        if (nbt != null && nbt.contains("gun_ammo")) {
-            NbtCompound ammoNbt = nbt.getCompound("gun_ammo");
-            chamber = ItemStack.fromNbt(ammoNbt); // converts NBT back to ItemStack
-        }
 
-        BulletItem bulletItem = null;
-        for (BulletItem bulletTemp : bullets) {
-            if (bulletTemp == chamber.getItem()) {
-                bulletItem = bulletTemp;
-                break;
+        if (nbt != null) {
+
+            if (nbt.contains("gun_ammo")) {
+                chamber = ItemStack.fromNbt(nbt.getCompound("gun_ammo"));
             }
         }
 
         int numBullets = chamber.getCount();
-        int currentReload = stack.getOrCreateNbt().getInt("gun_load");
+        int currentReload = nbt != null ? nbt.getInt("gun_load") : 1;
 
         // If still reloading, indicate gun is "empty"
         if (currentReload != 1) {
@@ -346,7 +332,6 @@ public class Gun extends SimpleItem implements PolymerItem {
         // Update the damage bar to reflect bullets left in the chamber
         stack.setDamage(clipSize - numBullets);
     }
-
 
 
     public int doRecoil(LivingEntity entity) {
@@ -375,65 +360,66 @@ public class Gun extends SimpleItem implements PolymerItem {
         int stunLen = 0;
         if (!world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
-
             NbtCompound nbt = stack.getOrCreateNbt();
-            int currentReload = nbt.contains("gun_load") ? nbt.getInt("gun_load") : 1;
-            int currentCooldown = nbt.contains("gun_cooldown") ? nbt.getInt("gun_cooldown") : 0;
 
 
+            System.out.println("=== SHOOT DEBUG ===");
+            System.out.println("All NBT keys: " + nbt.getKeys());
 
 
-            ItemStack chamber;
+            int currentReload = nbt.getInt("gun_load");
+            int currentCooldown = nbt.getInt("gun_cooldown");
+
+            // Only shoot if ready (load state 1) and not on cooldown
+            System.out.println(currentReload + "f");
+            System.out.println(currentCooldown + " d");
+
+            if (currentReload != 1 && currentCooldown > 0) {
+                System.out.println("4");
+                world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                        SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+                return 0;
+            }
+
+            ItemStack chamber = ItemStack.EMPTY;
             if (nbt.contains("gun_ammo")) {
                 chamber = ItemStack.fromNbt(nbt.getCompound("gun_ammo"));
+            }
+
+            if (chamber.isEmpty() || chamber.getCount() == 0) {
+                System.out.println("5");
+                world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                        SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
+                return 0;
+            }
+
+            BulletItem bullet = itemBulletItemMap.get(chamber.getItem());
+            if (bullet == null) return 0;
+
+            BulletEntity bulletEntity = getBulletEntity(user, hand, bullet, chamber);
+            world.spawnEntity(bulletEntity);
+            world.playSound(null, user.getX(), user.getY(), user.getZ(),
+                    SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.1f, 1.2f);
+
+            // Decrement ammo
+            chamber.decrement(1);
+            nbt.putInt("gun_cooldown", cooldownTarget);
+
+            if (chamber.getCount() <= 0) {
+                nbt.remove("gun_ammo");
+                // Start reload process automatically when empty
+                nbt.putInt("gun_load", 2);
             } else {
-                chamber = ItemStack.EMPTY;
+                nbt.put("gun_ammo", chamber.writeNbt(new NbtCompound()));
             }
 
-
-            BulletItem bullet = null;
-            if (itemBulletItemMap.containsKey(chamber.getItem())) {
-                bullet = itemBulletItemMap.get(chamber.getItem());
-            }
-
-            if (!chamber.isEmpty() && currentReload == 1 && currentCooldown == 0) {
-                BulletEntity bulletEntity = getBulletEntity(user, hand, bullet, chamber);
-                world.spawnEntity(bulletEntity);
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.1f, 1.2f);
-                chamber.decrement(1);
-
-                NbtCompound orCreateNbt = stack.getOrCreateNbt();
-                orCreateNbt.putInt("gun_cooldown", cooldownTarget);
-
-                stack.setNbt(orCreateNbt);
-
-                stunLen = doRecoil(user);
-                if (chamber.isEmpty()) {
-
-                    NbtCompound orCreateNbt1 = stack.getOrCreateNbt();
-                    if (orCreateNbt1.contains("gun_ammo")) {
-                        orCreateNbt1.remove("gun_ammo");
-                        stack.setNbt(orCreateNbt1);
-
-                    }
-                } else {
-
-                    NbtCompound nbt12 = stack.getNbt();
-                    if (nbt12.contains("gun_ammo")) {
-                        NbtCompound ammoNbt1 = nbt12.getCompound("gun_ammo");
-                        chamber = ItemStack.fromNbt(ammoNbt1); // converts NBT back to ItemStack
-                        stack.setNbt(ammoNbt1);
-                    }
-
-
-                }
-            } else if (currentReload > 1) {
-                world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.UI_BUTTON_CLICK.value(), SoundCategory.PLAYERS, 1.0f, 2.0f);
-            }
+            stunLen = doRecoil(user);
             updateDamage(stack);
         }
         return stunLen;
     }
+
+
 
     private @NotNull BulletEntity getBulletEntity(LivingEntity entity, Hand hand, BulletItem bullet, ItemStack chamber) {
         boolean isIncendiary = false;
