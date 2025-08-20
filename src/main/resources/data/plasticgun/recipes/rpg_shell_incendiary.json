@@ -6,9 +6,15 @@
     " E "
   ],
   "key": {
-    "E": "plasticgun:explosive_powder",
-    "G": "plasticgun:graphene_sheet",
-    "P": "plasticgun:plasma_core"
+    "E": {
+      "item": "plasticgun:explosive_powder"
+    },
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    },
+    "P": {
+      "item": "plasticgun:plasma_core"
+    }
   },
   "result": {
     "item": "plasticgun:rpg_shell_incendiary",

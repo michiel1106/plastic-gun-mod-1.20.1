@@ -6,10 +6,18 @@
     " P "
   ],
   "key": {
-    "G": "plasticgun:graphene_sheet",
-    "C": "plasticgun:composite_resin",
-    "E": "plasticgun:explosive_powder",
-    "P": "plasticgun:plasma_core"
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    },
+    "C": {
+      "item": "plasticgun:composite_resin"
+    },
+    "E": {
+      "item": "plasticgun:explosive_powder"
+    },
+    "P": {
+      "item": "plasticgun:plasma_core"
+    }
   },
   "result": {
     "item": "plasticgun:grenade_rgd_5",

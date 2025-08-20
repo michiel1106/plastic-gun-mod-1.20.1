@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:redstone_block",
-    "plasticgun:advanced_circuit"
+    {
+      "item": "minecraft:redstone_block"
+    },
+    {
+      "item": "plasticgun:advanced_circuit"
+    }
   ],
   "result": {
     "item": "plasticgun:power_cell",

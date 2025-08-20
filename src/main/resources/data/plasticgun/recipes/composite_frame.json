@@ -6,8 +6,12 @@
     "CCC"
   ],
   "key": {
-    "C": "plasticgun:composite_resin",
-    "H": "plasticgun:hardened_steel"
+    "C": {
+      "item": "plasticgun:composite_resin"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    }
   },
   "result": {
     "item": "plasticgun:composite_frame",

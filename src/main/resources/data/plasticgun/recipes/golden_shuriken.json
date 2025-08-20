@@ -6,9 +6,12 @@
     " G "
   ],
   "key": {
-    "G": "minecraft:gold_ingot"
+    "G": {
+      "item": "minecraft:gold_ingot"
+    }
   },
   "result": {
-    "item": "plasticgun:golden_shuriken"
+    "item": "plasticgun:golden_shuriken",
+    "count": 1
   }
 }

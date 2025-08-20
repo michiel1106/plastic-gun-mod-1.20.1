@@ -1,9 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "plasticgun:enhanced_gunpowder",
-    "minecraft:iron_nugget",
-    "plasticgun:kevlar_sheet"
+    {
+      "item": "plasticgun:enhanced_gunpowder"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    },
+    {
+      "item": "plasticgun:kevlar_sheet"
+    }
   ],
   "result": {
     "item": "plasticgun:357_magnum",

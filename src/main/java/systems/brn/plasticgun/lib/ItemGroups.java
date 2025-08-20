@@ -22,10 +22,15 @@ import static systems.brn.plasticgun.lib.Util.id;
 public class ItemGroups {
 
 
-    public static final RegistryKey<ItemGroup> CUSTOM_ITEM_GROUP_KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(), id("guns"));
+
     public static final ItemGroup GUNS_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(PlasticGun.guns.stream().findFirst().get()))
             .displayName(Text.translatable("guns.groups.guns"))
+            .entries(((context, entries) -> {
+                for (Gun gun : PlasticGun.guns) {
+                    entries.add(gun);
+                }
+            }))
             .build();
 
 

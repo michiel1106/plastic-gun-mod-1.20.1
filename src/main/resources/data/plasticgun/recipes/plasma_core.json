@@ -6,9 +6,15 @@
     "GEG"
   ],
   "key": {
-    "G": "minecraft:ghast_tear",
-    "E": "minecraft:ender_eye",
-    "C": "plasticgun:composite_frame"
+    "G": {
+      "item": "minecraft:ghast_tear"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    }
   },
   "result": {
     "item": "plasticgun:plasma_core",

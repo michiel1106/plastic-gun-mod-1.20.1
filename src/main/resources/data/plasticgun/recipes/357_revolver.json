@@ -6,10 +6,18 @@
     " TI"
   ],
   "key": {
-    "H": "plasticgun:hardened_steel",
-    "C": "plasticgun:composite_frame",
-    "T": "plasticgun:trigger_mechanism",
-    "I": "plasticgun:iron_shuriken"
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    },
+    "T": {
+      "item": "plasticgun:trigger_mechanism"
+    },
+    "I": {
+      "item": "plasticgun:iron_shuriken"
+    }
   },
   "result": {
     "item": "plasticgun:357_revolver",

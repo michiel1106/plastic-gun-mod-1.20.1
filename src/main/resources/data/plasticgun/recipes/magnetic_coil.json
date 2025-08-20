@@ -6,9 +6,15 @@
     " C "
   ],
   "key": {
-    "C": "plasticgun:copper_wiring",
-    "I": "minecraft:iron_ingot",
-    "R": "plasticgun:reinforced_fiber"
+    "C": {
+      "item": "plasticgun:copper_wiring"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:magnetic_coil",

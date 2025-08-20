@@ -6,7 +6,9 @@
     "  C"
   ],
   "key": {
-    "C": "minecraft:copper_ingot"
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
   },
   "result": {
     "item": "plasticgun:copper_wiring",

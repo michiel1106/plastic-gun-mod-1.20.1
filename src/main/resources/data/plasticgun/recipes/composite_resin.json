@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:slime_ball",
-    "minecraft:clay_ball"
+    {
+      "item": "minecraft:slime_ball"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    }
   ],
   "result": {
     "item": "plasticgun:composite_resin",

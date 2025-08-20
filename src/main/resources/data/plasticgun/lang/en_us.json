@@ -118,5 +118,6 @@
   "guns.groups.grenades": "Grenades",
   "guns.groups.shurikens": "Shurikens",
   "guns.groups.materials": "Weapon materials",
-  "guns.groups.defense": "Defensive"
+  "guns.groups.defense": "Defensive",
+  "gun.description.bullets_left": "%d/%d bullets"
 }

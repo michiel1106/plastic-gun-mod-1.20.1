@@ -6,9 +6,15 @@
     " S "
   ],
   "key": {
-    "S": "minecraft:string",
-    "F": "minecraft:feather",
-    "I": "plasticgun:composite_resin"
+    "S": {
+      "item": "minecraft:string"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    },
+    "I": {
+      "item": "plasticgun:composite_resin"
+    }
   },
   "result": {
     "item": "plasticgun:reinforced_fiber",

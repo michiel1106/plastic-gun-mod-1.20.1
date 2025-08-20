@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:gunpowder",
-    "plasticgun:ceramic_plate"
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "plasticgun:ceramic_plate"
+    }
   ],
   "result": {
     "item": "plasticgun:38_special",

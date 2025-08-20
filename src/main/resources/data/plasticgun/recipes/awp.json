@@ -6,12 +6,24 @@
     "PGR"
   ],
   "key": {
-    "T": "plasticgun:titanium_alloy",
-    "H": "plasticgun:hardened_steel",
-    "C": "plasticgun:composite_frame",
-    "P": "plasticgun:precision_gear",
-    "G": "plasticgun:graphene_sheet",
-    "R": "plasticgun:reinforced_fiber"
+    "T": {
+      "item": "plasticgun:titanium_alloy"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    },
+    "P": {
+      "item": "plasticgun:precision_gear"
+    },
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:awp",

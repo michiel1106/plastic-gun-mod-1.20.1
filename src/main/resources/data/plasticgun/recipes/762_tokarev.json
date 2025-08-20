@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:gunpowder",
-    "plasticgun:titanium_alloy"
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "plasticgun:titanium_alloy"
+    }
   ],
   "result": {
     "item": "plasticgun:762_tokarev",

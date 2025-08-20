@@ -6,7 +6,9 @@
     " G "
   ],
   "key": {
-    "G": "plasticgun:graphene_sheet"
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    }
   },
   "result": {
     "item": "plasticgun:nano_tubes",

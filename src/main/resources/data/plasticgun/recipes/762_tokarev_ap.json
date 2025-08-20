@@ -1,9 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "plasticgun:enhanced_gunpowder",
-    "plasticgun:titanium_alloy",
-    "plasticgun:kevlar_sheet"
+    {
+      "item": "plasticgun:enhanced_gunpowder"
+    },
+    {
+      "item": "plasticgun:titanium_alloy"
+    },
+    {
+      "item": "plasticgun:kevlar_sheet"
+    }
   ],
   "result": {
     "item": "plasticgun:762_tokarev_ap",

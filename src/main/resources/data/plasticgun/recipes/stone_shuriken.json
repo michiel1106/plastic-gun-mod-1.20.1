@@ -6,9 +6,12 @@
     " S "
   ],
   "key": {
-    "S": "minecraft:cobblestone"
+    "S": {
+      "item": "minecraft:cobblestone"
+    }
   },
   "result": {
-    "item": "plasticgun:stone_shuriken"
+    "item": "plasticgun:stone_shuriken",
+    "count": 1
   }
 }

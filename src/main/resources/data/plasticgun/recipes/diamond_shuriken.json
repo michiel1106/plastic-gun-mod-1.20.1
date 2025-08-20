@@ -6,7 +6,9 @@
     " D "
   ],
   "key": {
-    "D": "minecraft:diamond"
+    "D": {
+      "item": "minecraft:diamond"
+    }
   },
   "result": {
     "item": "plasticgun:diamond_shuriken"

@@ -1,9 +1,9 @@
 {
   "type": "minecraft:smelting",
-  "ingredient": "minecraft:iron_block",
-  "result": {
-    "item": "plasticgun:hardened_steel"
+  "ingredient": {
+    "item": "minecraft:iron_block"
   },
+  "result": "plasticgun:hardened_steel",
   "experience": 0.7,
   "cookingtime": 200
 }

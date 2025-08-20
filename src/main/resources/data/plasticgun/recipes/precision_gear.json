@@ -6,9 +6,15 @@
     " H "
   ],
   "key": {
-    "H": "plasticgun:hardened_steel",
-    "I": "minecraft:iron_ingot",
-    "R": "plasticgun:reinforced_fiber"
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:precision_gear",

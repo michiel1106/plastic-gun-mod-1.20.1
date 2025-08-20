@@ -1,11 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "plasticgun:hyperalloy",
-    "minecraft:iron_chestplate",
-    "plasticgun:hyperalloy",
-    "plasticgun:hyperalloy",
-    "plasticgun:hyperalloy"
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "minecraft:iron_chestplate"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    },
+    {
+      "item": "plasticgun:hyperalloy"
+    }
   ],
   "result": {
     "item": "plasticgun:flak_vest",

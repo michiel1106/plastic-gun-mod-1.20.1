@@ -6,10 +6,18 @@
     "RCR"
   ],
   "key": {
-    "R": "minecraft:redstone",
-    "C": "minecraft:comparator",
-    "I": "minecraft:iron_ingot",
-    "L": "minecraft:lapis_lazuli"
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "minecraft:lapis_lazuli"
+    }
   },
   "result": {
     "item": "plasticgun:advanced_circuit",

@@ -6,12 +6,24 @@
     "I R"
   ],
   "key": {
-    "T": "plasticgun:titanium_alloy",
-    "H": "plasticgun:hardened_steel",
-    "P": "plasticgun:precision_gear",
-    "C": "plasticgun:composite_frame",
-    "I": "plasticgun:iron_shuriken",
-    "R": "plasticgun:reinforced_fiber"
+    "T": {
+      "item": "plasticgun:titanium_alloy"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "P": {
+      "item": "plasticgun:precision_gear"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    },
+    "I": {
+      "item": "plasticgun:iron_shuriken"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:ak_47",

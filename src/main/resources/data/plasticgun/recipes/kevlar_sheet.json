@@ -6,8 +6,12 @@
     " K "
   ],
   "key": {
-    "K": "plasticgun:reinforced_fiber",
-    "F": "minecraft:feather"
+    "K": {
+      "item": "plasticgun:reinforced_fiber"
+    },
+    "F": {
+      "item": "minecraft:feather"
+    }
   },
   "result": {
     "item": "plasticgun:kevlar_sheet",

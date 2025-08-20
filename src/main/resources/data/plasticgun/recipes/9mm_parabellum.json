@@ -1,8 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
-    "minecraft:gunpowder",
-    "minecraft:gold_nugget"
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:gold_nugget"
+    }
   ],
   "result": {
     "item": "plasticgun:9mm_parabellum",

@@ -6,9 +6,15 @@
     "TTT"
   ],
   "key": {
-    "T": "plasticgun:titanium_alloy",
-    "H": "plasticgun:hardened_steel",
-    "R": "plasticgun:reinforced_fiber"
+    "T": {
+      "item": "plasticgun:titanium_alloy"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:hyperalloy",

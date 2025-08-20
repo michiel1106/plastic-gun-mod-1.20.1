@@ -6,9 +6,15 @@
     " E "
   ],
   "key": {
-    "E": "plasticgun:explosive_powder",
-    "G": "plasticgun:graphene_sheet",
-    "H": "plasticgun:hardened_steel"
+    "E": {
+      "item": "plasticgun:explosive_powder"
+    },
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    }
   },
   "result": {
     "item": "plasticgun:rpg_shell",

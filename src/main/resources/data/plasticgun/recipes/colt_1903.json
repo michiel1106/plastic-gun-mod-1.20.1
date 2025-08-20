@@ -6,11 +6,21 @@
     "PI "
   ],
   "key": {
-    "T": "plasticgun:titanium_alloy",
-    "C": "plasticgun:composite_frame",
-    "H": "plasticgun:hardened_steel",
-    "P": "plasticgun:precision_gear",
-    "I": "plasticgun:iron_shuriken"
+    "T": {
+      "item": "plasticgun:titanium_alloy"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    },
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "P": {
+      "item": "plasticgun:precision_gear"
+    },
+    "I": {
+      "item": "plasticgun:iron_shuriken"
+    }
   },
   "result": {
     "item": "plasticgun:colt_1903",

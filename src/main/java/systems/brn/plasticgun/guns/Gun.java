@@ -1,6 +1,7 @@
 package systems.brn.plasticgun.guns;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,6 +25,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import systems.brn.plasticgun.bullets.BulletEntity;
 import systems.brn.plasticgun.bullets.BulletItem;
 import systems.brn.plasticgun.lib.SimpleItem;
@@ -62,28 +64,7 @@ public class Gun extends SimpleItem implements PolymerItem {
         super(new Settings().maxCount(1).maxDamage(clipSize + 1), id(path), Items.WOODEN_SWORD);
 
 
-        ItemStack stack = new ItemStack(this);
-        NbtCompound nbt = stack.getOrCreateNbt();
 
-        nbt.put("GunAmmo", ItemStack.EMPTY.writeNbt(new NbtCompound())); // if you want to store an ItemStack
-        nbt.putInt("GunCooldown", 0);
-        nbt.putInt("GunReloadCooldown", 0);
-
-        NbtCompound display = nbt.getCompound("display");
-        NbtList loreList = new NbtList();
-        loreList.add(NbtString.of(Text.translatable("gun.description.caliber", caliber).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.damage_absolute", damage).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.speed", speed).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.clip_size", clipSize).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.reload_cooldown", reloadTarget).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.reload_cycles", reloadCount).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.shoot_cooldown", cooldownTarget).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.explosion_power", explosionPowerGun).getString()));
-        loreList.add(NbtString.of(Text.translatable("gun.description.repulsion_power", repulsionPowerGun).getString()));
-        display.put("Lore", loreList);
-        nbt.put("display", display);
-
-        stack.setNbt(nbt);
 
 
         this.verticalRecoilMin = verticalRecoilMin / 100f;
@@ -120,6 +101,45 @@ public class Gun extends SimpleItem implements PolymerItem {
         this.reloadTarget = reloadTarget + 1;
     }
 
+    @Override
+    public ItemStack getDefaultStack() {
+        ItemStack stack = super.getDefaultStack();
+        NbtCompound nbt = stack.getOrCreateNbt();
+
+        // Initialize with empty ammo
+        nbt.put("gun_ammo", ItemStack.EMPTY.writeNbt(new NbtCompound()));
+        nbt.putInt("gun_cooldown", 0);
+        nbt.putInt("gun_reload_cooldown", 0);
+        nbt.putInt("gun_load", 1); // Start ready to fire
+
+        return stack;
+    }
+
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> loreList, TooltipContext context) {
+        super.appendTooltip(stack, world, loreList, context);
+
+        int bulletsLeft = 0;
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains("gun_ammo")) {
+            bulletsLeft = ItemStack.fromNbt(nbt.getCompound("gun_ammo")).getCount();
+        }
+
+        loreList.add(Text.translatable("gun.description.caliber", caliber));
+        loreList.add(Text.translatable("gun.description.bullets_left", bulletsLeft, clipSize));
+        loreList.add(Text.translatable("gun.description.damage_absolute", damage));
+        loreList.add(Text.translatable("gun.description.speed", speed));
+        loreList.add(Text.translatable("gun.description.clip_size", clipSize));
+        loreList.add(Text.translatable("gun.description.reload_cooldown", reloadTarget));
+        loreList.add(Text.translatable("gun.description.reload_cycles", reloadCount));
+        loreList.add(Text.translatable("gun.description.shoot_cooldown", cooldownTarget));
+        loreList.add(Text.translatable("gun.description.explosion_power", explosionPowerGun));
+        loreList.add(Text.translatable("gun.description.repulsion_power", repulsionPowerGun));
+
+
+    }
+
     public void reload(World world, PlayerEntity user, Hand hand) {
         if (user instanceof ServerPlayerEntity player && !world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
@@ -140,7 +160,7 @@ public class Gun extends SimpleItem implements PolymerItem {
                     }
                 }
 
-// Optional: make a copy if needed
+
                 chamber = chamber.copy();
 
 
@@ -299,7 +319,6 @@ public class Gun extends SimpleItem implements PolymerItem {
     }
 
     public void updateDamage(ItemStack stack) {
-
         ItemStack chamber = ItemStack.EMPTY;
 
         NbtCompound nbt = stack.getNbt();
@@ -315,62 +334,20 @@ public class Gun extends SimpleItem implements PolymerItem {
                 break;
             }
         }
-        int numBullets = chamber.getCount();
 
+        int numBullets = chamber.getCount();
         int currentReload = stack.getOrCreateNbt().getInt("gun_load");
 
-
+        // If still reloading, indicate gun is "empty"
         if (currentReload != 1) {
-            numBullets = -clipSize;
-        }
-        stack.setDamage((clipSize - numBullets) + 1);
-
-        List<Text> loreList = new ArrayList<>();
-
-        loreList.add(Text.translatable("gun.description.caliber", caliber));
-        loreList.add(Text.translatable("gun.description.damage_absolute", damage));
-        loreList.add(Text.translatable("gun.description.speed", speed));
-        loreList.add(Text.translatable("gun.description.clip_size", clipSize));
-        loreList.add(Text.translatable("gun.description.reload_cooldown", reloadTarget));
-        loreList.add(Text.translatable("gun.description.reload_cycles", reloadCount));
-        loreList.add(Text.translatable("gun.description.shoot_cooldown", cooldownTarget));
-        if (explosionPowerGun > 0) {
-            loreList.add(Text.translatable("gun.description.explosion_power", explosionPowerGun));
-        }
-        if (repulsionPowerGun > 0) {
-            loreList.add(Text.translatable("gun.description.repulsion_power", repulsionPowerGun));
-        }
-        loreList.add(Text.translatable("gun.description.magazine_count", numBullets, clipSize));
-        if (!chamber.isEmpty() && bulletItem != null) {
-            loreList.add(Text.translatable("gun.description.damage_with_coefficient", damage * bulletItem.damageCoefficient));
-            loreList.add(Text.translatable("gun.description.damage_with_coefficient_muzzle_speed", speed, speed * damage * bulletItem.damageCoefficient));
-            loreList.add(Text.translatable("gun.description.magazine_bullet", bulletItem.getName()));
-            loreList.add(Text.translatable("gun.description.damage_coefficient", bulletItem.damageCoefficient));
-            loreList.add(Text.translatable("gun.description.explosion_coefficient", bulletItem.explosionPowerCoefficient));
-            if (bulletItem.isIncendiary) {
-                loreList.add(Text.translatable("gun.description.incendiary"));
-            }
-        } else {
-            loreList.add(Text.translatable("gun.description.magazine_bullet", "Empty"));
+            numBullets = 0;
         }
 
-
-
-        setLore(stack, loreList);
-
+        // Update the damage bar to reflect bullets left in the chamber
+        stack.setDamage(clipSize - numBullets);
     }
 
-    public static void setLore(ItemStack stack, List<Text> lines) {
-        NbtCompound display = stack.getOrCreateSubNbt("display");
 
-        NbtList loreList = new NbtList();
-        for (Text line : lines) {
-            // Lore must be JSON text
-            loreList.add(NbtString.of("{\"text\":\"" + line + "\"}"));
-        }
-
-        display.put("Lore", loreList);
-    }
 
     public int doRecoil(LivingEntity entity) {
        // if (entity.getWorld() instanceof ServerWorld serverWorld) {
@@ -399,17 +376,18 @@ public class Gun extends SimpleItem implements PolymerItem {
         if (!world.isClient()) {
             ItemStack stack = user.getStackInHand(hand);
 
-            int currentReload = stack.getOrCreateNbt().getInt("gun_load");
-            int currentCooldown = stack.getOrCreateNbt().getInt("gun_cooldown");
+            NbtCompound nbt = stack.getOrCreateNbt();
+            int currentReload = nbt.contains("gun_load") ? nbt.getInt("gun_load") : 1;
+            int currentCooldown = nbt.contains("gun_cooldown") ? nbt.getInt("gun_cooldown") : 0;
 
 
-            ItemStack chamber = ItemStack.EMPTY;
 
 
-            NbtCompound nbt1 = stack.getNbt();
-            if (nbt1.contains("gun_ammo")) {
-                NbtCompound ammoNbt1 = nbt1.getCompound("gun_ammo");
-                chamber = ItemStack.fromNbt(ammoNbt1); // converts NBT back to ItemStack
+            ItemStack chamber;
+            if (nbt.contains("gun_ammo")) {
+                chamber = ItemStack.fromNbt(nbt.getCompound("gun_ammo"));
+            } else {
+                chamber = ItemStack.EMPTY;
             }
 
 

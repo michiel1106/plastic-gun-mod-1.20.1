@@ -6,10 +6,18 @@
     " TR"
   ],
   "key": {
-    "H": "plasticgun:hardened_steel",
-    "C": "plasticgun:composite_frame",
-    "T": "plasticgun:trigger_mechanism",
-    "R": "plasticgun:reinforced_fiber"
+    "H": {
+      "item": "plasticgun:hardened_steel"
+    },
+    "C": {
+      "item": "plasticgun:composite_frame"
+    },
+    "T": {
+      "item": "plasticgun:trigger_mechanism"
+    },
+    "R": {
+      "item": "plasticgun:reinforced_fiber"
+    }
   },
   "result": {
     "item": "plasticgun:colt_peacemaker",

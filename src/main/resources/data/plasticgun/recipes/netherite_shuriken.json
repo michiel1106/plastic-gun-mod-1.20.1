@@ -6,9 +6,12 @@
     " N "
   ],
   "key": {
-    "N": "minecraft:netherite_ingot"
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
   },
   "result": {
-    "item": "plasticgun:netherite_shuriken"
+    "item": "plasticgun:netherite_shuriken",
+    "count": 1
   }
 }

@@ -6,10 +6,18 @@
     " G "
   ],
   "key": {
-    "E": "plasticgun:explosive_powder",
-    "C": "plasticgun:ceramic_plate",
-    "P": "plasticgun:plasma_core",
-    "G": "plasticgun:graphene_sheet"
+    "E": {
+      "item": "plasticgun:explosive_powder"
+    },
+    "C": {
+      "item": "plasticgun:ceramic_plate"
+    },
+    "P": {
+      "item": "plasticgun:plasma_core"
+    },
+    "G": {
+      "item": "plasticgun:graphene_sheet"
+    }
   },
   "result": {
     "item": "plasticgun:grenade_an_m14",
